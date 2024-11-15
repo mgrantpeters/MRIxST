@@ -1,0 +1,715 @@
+﻿GO_term,pathway
+GO:0099541,trans-synaptic signaling by lipid
+GO:0099552,"trans-synaptic signaling by lipid, modulating synaptic transmission"
+GO:0110112,regulation of lipid transporter activity
+GO:0110113,positive regulation of lipid transporter activity
+GO:0110114,negative regulation of lipid transporter activity
+GO:1905691,lipid droplet disassembly
+GO:1905038,regulation of membrane lipid metabolic process
+GO:0060588,negative regulation of lipoprotein lipid oxidation
+GO:0060587,regulation of lipoprotein lipid oxidation
+GO:1904729,regulation of intestinal lipid absorption
+GO:1904731,positive regulation of intestinal lipid absorption
+GO:1904730,negative regulation of intestinal lipid absorption
+GO:0036103,Kdo2-lipid A metabolic process
+GO:0036104,Kdo2-lipid A biosynthetic process
+GO:0061739,protein lipidation involved in autophagosome assembly
+GO:0140042,lipid droplet formation
+GO:0140043,lipid droplet localization to prospore membrane leading edge
+GO:0120009,intermembrane lipid transfer
+GO:0120013,lipid transfer activity
+GO:1900131,negative regulation of lipid binding
+GO:1900130,regulation of lipid binding
+GO:1900132,positive regulation of lipid binding
+GO:0005633,ascus lipid droplet
+GO:0019915,lipid storage
+GO:0005319,lipid transporter activity
+GO:0030259,lipid glycosylation
+GO:0030258,lipid modification
+GO:0030882,lipid antigen binding
+GO:0030884,exogenous lipid antigen binding
+GO:0030883,endogenous lipid antigen binding
+GO:0005811,lipid droplet
+GO:0060990,lipid tube assembly involved in organelle fission
+GO:0060988,lipid tube assembly
+GO:0060987,lipid tube
+GO:0060989,lipid tube assembly involved in organelle fusion
+GO:0033606,chemokine receptor transport within lipid bilayer
+GO:0033993,response to lipid
+GO:0010877,lipid transport involved in lipid storage
+GO:0010876,lipid localization
+GO:0010888,negative regulation of lipid storage
+GO:0010884,positive regulation of lipid storage
+GO:0010883,regulation of lipid storage
+GO:2001289,lipid X metabolic process
+GO:0140282,carbon-nitrogen ligase activity on lipid II
+GO:0140353,lipid export from cell
+GO:0140354,lipid import into cell
+GO:0140326,ATPase-coupled intramembrane lipid transporter activity
+GO:0140303,intramembrane lipid transporter activity
+GO:0009245,lipid A biosynthetic process
+GO:0034204,lipid translocation
+GO:0034440,lipid oxidation
+GO:0034439,lipoprotein lipid oxidation
+GO:0034430,monolayer-surrounded lipid storage body outer lipid monolayer
+GO:0034389,lipid droplet organization
+GO:0034368,protein-lipid complex remodeling
+GO:0032987,protein-lipid complex disassembly
+GO:0034646,organelle-enclosing lipid monolayer
+GO:0032595,B cell receptor transport within lipid bilayer
+GO:0032594,protein transport within lipid bilayer
+GO:0050994,regulation of lipid catabolic process
+GO:0050996,positive regulation of lipid catabolic process
+GO:0050995,negative regulation of lipid catabolic process
+GO:0102866,acyl-lipid (8-3)-desaturase activity
+GO:0102865,delta6-acyl-lipid desaturase activity
+GO:0102850,acyl-lipid (n+3)-(Z)-desaturase (ferredoxin) activity
+GO:0102859,acyl-lipid omega-3 desaturase (cytochrome b5) activity
+GO:0050184,acyl-lipid omega-6 desaturase (cytochrome b5) activity
+GO:0102003,acyl-lipid (11-3)-desaturase activity
+GO:0102993,sn-2 acyl-lipid omega-3 desaturase (ferredoxin) activity
+GO:0001727,lipid kinase activity
+GO:0015648,lipid-linked peptidoglycan transporter activity
+GO:0015836,lipid-linked peptidoglycan transport
+GO:1990052,ER to chloroplast lipid transport
+GO:1990044,protein localization to lipid droplet
+GO:1990379,lipid transport across blood-brain barrier
+GO:0102431,acyl-lipid omega-(9-4) desaturase activity
+GO:0170007,endoplasmic reticulum-lipid droplet tether activity
+GO:0170055,lipid transmembrane transporter activity
+GO:0106254,lipid sensor activity
+GO:0012511,monolayer-surrounded lipid storage body
+GO:0019216,regulation of lipid metabolic process
+GO:0044241,lipid digestion
+GO:0044242,cellular lipid catabolic process
+GO:0044258,intestinal lipid catabolic process
+GO:0044255,cellular lipid metabolic process
+GO:0044186,host cell lipid droplet
+GO:0042577,lipid phosphatase activity
+GO:1903001,negative regulation of lipid transport across blood-brain barrier
+GO:1903002,positive regulation of lipid transport across blood-brain barrier
+GO:1903000,regulation of lipid transport across blood-brain barrier
+GO:1903059,regulation of protein lipidation
+GO:1903060,negative regulation of protein lipidation
+GO:1903061,positive regulation of protein lipidation
+GO:0008289,lipid binding
+GO:1901759,beta-L-Ara4N-lipid A metabolic process
+GO:1901760,beta-L-Ara4N-lipid A biosynthetic process
+GO:0045125,bioactive lipid receptor activity
+GO:0098920,retrograde trans-synaptic signaling by lipid
+GO:0098856,intestinal lipid absorption
+GO:0097384,cellular lipid biosynthetic process
+GO:0097035,regulation of membrane lipid distribution
+GO:0120322,lipid modification by small protein conjugation
+GO:0120323,lipid ubiquitination
+GO:0002600,positive regulation of antigen processing and presentation of lipid antigen via MHC class Ib
+GO:0002598,regulation of antigen processing and presentation of lipid antigen via MHC class Ib
+GO:0002599,negative regulation of antigen processing and presentation of lipid antigen via MHC class Ib
+GO:0160077,lipid droplet fusion
+GO:0160078,negative regulation of lipid droplet fusion
+GO:0002933,lipid hydroxylation
+GO:0002493,lipid antigen assembly with MHC class Ib protein complex
+GO:0002494,lipid antigen transport
+GO:0046834,lipid phosphorylation
+GO:0046889,positive regulation of lipid biosynthetic process
+GO:0071825,protein-lipid complex organization
+GO:0071814,protein-lipid complex binding
+GO:0046890,regulation of lipid biosynthetic process
+GO:0046460,neutral lipid biosynthetic process
+GO:0046461,neutral lipid catabolic process
+GO:0046466,membrane lipid catabolic process
+GO:0046467,membrane lipid biosynthetic process
+GO:0071449,cellular response to lipid hydroperoxide
+GO:0046485,ether lipid metabolic process
+GO:0046493,lipid A metabolic process
+GO:0071396,cellular response to lipid
+GO:0016720,acyl-lipid Delta(12)-acetylenase
+GO:0055088,lipid homeostasis
+GO:0016042,lipid catabolic process
+GO:0006982,response to lipid hydroperoxide
+GO:0006869,lipid transport
+GO:0006497,protein lipidation
+GO:0006498,N-terminal protein lipidation
+GO:0045833,negative regulation of lipid metabolic process
+GO:0045834,positive regulation of lipid metabolic process
+GO:0006629,lipid metabolic process
+GO:0006638,neutral lipid metabolic process
+GO:0006643,membrane lipid metabolic process
+GO:0006501,C-terminal protein lipidation
+GO:0008611,ether lipid biosynthetic process
+GO:0008610,lipid biosynthetic process
+GO:0033545,"myo-inositol hexakisphosphate biosynthetic process, lipid-dependent"
+GO:0033548,"myo-inositol hexakisphosphate biosynthetic process, lipid-independent"
+GO:0031887,lipid droplet transport along microtubule
+GO:0043550,regulation of lipid kinase activity
+GO:0043808,lyso-ornithine lipid acyltransferase activity
+GO:0043839,lipid A phosphate methyltransferase activity
+GO:0043838,phosphatidylethanolamine:Kdo2-lipid A phosphoethanolamine transferase activity
+GO:1901373,lipid hydroperoxide transport
+GO:1990684,protein-lipid-RNA complex
+GO:1990685,HDL-containing protein-lipid-RNA complex
+GO:1990686,LDL-containing protein-lipid-RNA complex
+GO:0071968,lipid A-core heptosyltransferase activity
+GO:0032368,regulation of lipid transport
+GO:0032369,negative regulation of lipid transport
+GO:0032365,intracellular lipid transport
+GO:0008913,Kdo2-lipid IVA acyltransferase activity
+GO:0008915,lipid-A-disaccharide synthase activity
+GO:0032379,positive regulation of intracellular lipid transport
+GO:0032377,regulation of intracellular lipid transport
+GO:0032378,negative regulation of intracellular lipid transport
+GO:0032370,positive regulation of lipid transport
+GO:0032994,protein-lipid complex
+GO:0048003,antigen processing and presentation of lipid antigen via MHC class Ib
+GO:0048007,"antigen processing and presentation, exogenous lipid antigen via MHC class Ib"
+GO:0048006,"antigen processing and presentation, endogenous lipid antigen via MHC class Ib"
+GO:1905954,positive regulation of lipid localization
+GO:1905953,negative regulation of lipid localization
+GO:1905952,regulation of lipid localization
+GO:0034040,ATPase-coupled lipid transmembrane transporter activity
+GO:0065005,protein-lipid complex assembly
+GO:0090218,positive regulation of lipid kinase activity
+GO:0090219,negative regulation of lipid kinase activity
+GO:0051055,negative regulation of lipid biosynthetic process
+GO:0015161,lipid III floppase activity
+GO:0099501,exocytic vesicle membrane
+GO:0099012,neuronal dense core vesicle membrane
+GO:0110146,magnetosome membrane
+GO:1904121,phosphatidylethanolamine transfer activity
+GO:0085026,tubovesicular membrane network
+GO:0085019,formation of tubovesicular network for nutrient acquisition
+GO:0085017,entry into host cell by a symbiont-containing vacuole
+GO:0060106,cortical layer of collagen and cuticulin-based cuticle extracellular matrix
+GO:0060105,epicuticle of collagen and cuticulin-based cuticle extracellular matrix
+GO:0060191,regulation of lipase activity
+GO:0060193,positive regulation of lipase activity
+GO:0060192,negative regulation of lipase activity
+GO:0060199,clathrin-sculpted glutamate transport vesicle
+GO:0060198,clathrin-sculpted vesicle
+GO:0060203,clathrin-sculpted glutamate transport vesicle membrane
+GO:0060201,clathrin-sculpted acetylcholine transport vesicle membrane
+GO:0060200,clathrin-sculpted acetylcholine transport vesicle
+GO:0060230,lipoprotein lipase activator activity
+GO:0060229,lipase activator activity
+GO:0035014,phosphatidylinositol 3-kinase regulator activity
+GO:0035348,acetyl-CoA transmembrane transport
+GO:0035627,ceramide transport
+GO:0035621,ER to Golgi ceramide transport
+GO:0060642,white fat cell differentiation involved in mammary gland fat development
+GO:0060510,type II pneumocyte differentiation
+GO:0035579,specific granule membrane
+GO:0035577,azurophil granule membrane
+GO:0061796,membrane addition at site of mitotic cytokinesis
+GO:0061724,lipophagy
+GO:0061725,cytosolic lipolysis
+GO:0141047,molecular tag activity
+GO:0141048,membrane tag activity
+GO:0062040,fungal biofilm matrix
+GO:0062242,double membrane vesicle viral factory membrane
+GO:0062243,double membrane vesicle viral factory outer membrane
+GO:0062245,double membrane vesicle viral factory inner membrane
+GO:0036186,early phagosome membrane
+GO:0061202,clathrin-sculpted gamma-aminobutyric acid transport vesicle membrane
+GO:0061200,clathrin-sculpted gamma-aminobutyric acid transport vesicle
+GO:0022011,myelination in peripheral nervous system
+GO:0022010,central nervous system myelination
+GO:0036504,Golgi membrane fusion
+GO:0061474,phagolysosome membrane
+GO:0036407,mycolate outer membrane
+GO:0036313,phosphatidylinositol 3-kinase catalytic subunit binding
+GO:0036338,viral membrane
+GO:0036362,ascus membrane
+GO:0120020,cholesterol transfer activity
+GO:0120021,oxysterol transfer activity
+GO:0120011,intermembrane sterol transfer
+GO:0120012,intermembrane sphingolipid transfer
+GO:0120014,phospholipid transfer activity
+GO:0120015,sterol transfer activity
+GO:0120016,sphingolipid transfer activity
+GO:0120017,ceramide transfer activity
+GO:0120019,phosphatidylcholine transfer activity
+GO:0160204,mitochondrion-mitochondrion outer membrane tether activity
+GO:0160211,apicoplast membrane
+GO:0005543,phospholipid binding
+GO:0005544,calcium-dependent phospholipid binding
+GO:0005548,phospholipid transporter activity
+GO:0030936,transmembrane collagen trimer
+GO:0005635,nuclear envelope
+GO:0005637,nuclear inner membrane
+GO:0005640,nuclear outer membrane
+GO:0005641,nuclear envelope lumen
+GO:0030659,cytoplasmic vesicle membrane
+GO:0030658,transport vesicle membrane
+GO:0030662,coated vesicle membrane
+GO:0030661,chitosome membrane
+GO:0030663,COPI-coated vesicle membrane
+GO:0030666,endocytic vesicle membrane
+GO:0030665,clathrin-coated vesicle membrane
+GO:0030668,merozoite dense granule membrane
+GO:0030667,secretory granule membrane
+GO:0030660,Golgi-associated vesicle membrane
+GO:0030669,clathrin-coated endocytic vesicle membrane
+GO:0030672,synaptic vesicle membrane
+GO:0030674,protein-macromolecule adaptor activity
+GO:0030671,clathrin-coated phagocytic vesicle membrane
+GO:0030670,phagocytic vesicle membrane
+GO:0030228,lipoprotein particle receptor activity
+GO:0005886,plasma membrane
+GO:0030868,smooth endoplasmic reticulum membrane
+GO:0030867,rough endoplasmic reticulum membrane
+GO:0005741,mitochondrial outer membrane
+GO:0005740,mitochondrial envelope
+GO:0005743,mitochondrial inner membrane
+GO:0005758,mitochondrial intermembrane space
+GO:0005765,lysosomal membrane
+GO:0005774,vacuolar membrane
+GO:0005778,peroxisomal membrane
+GO:0005777,peroxisome
+GO:0005789,endoplasmic reticulum membrane
+GO:0005790,smooth endoplasmic reticulum
+GO:0009029,tetraacyldisaccharide 4'-kinase activity
+GO:0008713,ADP-heptose-lipopolysaccharide heptosyltransferase activity
+GO:0008754,O antigen ligase activity
+GO:0008654,phospholipid biosynthetic process
+GO:0008653,lipopolysaccharide metabolic process
+GO:0033644,host cell membrane
+GO:0033648,host intracellular membrane-bounded organelle
+GO:0180041,"glycolipid 1,4-alpha-mannosyltransferase activity"
+GO:0036020,endolysosome membrane
+GO:0036014,cyanelle intermembrane space
+GO:0036012,cyanelle inner membrane
+GO:0036013,cyanelle outer membrane
+GO:0061007,hepaticobiliary system process
+GO:0061008,hepaticobiliary system development
+GO:0061025,membrane fusion
+GO:0061024,membrane organization
+GO:0075513,caveolin-mediated endocytosis of virus by host cell
+GO:0010795,regulation of ubiquinone biosynthetic process
+GO:0103003,oleate peroxygenase activity
+GO:0103028,murein hydrolase activity
+GO:0103015,4-amino-4-deoxy-L-arabinose transferase activity
+GO:0010745,negative regulation of macrophage derived foam cell differentiation
+GO:0010744,positive regulation of macrophage derived foam cell differentiation
+GO:0010743,regulation of macrophage derived foam cell differentiation
+GO:0010742,macrophage derived foam cell differentiation
+GO:0140622,ER-to-endosome phospholipid transfer complex
+GO:0101003,ficolin-1-rich granule membrane
+GO:0101004,cytolytic granule membrane
+GO:0140567,membrane protein dislocase activity
+GO:0140522,fusogenic activity
+GO:0140523,GTPase-dependent fusogenic activity
+GO:0140504,microlipophagy
+GO:0140505,regulation of microlipophagy
+GO:0140513,nuclear protein-containing complex
+GO:0010901,regulation of very-low-density lipoprotein particle remodeling
+GO:0010903,negative regulation of very-low-density lipoprotein particle remodeling
+GO:0010902,positive regulation of very-low-density lipoprotein particle remodeling
+GO:0140474,mitochondrion-endoplasmic reticulum membrane tether activity
+GO:0140443,mitochondrion-plasma membrane adaptor activity
+GO:0140444,cytoskeleton-nuclear membrane anchor activity
+GO:0140328,floppase activity
+GO:0140327,flippase activity
+GO:0034365,discoidal high-density lipoprotein particle
+GO:0034364,high-density lipoprotein particle
+GO:0034359,mature chylomicron
+GO:0034358,plasma lipoprotein particle
+GO:0009279,cell outer membrane
+GO:0034235,GPI anchor binding
+GO:0032810,sterol response element binding
+GO:0034441,plasma lipoprotein particle oxidation
+GO:0034380,high-density lipoprotein particle assembly
+GO:0034385,triglyceride-rich plasma lipoprotein particle
+GO:0034370,triglyceride-rich lipoprotein particle remodeling
+GO:0034379,very-low-density lipoprotein particle assembly
+GO:0034374,low-density lipoprotein particle remodeling
+GO:0034373,intermediate-density lipoprotein particle remodeling
+GO:0034372,very-low-density lipoprotein particle remodeling
+GO:0034371,chylomicron remodeling
+GO:0034378,chylomicron assembly
+GO:0034377,plasma lipoprotein particle assembly
+GO:0034376,conversion of discoidal high-density lipoprotein particle to spherical high-density lipoprotein particle
+GO:0034375,high-density lipoprotein particle remodeling
+GO:0009395,phospholipid catabolic process
+GO:0034369,plasma lipoprotein particle remodeling
+GO:0032978,protein insertion into membrane from inner side
+GO:0009705,plant-type vacuole membrane
+GO:0009707,chloroplast outer membrane
+GO:0009706,chloroplast inner membrane
+GO:0009668,plastid membrane organization
+GO:0020005,symbiont-containing vacuole membrane
+GO:0009529,plastid intermembrane space
+GO:0009528,plastid inner membrane
+GO:0009527,plastid outer membrane
+GO:0009526,plastid envelope
+GO:0009569,chloroplast starch grain
+GO:0009568,amyloplast starch grain
+GO:0034595,phosphatidylinositol phosphate 5-phosphatase activity
+GO:0034426,etioplast membrane
+GO:0034425,etioplast envelope
+GO:0032600,chemokine receptor transport out of membrane raft
+GO:0032588,trans-Golgi network membrane
+GO:0032586,protein storage vacuole membrane
+GO:0032580,Golgi cisterna membrane
+GO:0032585,multivesicular body membrane
+GO:0032578,aleurone grain membrane
+GO:0032599,protein transport out of membrane raft
+GO:0032597,B cell receptor transport into membrane raft
+GO:0032596,protein transport into membrane raft
+GO:0050748,negative regulation of lipoprotein metabolic process
+GO:0050747,positive regulation of lipoprotein metabolic process
+GO:0050746,regulation of lipoprotein metabolic process
+GO:0050738,fructosyltransferase activity
+GO:0039641,viral inner membrane
+GO:0039661,host organelle outer membrane
+GO:0039662,host cell outer membrane
+GO:0000742,karyogamy involved in conjugation with cellular fusion
+GO:0000741,karyogamy
+GO:0000740,nuclear membrane fusion
+GO:0050872,white fat cell differentiation
+GO:0010236,plastoquinone biosynthetic process
+GO:0010287,plastoglobule
+GO:0010008,endosome membrane
+GO:0051697,protein delipidation
+GO:0051665,membrane raft localization
+GO:1990199,MsbA transporter complex
+GO:0000139,Golgi membrane
+GO:0015221,lipopolysaccharide transmembrane transporter activity
+GO:0015269,calcium-activated potassium channel activity
+GO:0001766,membrane raft polarization
+GO:0001765,membrane raft assembly
+GO:0015738,glucuronate transmembrane transport
+GO:0015737,galacturonate transmembrane transport
+GO:0015736,hexuronate transmembrane transport
+GO:0015735,uronic acid transmembrane transport
+GO:0015733,shikimate transmembrane transport
+GO:0015810,aspartate transmembrane transport
+GO:0015749,monosaccharide transmembrane transport
+GO:0015745,tartrate transmembrane transport
+GO:0015757,galactose transmembrane transport
+GO:0015756,fucose transmembrane transport
+GO:0015754,D-allose transmembrane transport
+GO:0015753,D-xylose transmembrane transport
+GO:0015752,D-ribose transmembrane transport
+GO:0015751,arabinose transmembrane transport
+GO:0015750,pentose transmembrane transport
+GO:0015762,rhamnose transmembrane transport
+GO:0015761,mannose transmembrane transport
+GO:0015793,glycerol transmembrane transport
+GO:0015792,arabinitol transmembrane transport
+GO:0015713,phosphoglycerate transmembrane transport
+GO:0015726,L-idonate transmembrane transport
+GO:0015905,bicyclomycin transmembrane transport
+GO:0015914,phospholipid transport
+GO:0015920,lipopolysaccharide transport
+GO:0015862,uridine transmembrane transport
+GO:0015876,acetyl-CoA transport
+GO:0015882,L-ascorbic acid transmembrane transport
+GO:0014045,establishment of endothelial blood-brain barrier
+GO:0000421,autophagosome membrane
+GO:0000329,fungal-type vacuole membrane
+GO:1990050,phosphatidic acid transfer activity
+GO:0000030,mannosyltransferase activity
+GO:0014804,terminal cisterna lumen
+GO:0014803,longitudinal sarcoplasmic reticulum lumen
+GO:0106006,cytoskeletal protein-membrane anchor activity
+GO:0051469,vesicle fusion with vacuole
+GO:0170016,endoplasmic reticulum-endosome tether activity
+GO:0170009,endoplasmic reticulum-organelle membrane tether activity
+GO:0051377,mannose-ethanolamine phosphotransferase activity
+GO:0051267,CP2 mannose-ethanolamine phosphotransferase activity
+GO:0106175,phagolysosome vesicle membrane
+GO:0106126,reservosome membrane
+GO:0106125,reservosome matrix
+GO:0106073,"dolichyl pyrophosphate Glc2Man9GlcNAc2 alpha-1,2-glucosyltransferase activity"
+GO:0012506,vesicle membrane
+GO:0012507,ER to Golgi transport vesicle membrane
+GO:0012508,Golgi to ER transport vesicle membrane
+GO:0012509,inter-Golgi transport vesicle membrane
+GO:0012510,trans-Golgi network transport vesicle membrane
+GO:0051999,mannosyl-inositol phosphorylceramide biosynthetic process
+GO:0042281,"dolichyl pyrophosphate Man9GlcNAc2 alpha-1,3-glucosyltransferase activity"
+GO:0042283,"dolichyl pyrophosphate Glc1Man9GlcNAc2 alpha-1,3-glucosyltransferase activity"
+GO:0042285,xylosyltransferase activity
+GO:0017089,glycolipid transfer activity
+GO:0042081,GSI anchor metabolic process
+GO:0044202,host cell nuclear outer membrane
+GO:0044201,host cell nuclear inner membrane
+GO:0044200,host cell nuclear membrane
+GO:0044232,organelle membrane contact site
+GO:0044185,host cell late endosome membrane
+GO:0044188,host cell lysosomal membrane
+GO:0044173,host cell endoplasmic reticulum-Golgi intermediate compartment membrane
+GO:0044175,host cell endosome membrane
+GO:0044178,host cell Golgi membrane
+GO:0044171,host cell smooth endoplasmic reticulum membrane
+GO:0044199,host cell nuclear envelope
+GO:0044191,host cell mitochondrial membrane
+GO:0044190,host cell mitochondrial envelope
+GO:0044193,host cell mitochondrial outer membrane
+GO:0044192,host cell mitochondrial inner membrane
+GO:0017121,plasma membrane phospholipid scrambling
+GO:0042160,lipoprotein modification
+GO:0042161,lipoprotein oxidation
+GO:0042157,lipoprotein metabolic process
+GO:0042158,lipoprotein biosynthetic process
+GO:0042159,lipoprotein catabolic process
+GO:0042170,plastid membrane
+GO:0042717,plasma membrane-derived chromatophore membrane
+GO:0042611,MHC protein complex
+GO:0042627,chylomicron
+GO:0042589,zymogen granule membrane
+GO:0042584,chromaffin granule membrane
+GO:0042953,lipoprotein transport
+GO:1990836,lysosomal matrix
+GO:1990816,vacuole-mitochondrion membrane contact site
+GO:0042882,L-arabinose transmembrane transport
+GO:0042873,aldonate transmembrane transport
+GO:0042874,D-glucuronate transmembrane transport
+GO:0042875,D-galactonate transmembrane transport
+GO:0042870,D-glucarate transmembrane transport
+GO:0042869,aldarate transmembrane transport
+GO:0042899,arabinan transmembrane transport
+GO:0042892,chloramphenicol transmembrane transport
+GO:0033116,endoplasmic reticulum-Golgi intermediate compartment membrane
+GO:0033115,cyanelle thylakoid membrane
+GO:0033118,esterosome membrane
+GO:0033112,cyanelle envelope
+GO:0033113,cyanelle membrane
+GO:0033110,Cvt vesicle membrane
+GO:0033111,attachment organelle membrane
+GO:0033106,cis-Golgi network membrane
+GO:0033102,acidocalcisome membrane
+GO:0033097,amyloplast membrane
+GO:0033098,amyloplast inner membrane
+GO:0033096,amyloplast envelope
+GO:0008203,cholesterol metabolic process
+GO:0008250,oligosaccharyltransferase complex
+GO:0033163,microneme membrane
+GO:0033164,"glycolipid 1,6-alpha-mannosyltransferase activity"
+GO:0033162,melanosome membrane
+GO:0033017,sarcoplasmic reticulum membrane
+GO:0033016,rhoptry membrane
+GO:0072492,host cell mitochondrial intermembrane space
+GO:0043495,protein-membrane adaptor activity
+GO:0045117,azole transmembrane transport
+GO:0045121,membrane raft
+GO:0045026,plasma membrane fusion
+GO:0045054,constitutive secretory pathway
+GO:0070081,clathrin-sculpted monoamine transport vesicle
+GO:0070083,clathrin-sculpted monoamine transport vesicle membrane
+GO:0070089,chloride-activated potassium channel activity
+GO:0070075,tear secretion
+GO:0098944,postsynaptic recycling endosome membrane
+GO:0098954,presynaptic endosome membrane
+GO:0098585,host cell synaptic vesicle membrane
+GO:0098588,bounding membrane of organelle
+GO:0070505,pollen coat
+GO:0098895,postsynaptic endosome membrane
+GO:0098897,spine apparatus membrane
+GO:0098896,postsynaptic early endosome membrane
+GO:0098852,lytic vacuole membrane
+GO:0098857,membrane microdomain
+GO:0070258,inner membrane pellicle complex
+GO:0070268,cornification
+GO:0070115,organellar chromatophore intermembrane space
+GO:0070118,organellar chromatophore thylakoid membrane
+GO:0070112,organellar chromatophore membrane
+GO:0070114,organellar chromatophore outer membrane
+GO:0070113,organellar chromatophore inner membrane
+GO:0043036,starch grain
+GO:0070381,endosome to plasma membrane transport vesicle
+GO:0045017,glycerolipid biosynthetic process
+GO:0019031,viral envelope
+GO:0097598,sperm cytoplasmic droplet
+GO:0097488,"multivesicular body, internal vesicle membrane"
+GO:0097478,leaflet of membrane bilayer
+GO:0097381,photoreceptor disc membrane
+GO:0097209,epidermal lamellar body
+GO:0097212,lysosomal membrane organization
+GO:0097232,lamellar body membrane
+GO:0097234,epidermal lamellar body membrane
+GO:0097233,alveolar lamellar body membrane
+GO:0097040,phthiocerol biosynthetic process
+GO:0097001,ceramide binding
+GO:0097003,adipokinetic hormone receptor activity
+GO:0097005,adipokinetic hormone receptor binding
+GO:0097004,adipokinetic hormone binding
+GO:0004879,nuclear receptor activity
+GO:0097707,ferroptosis
+GO:0097348,host cell endocytic vesicle membrane
+GO:0044169,host cell rough endoplasmic reticulum membrane
+GO:0044162,host cell cytoplasmic vesicle membrane
+GO:0044167,host cell endoplasmic reticulum membrane
+GO:0120281,autolysosome membrane
+GO:0120201,cone photoreceptor disc membrane
+GO:0120202,rod photoreceptor disc membrane
+GO:0160056,macropinosome membrane
+GO:0160062,cutin-based cuticle development
+GO:0120149,host cell peroxisome
+GO:0002450,B cell antigen processing and presentation
+GO:0002457,T cell antigen processing and presentation
+GO:0002468,dendritic cell antigen processing and presentation
+GO:0002469,myeloid dendritic cell antigen processing and presentation
+GO:0002470,plasmacytoid dendritic cell antigen processing and presentation
+GO:0002471,monocyte antigen processing and presentation
+GO:0002472,macrophage antigen processing and presentation
+GO:0002473,non-professional antigen presenting cell antigen processing and presentation
+GO:0002475,antigen processing and presentation via MHC class Ib
+GO:0019563,glycerol catabolic process
+GO:0071129,alphaV-beta3 integrin-LPP3 complex
+GO:0071130,alpha5-beta1 integrin-LPP3 complex
+GO:0019817,vesicle fusion with peroxisome
+GO:0019866,organelle inner membrane
+GO:0005227,calcium-activated cation channel activity
+GO:0019884,antigen processing and presentation of exogenous antigen
+GO:0019883,antigen processing and presentation of endogenous antigen
+GO:0019882,antigen processing and presentation
+GO:0030149,sphingolipid catabolic process
+GO:0030148,sphingolipid biosynthetic process
+GO:0046839,phospholipid dephosphorylation
+GO:0046836,glycolipid transport
+GO:0046862,chromoplast membrane
+GO:0046860,glycosome membrane
+GO:0046861,glyoxysomal membrane
+GO:0032220,plasma membrane fusion involved in cytogamy
+GO:0046859,hydrogenosomal membrane
+GO:0046858,chlorosome
+GO:0071827,plasma lipoprotein particle organization
+GO:0071813,lipoprotein particle binding
+GO:0046411,2-keto-3-deoxygluconate transmembrane transport
+GO:0046433,2-aminoethylphosphonate metabolic process
+GO:0046465,dolichyl diphosphate metabolic process
+GO:0007006,mitochondrial membrane organization
+GO:0046624,sphingolipid transporter activity
+GO:0046625,sphingolipid binding
+GO:0007086,vesicle fusion with nuclear membrane involved in mitotic nuclear envelope reassembly
+GO:0046503,glycerolipid catabolic process
+GO:0046505,sulfolipid metabolic process
+GO:0046506,sulfolipid biosynthetic process
+GO:0046527,glucosyltransferase activity
+GO:0046486,glycerolipid metabolic process
+GO:0007107,membrane addition at site of cytokinesis
+GO:0071723,lipopeptide binding
+GO:0032127,dense core granule membrane
+GO:0032093,SAM domain binding
+GO:0080177,plastoglobule organization
+GO:0055102,lipase inhibitor activity
+GO:0055085,transmembrane transport
+GO:0080064,"4,4-dimethyl-9beta,19-cyclopropylsterol oxidation"
+GO:0080065,4-alpha-methyl-delta7-sterol oxidation
+GO:0055037,recycling endosome
+GO:0055038,recycling endosome membrane
+GO:0055035,plastid thylakoid membrane
+GO:0055036,virion membrane
+GO:0016320,endoplasmic reticulum membrane fusion
+GO:0016020,membrane
+GO:0016298,lipase activity
+GO:0006910,"phagocytosis, recognition"
+GO:0031903,microbody membrane
+GO:0031901,early endosome membrane
+GO:0031902,late endosome membrane
+GO:0031900,chromoplast outer membrane
+GO:0031969,chloroplast membrane
+GO:0031967,organelle envelope
+GO:0031968,organelle outer membrane
+GO:0031972,chloroplast intermembrane space
+GO:0031973,chromoplast intermembrane space
+GO:0031970,organelle envelope lumen
+GO:0031974,membrane-enclosed lumen
+GO:0031965,nuclear membrane
+GO:0031966,mitochondrial membrane
+GO:0006114,glycerol biosynthetic process
+GO:0070821,tertiary granule membrane
+GO:0031164,contractile vacuolar membrane
+GO:0070777,D-aspartate transmembrane transport
+GO:0006071,glycerol metabolic process
+GO:0006644,phospholipid metabolic process
+GO:0006665,sphingolipid metabolic process
+GO:0006675,mannosyl-inositol phosphorylceramide metabolic process
+GO:0006676,mannosyl diphosphorylinositol ceramide metabolic process
+GO:0006673,inositol phosphoceramide metabolic process
+GO:0031579,membrane raft organization
+GO:0031580,membrane raft distribution
+GO:0006505,GPI anchor metabolic process
+GO:0006506,GPI anchor biosynthetic process
+GO:0008521,acetyl-CoA transmembrane transporter activity
+GO:0008526,phosphatidylinositol transfer activity
+GO:0008417,fucosyltransferase activity
+GO:0006084,acetyl-CoA metabolic process
+GO:0031092,platelet alpha granule membrane
+GO:0031090,organelle membrane
+GO:0031095,platelet dense tubular network membrane
+GO:0031088,platelet dense granule membrane
+GO:0033556,"dolichyl pyrophosphate Man7GlcNAc2 alpha-1,3-glucosyltransferase activity"
+GO:0008378,galactosyltransferase activity
+GO:0031899,chromoplast inner membrane
+GO:0031898,chromoplast envelope
+GO:0006743,ubiquinone metabolic process
+GO:0006744,ubiquinone biosynthetic process
+GO:0004583,dolichyl-phosphate-glucose-glycolipid alpha-glucosyltransferase activity
+GO:0004608,phosphatidylethanolamine N-methyltransferase activity
+GO:0004576,oligosaccharyl transferase activity
+GO:0043264,extracellular non-membrane-bounded organelle
+GO:0043231,intracellular membrane-bounded organelle
+GO:0043233,organelle lumen
+GO:0043232,intracellular non-membrane-bounded organelle
+GO:0043228,non-membrane-bounded organelle
+GO:0043227,membrane-bounded organelle
+GO:0043548,phosphatidylinositol 3-kinase binding
+GO:0043592,exosporium
+GO:0043810,ornithine-acyl [acyl carrier protein] N-acyltransferase activity
+GO:0043842,Kdo transferase activity
+GO:0043654,recognition of apoptotic cell
+GO:0004377,"GDP-Man:Man3GlcNAc2-PP-Dol alpha-1,2-mannosyltransferase activity"
+GO:0004376,glycolipid mannosyltransferase activity
+GO:0004378,"GDP-Man:Man1GlcNAc2-PP-Dol alpha-1,3-mannosyltransferase activity"
+GO:1990687,endoplasmic reticulum-derived vesicle fusion with endoplasmic reticulum-Golgi intermediate compartment (ERGIC) membrane
+GO:1990688,Golgi vesicle fusion with endoplasmic reticulum-Golgi intermediate compartment (ERGIC) membrane
+GO:1990689,endoplasmic reticulum-Golgi intermediate compartment (ERGIC) derived vesicle fusion with Golgi cis cisterna membrane
+GO:1990690,Golgi medial cisterna-derived vesicle fusion with Golgi cis cisterna membrane
+GO:1990691,cis-Golgi-derived vesicle fusion with Golgi medial cisterna membrane
+GO:1990692,trans-Golgi-derived vesicle fusion with Golgi medial cisterna membrane
+GO:1990668,vesicle fusion with endoplasmic reticulum-Golgi intermediate compartment (ERGIC) membrane
+GO:1990669,endoplasmic reticulum-Golgi intermediate compartment (ERGIC) derived vesicle fusion with endoplasmic reticulum membrane
+GO:1990670,vesicle fusion with Golgi cis cisterna membrane
+GO:1990671,vesicle fusion with Golgi medial cisterna membrane
+GO:1990672,medial-Golgi-derived vesicle fusion with Golgi trans cisterna membrane
+GO:1990674,Golgi cis cisterna membrane
+GO:1990675,Golgi medial cisterna membrane
+GO:1990676,Golgi trans cisterna membrane
+GO:1990777,lipoprotein particle
+GO:0042920,3-hydroxyphenylpropionic acid transmembrane transport
+GO:0042941,D-alanine transmembrane transport
+GO:0042942,D-serine transmembrane transport
+GO:1990455,PTEN phosphatase complex
+GO:0032322,ubiquinone catabolic process
+GO:0071967,lipopolysaccharide core heptosyltransferase activity
+GO:0008951,palmitoleoyl [acyl-carrier-protein]-dependent acyltransferase activity
+GO:0033885,10-hydroxy-9-(phosphonooxy)octadecanoate phosphatase activity
+GO:0032398,MHC class Ib protein complex
+GO:0009941,chloroplast envelope
+GO:0060856,establishment of blood-brain barrier
+GO:0060857,establishment of glial blood-brain barrier
+GO:0060697,positive regulation of phospholipid catabolic process
+GO:0060696,regulation of phospholipid catabolic process
+GO:0032991,protein-containing complex
+GO:0048210,Golgi vesicle fusion to target membrane
+GO:0048288,nuclear membrane fusion involved in karyogamy
+GO:0048280,vesicle fusion with Golgi apparatus
+GO:0048279,vesicle fusion with endoplasmic reticulum
+GO:0048475,coated membrane
+GO:0048473,D-methionine transmembrane transport
+GO:1902300,galactarate transmembrane transport
+GO:1902388,ceramide 1-phosphate transfer activity
+GO:0090078,smooth muscle derived foam cell differentiation
+GO:0090077,foam cell differentiation
+GO:0065010,extracellular membrane-bounded organelle
+GO:0090174,organelle membrane fusion
+GO:0090108,positive regulation of high-density lipoprotein particle assembly
+GO:0090107,regulation of high-density lipoprotein particle assembly
+GO:0090155,negative regulation of sphingolipid biosynthetic process
+GO:0090153,regulation of sphingolipid biosynthetic process
+GO:0090154,positive regulation of sphingolipid biosynthetic process
+GO:0090319,positive regulation of chylomicron remodeling
+GO:0090318,regulation of chylomicron remodeling
+GO:0015168,glycerol transmembrane transporter activity

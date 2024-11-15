@@ -1,0 +1,196 @@
+﻿GO_term,pathway
+GO:1904255,negative regulation of iron ion transmembrane transporter activity
+GO:1904254,regulation of iron ion transmembrane transporter activity
+GO:1904440,positive regulation of iron ion import across plasma membrane
+GO:1904432,regulation of ferrous iron binding
+GO:1904433,negative regulation of ferrous iron binding
+GO:1904434,positive regulation of ferrous iron binding
+GO:1904439,negative regulation of iron ion import across plasma membrane
+GO:1904438,regulation of iron ion import across plasma membrane
+GO:1904040,positive regulation of iron export across plasma membrane
+GO:1904039,negative regulation of iron export across plasma membrane
+GO:1904038,regulation of iron export across plasma membrane
+GO:1903329,regulation of iron-sulfur cluster assembly
+GO:1903331,positive regulation of iron-sulfur cluster assembly
+GO:1903330,negative regulation of iron-sulfur cluster assembly
+GO:0060586,multicellular organismal-level iron ion homeostasis
+GO:0061840,high-affinity ferrous iron transmembrane transporter activity
+GO:0061841,high-affinity iron exporter complex
+GO:0036455,iron-sulfur transferase activity
+GO:0005381,iron ion transmembrane transporter activity
+GO:0030350,iron-responsive element binding
+GO:0005506,iron ion binding
+GO:0033694,"oxidoreductase activity, acting on the CH-NH group of donors, iron-sulfur protein as acceptor"
+GO:0075139,response to host iron concentration
+GO:0140298,endocytic iron import into cell
+GO:0140132,iron-sulfur cluster carrier activity
+GO:0140481,ABC-type iron-sulfur cluster transporter activity
+GO:0140482,iron sensor activity
+GO:0140466,iron-sulfur cluster export from the mitochondrion
+GO:0140315,iron ion sequestering activity
+GO:1902497,iron-sulfur cluster transmembrane transport
+GO:0034761,positive regulation of iron ion transmembrane transport
+GO:0034760,negative regulation of iron ion transmembrane transport
+GO:0034756,regulation of iron ion transport
+GO:0034755,iron ion transmembrane transport
+GO:0034759,regulation of iron ion transmembrane transport
+GO:0034758,positive regulation of iron ion transport
+GO:0034757,negative regulation of iron ion transport
+GO:0010106,cellular response to iron ion starvation
+GO:0010309,acireductone dioxygenase [iron(II)-requiring] activity
+GO:0010039,response to iron ion
+GO:0010040,response to iron(II) ion
+GO:0010041,response to iron(III) ion
+GO:0102036,methyltetrahydrofolate:corrinoid/iron-sulfur protein methyltransferase activity
+GO:0051538,"3 iron, 4 sulfur cluster binding"
+GO:0051539,"4 iron, 4 sulfur cluster binding"
+GO:0051536,iron-sulfur cluster binding
+GO:0051537,"2 iron, 2 sulfur cluster binding"
+GO:1990230,iron-sulfur cluster transfer complex
+GO:1990229,iron-sulfur cluster assembly complex
+GO:0015343,siderophore-iron transmembrane transporter activity
+GO:0015408,ABC-type ferric iron transporter activity
+GO:0015603,iron chelate transmembrane transporter activity
+GO:1990388,xylem-to-phloem iron transport
+GO:0052592,"oxidoreductase activity, acting on CH or CH2 groups, with an iron-sulfur protein as acceptor"
+GO:0051980,iron-nicotianamine transmembrane transporter activity
+GO:0006447,regulation of translational initiation by iron
+GO:0045993,negative regulation of translational initiation by iron
+GO:0045994,positive regulation of translational initiation by iron
+GO:0047726,iron-cytochrome-c reductase activity
+GO:0008198,ferrous iron binding
+GO:0008199,ferric iron binding
+GO:0033215,reductive iron assimilation
+GO:0033214,siderophore-dependent iron import into cell
+GO:0033212,iron import into cell
+GO:0098706,iron ion import across cell outer membrane
+GO:0098711,iron ion import across plasma membrane
+GO:0097577,sequestering of iron ion
+GO:0097428,protein maturation by iron-sulfur cluster transfer
+GO:0097739,negative regulation of ferrichrome biosynthetic process in response to iron
+GO:0097690,iron ion transmembrane transporter inhibitor activity
+GO:0160179,intestinal iron absorption
+GO:0044590,iron-sulfur-molybdenum cofactor binding
+GO:0044593,iron-sulfur-molybdenum cofactor assembly
+GO:1900506,regulation of iron-sulfur-molybdenum cofactor assembly
+GO:1900508,positive regulation of iron-sulfur-molybdenum cofactor assembly
+GO:1900507,negative regulation of iron-sulfur-molybdenum cofactor assembly
+GO:0044847,iron acquisition from host
+GO:0071282,cellular response to iron(II) ion
+GO:0071283,cellular response to iron(III) ion
+GO:0071281,cellular response to iron ion
+GO:0016713,"oxidoreductase activity, acting on paired donors, with incorporation or reduction of molecular oxygen, reduced iron-sulfur protein as one donor, and incorporation of one atom of oxygen"
+GO:0016730,"oxidoreductase activity, acting on iron-sulfur proteins as donors"
+GO:0016731,"oxidoreductase activity, acting on iron-sulfur proteins as donors, NAD or NADP as acceptor"
+GO:0016732,"oxidoreductase activity, acting on iron-sulfur proteins as donors, dinitrogen as acceptor"
+GO:0016611,iron-iron nitrogenase complex
+GO:0016612,molybdenum-iron nitrogenase complex
+GO:0016613,vanadium-iron nitrogenase complex
+GO:0016625,"oxidoreductase activity, acting on the aldehyde or oxo group of donors, iron-sulfur protein as acceptor"
+GO:0016636,"oxidoreductase activity, acting on the CH-CH group of donors, iron-sulfur protein as acceptor"
+GO:0016643,"oxidoreductase activity, acting on the CH-NH2 group of donors, iron-sulfur protein as acceptor"
+GO:0016664,"oxidoreductase activity, acting on other nitrogenous compounds as donors, iron-sulfur protein as acceptor"
+GO:0016673,"oxidoreductase activity, acting on a sulfur group of donors, iron-sulfur protein as acceptor"
+GO:0016699,"oxidoreductase activity, acting on hydrogen as donor, iron-sulfur protein as acceptor"
+GO:0016226,iron-sulfur cluster assembly
+GO:1903988,iron ion export across plasma membrane
+GO:0006826,iron ion transport
+GO:0006879,intracellular iron ion homeostasis
+GO:0006880,intracellular sequestering of iron ion
+GO:0006881,extracellular sequestering of iron ion
+GO:0033573,high-affinity iron permease complex
+GO:1901286,iron-sulfur-molybdenum cofactor metabolic process
+GO:1901288,iron-sulfur-molybdenum cofactor biosynthetic process
+GO:1901287,iron-sulfur-molybdenum cofactor catabolic process
+GO:1901967,negative regulation of cellular response to iron ion starvation
+GO:1901966,regulation of cellular response to iron ion starvation
+GO:0018283,iron incorporation into metallo-sulfur cluster
+GO:0018291,molybdenum incorporation into iron-sulfur cluster
+GO:0018418,nickel incorporation into iron-sulfur cluster via tris-L-cysteinyl L-cysteine persulfido L-glutamato L-histidino L-serinyl nickel triiron disulfide trioxide
+GO:1901678,iron coordination entity transport
+GO:1990641,response to iron ion starvation
+GO:1990655,"4 iron, 3 sulfur cluster binding"
+GO:1990461,detoxification of iron ion
+GO:0034986,iron chaperone activity
+GO:0035731,dinitrosyl-iron complex binding
+GO:0048250,iron import into the mitochondrion
+GO:0015093,ferrous iron transmembrane transporter activity
+GO:0015092,high-affinity ferric iron transmembrane transporter activity
+GO:0015091,ferric iron transmembrane transporter activity
+GO:0015090,low-affinity ferric iron ion transmembrane transporter activity
+GO:0110143,magnetosome
+GO:0099128,mitochondrial [2Fe-2S] assembly complex
+GO:1904564,cytosolic [4Fe-4S] assembly scaffold complex
+GO:1905118,positive regulation of ribonucleoside-diphosphate reductase activity
+GO:1905117,regulation of ribonucleoside-diphosphate reductase activity
+GO:0035351,heme transmembrane transport
+GO:0061731,ribonucleoside-diphosphate reductase activity
+GO:1904733,negative regulation of electron transfer activity
+GO:1904732,regulation of electron transfer activity
+GO:1904734,positive regulation of electron transfer activity
+GO:0062092,Yae1-Lto1 complex
+GO:0005385,zinc ion transmembrane transporter activity
+GO:0005971,ribonucleoside-diphosphate reductase complex
+GO:0005833,hemoglobin complex
+GO:0140923,magnetosome assembly
+GO:0140618,ferric-chelate reductase (NADH) activity
+GO:0140741,tRNA-uracil-4 sulfurtransferase activity
+GO:0009237,siderophore metabolic process
+GO:0009337,sulfite reductase complex (NADPH)
+GO:0009375,ferredoxin hydrogenase complex
+GO:0020037,heme binding
+GO:0009512,cytochrome b6f complex
+GO:0009522,photosystem I
+GO:0051540,metal cluster binding
+GO:0015344,siderophore uptake transmembrane transporter activity
+GO:0015625,ABC-type ferric hydroxamate transporter activity
+GO:0015687,ferric-hydroxamate import into cell
+GO:0015685,ferric-enterobactin import into cell
+GO:0015886,heme transport
+GO:0015891,siderophore transport
+GO:0000041,transition metal ion transport
+GO:1990330,IscS-IscU complex
+GO:0000293,ferric-chelate reductase activity
+GO:0052851,ferric-chelate reductase (NADPH) activity
+GO:0019270,aerobactin biosynthetic process
+GO:0019271,aerobactin transport
+GO:0019290,siderophore biosynthetic process
+GO:0042167,heme catabolic process
+GO:0042168,heme metabolic process
+GO:0045273,respiratory chain complex II (succinate dehydrogenase)
+GO:0045275,respiratory chain complex III
+GO:0070288,ferritin complex
+GO:0097361,cytosolic [4Fe-4S] assembly targeting complex
+GO:0004998,transferrin receptor activity
+GO:0097707,ferroptosis
+GO:0120510,mitochondrial [4Fe-4S] assembly complex
+GO:0019540,catechol-containing siderophore biosynthetic process
+GO:0044569,[Ni-Fe] hydrogenase complex
+GO:0044571,[2Fe-2S] cluster assembly
+GO:0044572,[4Fe-4S] cluster assembly
+GO:0019539,hydroxymate-containing siderophore biosynthetic process
+GO:0046215,siderophore catabolic process
+GO:0044676,formyl-methanofuran dehydrogenase (molybdenum enzyme) complex
+GO:0044675,formyl-methanofuran dehydrogenase (tungsten enzyme) complex
+GO:0044799,NarGHI complex
+GO:0046442,aerobactin metabolic process
+GO:0032047,mitosome
+GO:0046501,protoporphyrinogen IX metabolic process
+GO:0016163,nitrogenase activity
+GO:0006124,ferredoxin metabolic process
+GO:0070826,paraferritin complex
+GO:0031250,anaerobic ribonucleoside-triphosphate reductase complex
+GO:0033568,lactoferrin receptor activity
+GO:0006783,heme biosynthetic process
+GO:0004784,superoxide dismutase activity
+GO:0018282,metal incorporation into metallo-sulfur cluster
+GO:1901668,regulation of superoxide dismutase activity
+GO:1901671,positive regulation of superoxide dismutase activity
+GO:1901670,negative regulation of superoxide dismutase activity
+GO:0004322,ferroxidase activity
+GO:0004325,ferrochelatase activity
+GO:0046914,transition metal ion binding
+GO:0046915,transition metal ion transmembrane transporter activity
+GO:0046995,"oxidoreductase activity, acting on hydrogen as donor, with other known acceptors"
+GO:0008901,ferredoxin hydrogenase activity
+GO:0035732,nitric oxide storage
