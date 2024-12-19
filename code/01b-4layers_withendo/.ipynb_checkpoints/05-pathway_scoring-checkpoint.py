@@ -11,7 +11,7 @@ import os, glob
 import random
 
 ###--------------------------------------------4 layers
-
+print('Reading anndata')
 adata =  sc.read("/nemo/lab/gandhis/home/users/grantpm/DLPFC_data/DLPFC_Visium/combined_dataframes/nonIF_c2l_anndata_combined_30samples.h5ad")
 
 # Prepare data
@@ -31,28 +31,31 @@ df_deconvo = subset.obs[np.isnan(subset.obs['Oligo'])==False]
 
 paths = glob.glob('../../processed_data/00-prepare_GO/01-fetch_genes_for_GO_pathways/*.csv')                         # read gene per pathway data
 
-for m in range(2,4):
-    df = pd.read_csv(paths[m], index_col=0)
-    pathways = df['GO'].unique()
-    categories = pd.DataFrame(paths)[0].str.split('/', expand = True)[5].str.split('.csv', expand = True)[0]
+for m in range(0,6):
+    print('Reading data')
+    df = pd.read_csv(paths[m], index_col=0)  # Fetch gene and pathway information for a category
+    pathways = df['GO'].unique()  # Fetch the pathway names
+    categories = pd.DataFrame(paths)[0].str.split('/', expand = True)[5].str.split('.csv', expand = True)[0] #  Fetch category names
     print(len(pathways))
+    print('Start pathway scoring')
     for n in range(0,len(pathways)):
         print(categories[m], pathways[n])
-        if os.path.exists('../../processed_data/01b-4layers_withendo/05-pathway_scoring/scores_4layers_%s_%s.csv' % (categories[m],pathways[n])):
+        genes = list(df[df['GO']==pathways[n]]['SYMBOL'])  #list genes
+        #  Check if this has already been run for this pathway and if the gene list for the pathway is 1 gene or less. Stop this loop and continue if either are true
+        if (os.path.exists('../../processed_data/01b-4layers_withendo/05-pathway_scoring/scores_4layers_%s_%s.csv' % (categories[m],pathways[n])) | len(genes)>1):
             print('Path exists')
             continue
         else:
             print('Path does not exist')
-            genes = list(df[df['GO']==pathways[n]]['SYMBOL'])
-            ensembl = list(subset.var[subset.var['gene_name'].isin(genes)].index)
+            ensembl = list(subset.var[subset.var['gene_name'].isin(genes)].index)  #  List ensembl ids for gene list to match spatial data
             print(len(genes))
-            for it in range(0,1000):
+            for it in range(0,1000): #  Create a background of test genes with bootstrapping
                 universe = list(subset.var.index)
                 gene_pool = list(set(universe)-set(ensembl))                           
                 interest = subset[:, ensembl].to_df().sum(axis = 1)                    #Take the sum of gene expression for genes of interest                     
                 r = random.sample(gene_pool, len(ensembl))
                 background = subset[:, r].to_df().sum(axis = 1)                                  #Take sum of expression for background genes
-                subset.obs['score'] = (interest - background)/subset.obs['sum_umi']
+                subset.obs['score'] = (interest - background)/subset.obs['sum_umi']  # Divide sum of gene signal by total UMIs to compensate for poor permeabilisation of WM
                 df1 = subset.obs[['sample_id','bayesSpace_harmony_7','score']]
                 if (it == 0):
                     all_scores = subset.obs[['bayesSpace_harmony_7','sample_id','score']]
