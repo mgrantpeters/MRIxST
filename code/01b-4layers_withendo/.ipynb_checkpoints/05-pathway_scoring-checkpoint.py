@@ -12,7 +12,7 @@ import random
 
 ###--------------------------------------------4 layers
 print('Reading anndata')
-adata =  sc.read("/nemo/lab/gandhis/home/users/grantpm/DLPFC_data/DLPFC_Visium/combined_dataframes/nonIF_c2l_anndata_combined_30samples.h5ad")
+adata =  sc.read("/home/MRMelissaGrantPeters/MinaRyten/Melissa/spatialDLPFC/nonIF_c2l_anndata_combined_30samples.h5ad")
 
 # Prepare data
 subset = adata[adata.obs['bayesSpace_harmony_7'].isin([1,2,3,4,5,6])]   # Excluding WM and meningeal layers
@@ -42,8 +42,8 @@ for m in range(0,6):
         print(categories[m], pathways[n])
         genes = list(df[df['GO']==pathways[n]]['SYMBOL'])  #list genes
         #  Check if this has already been run for this pathway and if the gene list for the pathway is 1 gene or less. Stop this loop and continue if either are true
-        if (os.path.exists('../../processed_data/01b-4layers_withendo/05-pathway_scoring/scores_4layers_%s_%s.csv' % (categories[m],pathways[n])) | len(genes)>1):
-            print('Path exists')
+        if (os.path.exists('../../processed_data/01b-4layers_withendo/05-pathway_scoring/scores_4layers_%s_%s.csv' % (categories[m],pathways[n])) | len(genes)<3):
+            print('Path exists or not enough genes')
             continue
         else:
             print('Path does not exist')
