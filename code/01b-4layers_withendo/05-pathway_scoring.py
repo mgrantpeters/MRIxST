@@ -15,15 +15,16 @@ print('Reading anndata')
 adata =  sc.read("/home/MRMelissaGrantPeters/MinaRyten/Melissa/spatialDLPFC/nonIF_c2l_anndata_combined_30samples.h5ad")
 
 # Prepare data
-subset = adata[adata.obs['bayesSpace_harmony_7'].isin([1,2,3,4,5,6])]   # Excluding WM and meningeal layers
+subset = adata[adata.obs['bayesSpace_harmony_7'].isin([1,2,3,4,5,6,7])]   # Excluding WM and meningeal layers
 
 subset.obs['bayesSpace_harmony_7'] = subset.obs['bayesSpace_harmony_7'].replace({   # Renaming to match order of MRI (L1, closer to WM, L4 closer to meninges)
-                                                     1 : 'L1',
-                                                     2 : 'L4', 
-                                                     3 : 'L3', 
-                                                     4 : 'L2', 
+                                                     1 : 'SpD1',
+                                                     2 : 'SpD1', 
+                                                     3 : 'SpD2', 
+                                                     4 : 'SpD3', 
                                                      5 : 'WM',
-                                                     6 : 'L1'})
+                                                     6 : 'SpD4',
+                                                     7 : 'WM'})
 
 subset.obs['sample_id'] = subset.obs['sample_id'].astype(str)
 
