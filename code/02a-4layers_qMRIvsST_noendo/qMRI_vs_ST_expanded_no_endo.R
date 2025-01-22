@@ -191,7 +191,7 @@ for (ROI in GO.ROI.names) {
 #### calculate average across subjects ####
 
 # making columns
-dom <- c("SWM", "SpD1", "SpD3","SpD2","SpD1")
+dom <- c("SWM", "SpD4", "SpD3","SpD2","SpD1")
 reg <- c("anterior", "middle", "posterior")
 
 adj.qMRI.GO.medians <- expand.grid(SpD = dom, region = reg)
