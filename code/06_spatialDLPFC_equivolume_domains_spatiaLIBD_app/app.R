@@ -12,31 +12,23 @@ options("golem.app.prod" = TRUE)
 options(repos = BiocManager::repositories())
 
 ## Load the spe object
-spe <- readRDS("spe_subset_for_spatialLIBD.rds")
-# load the pseudobulked object sce_pseudo
-sce_pseudo <- readRDS("sce_pseudo_BayesSpace_k09.rds")
-# load modeling results for k9 clustering/pseudobulking
-load("modeling_results_BayesSpace_k09.Rdata", verbose = TRUE)
-load("sig_genes_subset_k09.Rdata", verbose = TRUE)
+load("spatialDLPFC_equivolume_domains.Rdata", verbose = TRUE)
+# load the pseudobulked object spe_pseudo
+spe_pseudo <- readRDS("spatialDLPFC_equivolume_domains_pseudobulk.Rds")
+# load modeling results for pd domains
+modeling_results <- readRDS("spatialDLPFC_equivolume_domains_modeling_results.Rds")
+sig_genes <- readRDS("spatialDLPFC_equivolume_domains_sig_genes.Rds")
 
-spe$BayesSpace <- spe$BayesSpace_harmony_09
 vars <- colnames(colData(spe))
-# https://github.com/LieberInstitute/Visium_IF_AD/blob/5e3518a9d379e90f593f5826cc24ec958f81f4aa/code/05_deploy_app_wholegenome/app.R#L61-L72
-
-colors_BayesSpace <- Polychrome::palette36.colors(28)
-names(colors_BayesSpace) <- c(1:28)
-m <- match(as.character(spe$BayesSpace_harmony_09), names(colors_BayesSpace))
-stopifnot(all(!is.na(m)))
-spe$BayesSpace_colors <- spe$BayesSpace_harmony_09_colors <- colors_BayesSpace[m]
 
 ## Deploy the website
 spatialLIBD::run_app(
     spe,
-    sce_layer = sce_pseudo,
+    sce_layer = spe_pseudo,
     modeling_results = modeling_results,
     sig_genes = sig_genes,
     title = "spatialDLPFC, Visium, Sp09",
-    spe_discrete_vars = c( # this is the variables for the spe object not the sce_pseudo object
+    spe_discrete_vars = c( # this is the variables for the spe object not the spe_pseudo object
         "BayesSpace",
         "ManualAnnotation",
         vars[grep("^SpaceRanger_|^scran_", vars)],

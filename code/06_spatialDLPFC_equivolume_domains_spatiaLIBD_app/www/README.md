@@ -115,6 +115,12 @@ software labeled by emojis:
 
 - Visium (n = 30)
   - 🔭
+    [spatialDLPFC_equivolume_domains](https://libd.shinyapps.io/spatialDLPFC_equivolume_domains):
+    [`spatialLIBD`](https://doi.org/10.1186/s12864-022-08601-w) website
+    showing the spatially-resolved Visium data (n = 30) with statistical
+    results comparing the 4 equivolume domains derived from spatialDLPFC Sp07
+    plus white matter.
+  - 🔭
     [spatialDLPFC_Visium_Sp09](https://libd.shinyapps.io/spatialDLPFC_Visium_Sp09):
     [`spatialLIBD`](https://doi.org/10.1186/s12864-022-08601-w) website
     showing the spatially-resolved Visium data (n = 30) with statistical
