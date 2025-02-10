@@ -252,7 +252,7 @@ for (metric in qMRI.metrics) {
     res <- cor.test(adj.qMRI.GO.medians[[namemetric]], adj.qMRI.GO.medians[[nameGO]], method = "pearson")
     all.rho.vals[GO, metric] <- res$estimate
     all.R2.vals[GO,metric] <- res$estimate^2
-    all.pvals[GO.metric] <- res$p.value
+    all.pvals[GO,metric] <- res$p.value
   }
 }
 
@@ -423,7 +423,7 @@ for (metric in qMRI.metrics) {
     res <- cor.test(adj.qMRI.GO.medians.no.SWM[[namemetric]], adj.qMRI.GO.medians.no.SWM[[nameGO]], method = "pearson")
     all.rho.vals.no.SWM[GO, metric] <- res$estimate
     all.R2.vals.no.SWM[GO,metric] <- res$estimate^2
-    all.pvals.no.SWM[GO.metric] <- res$p.value
+    all.pvals.no.SWM[GO,metric] <- res$p.value
   }
 }
 
@@ -518,7 +518,7 @@ for (metric in qMRI.metrics) {
     res <- cor.test(adj.qMRI.GO.medians.no.SWMSpD1[[namemetric]], adj.qMRI.GO.medians.no.SWMSpD1[[nameGO]], method = "pearson")
     all.rho.vals.no.SWMSpD1[GO, metric] <- res$estimate
     all.R2.vals.no.SWMSpD1[GO,metric] <- res$estimate^2
-    all.pvals.no.SWMSpD1[GO.metric] <- res$p.value
+    all.pvals.no.SWMSpD1[GO,metric] <- res$p.value
   }
 }
 
