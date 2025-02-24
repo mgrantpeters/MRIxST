@@ -690,7 +690,7 @@ write.csv(cell.LOO.stats.Ctrl, file = paste(
 # GO PATHWAYS
 
 # define empty data frames for LOO results
-GO.LOO.Ctrl.colnames <- paste(rep(POI,each = 3),c("actual","predicted", "SE"),sep = "_")
+GO.LOO.Ctrl.colnames <- paste(rep(POI.names,each = 3),c("actual","predicted", "SE"),sep = "_")
 GO.LOO.Ctrl <- data.frame(matrix(nrow = nrow(adj.qMRI.ST.medians), ncol = length(GO.LOO.Ctrl.colnames)))
 colnames(GO.LOO.Ctrl) <- GO.LOO.Ctrl.colnames
 GO.LOO.Ctrl <-cbind(adj.qMRI.ST.medians[,1:2],GO.LOO.Ctrl)
