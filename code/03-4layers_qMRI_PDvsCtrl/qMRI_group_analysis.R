@@ -162,42 +162,42 @@ plot.mdl <- ggplot(qMRI.data.dems.R2s.melt, aes(x = SpD, y = R2s, fill = diagnos
 print(plot.mdl)
 dev.off()
 
-# # PD
-# 
-# # remove subjects that failed PD QC or are missing their PD
-# qMRI.data.dems.PD <- subset(qMRI.data.dems,QC.info$MPM_QC == 1 & !is.nan(qMRI.data.dems$PD_SWM))
-# qMRI.data.dems.PD <- subset(qMRI.data.dems.PD, select = c(grepl("subject|age|sex|diagnosis|PD",colnames(qMRI.data.dems.PD))))
-# ROI.names.PD <- colnames(qMRI.data.dems.PD)[grepl("PD",colnames(qMRI.data.dems.PD))]
-# 
-# qMRI.data.dems.PD.melt <- melt(qMRI.data.dems.PD,id.vars=c("subject","age","sex","diagnosis"))
-# colnames(qMRI.data.dems.PD.melt) <- c("subject","age","sex","diagnosis","SpD", "PD")
-# qMRI.data.dems.PD.melt$SpD <- gsub("PD_", "", qMRI.data.dems.PD.melt$SpD)
-# qMRI.data.dems.PD.melt$SpD <- factor(qMRI.data.dems.PD.melt$SpD, levels = c("SWM", "SpD4", "SpD3", "SpD2", "SpD1"), ordered = TRUE)
-# 
-# # putting everything into one model rather than running loads
-# mdl.PD <- aov(data = qMRI.data.dems.PD.melt, PD ~ age + sex + SpD*diagnosis)
-# # calculate estimated marginal means (adjusting for age and sex)
-# mdl.PD.emns <- emmeans(mdl.PD, pairwise ~ diagnosis | SpD, cov.reduce = mean, adjust = "bonferroni")
-# 
-# print("#################### PD ####################")
-# 
-# print(summary(mdl.PD.emns))
-#
-# # save some stats
-# write.csv(as.data.frame(summary(mdl.PD.emns)),
-#           paste(results.dir,"/stats_PD_group_comparison_PDvsCtrl",".csv",sep=""),
-#           row.names = FALSE)
-# 
-# # do a boxplot across groups
-# png(filename = paste(results.dir,"/plot_PD_group_comparison_PDvsCtrl",".png",sep=""), 
-#     width = 750, height = 750, units = "px", res = 150)
-# plot.mdl <- ggplot(qMRI.data.dems.PD.melt, aes(x = SpD, y = PD, fill = diagnosis)) + 
-#   geom_boxplot(outlier.shape = NA) + 
-#   geom_point(position = position_jitterdodge(jitter.width = 0.2), alpha = 0.5, shape = 21, aes(fill = diagnosis)) + 
-#   ylab("PD") +
-#   theme_minimal()
-# print(plot.mdl)
-# dev.off()
+# PrD
+
+# remove subjects that failed PrD QC or are missing their PrD
+qMRI.data.dems.PrD <- subset(qMRI.data.dems,QC.info$MPM_QC == 1 & !is.nan(qMRI.data.dems$PrD_SWM))
+qMRI.data.dems.PrD <- subset(qMRI.data.dems.PrD, select = c(grepl("subject|age|sex|diagnosis|PrD",colnames(qMRI.data.dems.PrD))))
+ROI.names.PrD <- colnames(qMRI.data.dems.PrD)[grepl("PrD",colnames(qMRI.data.dems.PrD))]
+
+qMRI.data.dems.PrD.melt <- melt(qMRI.data.dems.PrD,id.vars=c("subject","age","sex","diagnosis"))
+colnames(qMRI.data.dems.PrD.melt) <- c("subject","age","sex","diagnosis","SpD", "PrD")
+qMRI.data.dems.PrD.melt$SpD <- gsub("PrD_", "", qMRI.data.dems.PrD.melt$SpD)
+qMRI.data.dems.PrD.melt$SpD <- factor(qMRI.data.dems.PrD.melt$SpD, levels = c("SWM", "SpD4", "SpD3", "SpD2", "SpD1"), ordered = TRUE)
+
+# putting everything into one model rather than running loads
+mdl.PrD <- aov(data = qMRI.data.dems.PrD.melt, PrD ~ age + sex + SpD*diagnosis)
+# calculate estimated marginal means (adjusting for age and sex)
+mdl.PrD.emns <- emmeans(mdl.PrD, pairwise ~ diagnosis | SpD, cov.reduce = mean, adjust = "bonferroni")
+
+print("#################### PrD ####################")
+
+print(summary(mdl.PrD.emns))
+
+# save some stats
+write.csv(as.data.frame(summary(mdl.PrD.emns)),
+          paste(results.dir,"/stats_PrD_group_comparison_PDvsCtrl",".csv",sep=""),
+          row.names = FALSE)
+
+# do a boxplot across groups
+png(filename = paste(results.dir,"/plot_PrD_group_comparison_PDvsCtrl",".png",sep=""),
+    width = 750, height = 750, units = "px", res = 150)
+plot.mdl <- ggplot(qMRI.data.dems.PrD.melt, aes(x = SpD, y = PrD, fill = diagnosis)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position = position_jitterdodge(jitter.width = 0.2), alpha = 0.5, shape = 21, aes(fill = diagnosis)) +
+  ylab("PrD") +
+  theme_minimal()
+print(plot.mdl)
+dev.off()
 
 # MT sat
 

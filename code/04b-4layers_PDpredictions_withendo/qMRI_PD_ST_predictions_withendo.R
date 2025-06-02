@@ -15,7 +15,7 @@ cell.data.dir <- paste(d0, "/../../processed_data/01b-4layers_withendo/02-top3_c
 GO.data.dir <- paste(d0, "/../../processed_data/01b-4layers_withendo/05-pathway_scoring/", sep = "")
 dems.dir<- paste(d0, "/../../raw_data/participant_info/", sep = "")
 results.dir <- paste(d0, "/../../plots/04b-4layers_PDpredictions_withendo/", sep = "")
-
+results.dir2 <- paste(d0, "/../../plots/02b-4layers_qMRIvsST_withendo/", sep = "")
 
 # make a function to rename layers like so:
 # L4 --> SpD1
@@ -82,8 +82,8 @@ rownames(qMRI.data.dems) <- 1:nrow(qMRI.data.dems)
 QC.info <- read.csv(paste(dems.dir,"anon_7T_QC_info.csv",sep = ""))
 
 # specify the metrics we are interested in
-qMRI.metrics <- c("QSM","R1","R2s","PD","MTsat")
-MOI <- c("QSM","R1","R2s","MTsat")
+qMRI.metrics <- c("QSM","R1","R2s","PrD","MTsat")
+MOI <- c("QSM","R1","R2s","PrD","MTsat")
 
 # match up QC and qMRI data frames
 QC.info <- subset(QC.info, QC.info$subject %in% qMRI.data.dems$subject)
@@ -103,7 +103,7 @@ qMRI.ROI.names <- colnames(qMRI.data.dems)[5:ncol(qMRI.data.dems)]
 QC.info$QSM_QC <- QC.info$QSM_QC == 1 & QC.info$has_QSM == 1
 QC.info$R1_QC <- QC.info$MPM_QC == 1 & QC.info$has_MPM == 1
 QC.info$R2s_QC <- QC.info$MPM_QC == 1 & QC.info$has_MPM == 1
-QC.info$PD_QC <- QC.info$MPM_QC == 1 & QC.info$has_MPM == 1
+QC.info$PrD_QC <- QC.info$MPM_QC == 1 & QC.info$has_MPM == 1
 QC.info$MTsat_QC <- QC.info$MPM_QC == 1 & QC.info$has_MT == 1
 
 #### adjust qMRI values ####
@@ -272,7 +272,7 @@ reg <- c("anterior", "middle", "posterior")
 adj.qMRI.ST.medians <- expand.grid(SpD = dom, region = reg)
 
 # go through each qMRI metric and remove QC-failed subjects / nan values before averaging
-qMRI.metrics = c("QSM","R1","R2s","MTsat")
+qMRI.metrics = c("QSM","R1","R2s","PrD","MTsat")
 
 # do this for controls and PD separately
 # (although only looking at Ctrl vs Ctrl for now)
@@ -314,9 +314,13 @@ for (p in GO.names){
   adj.qMRI.ST.medians[,paste(p, "_Control", sep = "")] <- GO.medians
 }
 
+write.csv(adj.qMRI.ST.medians, file = paste(
+  results.dir2, "/adj_qMRI_ST_medians_extended.csv", sep = ""), 
+  row.names = FALSE)
+
 #### predict PD ST scores with SWM ####
 
-all.ST.names <- colnames(adj.qMRI.ST.medians)[11:ncol(adj.qMRI.ST.medians)]
+all.ST.names <- colnames(adj.qMRI.ST.medians)[13:ncol(adj.qMRI.ST.medians)]
 
 # define a function to project the PD values
 project.PD.ST <- function(dframe, ST) {
@@ -334,16 +338,16 @@ project.PD.ST <- function(dframe, ST) {
     # define formula
     control.fm <- as.formula(paste0(st, 
                                  "~ QSM_Control + R1_Control + 
-                                 R2s_Control + MTsat_Control"))
+                                 R2s_Control + PrD_Control + MTsat_Control"))
     # PD.data
-    PD.data <- dframe[,c("QSM_PD","R1_PD", "R2s_PD", "MTsat_PD")]
+    PD.data <- dframe[,c("QSM_PD","R1_PD", "R2s_PD", "PrD_Control", "MTsat_PD")]
       
     # fit control
     control.fit <- lm(control.fm, data = dframe)
       
     # predict PD values
     # need to rename columns to get this to work
-    colnames(PD.data) <- c("QSM_Control","R1_Control", "R2s_Control", "MTsat_Control")
+    colnames(PD.data) <- c("QSM_Control","R1_Control", "R2s_Control", "PrD_Control", "MTsat_Control")
     PD.pred <- predict(control.fit, newdata = PD.data)
     
     # add to data frame

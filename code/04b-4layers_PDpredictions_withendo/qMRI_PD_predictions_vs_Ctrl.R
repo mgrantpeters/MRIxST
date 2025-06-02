@@ -1,0 +1,285 @@
+# Master script to look at qMRI vs ST across layers
+
+# load in some libraries
+library(ggplot2)
+library(tidyverse)
+library(reshape2)
+library(ggpubr)
+library(hydroGOF)
+library(matrixStats)
+
+# define directories
+d0 <- getwd();
+qMRI.data.dir <- paste(d0, "/../../plots/02b-4layers_qMRIvsST_withendo/", sep = "")
+GO.pred.data.dir <- paste(d0, "/../../plots/04b-4layers_PDpredictions_withendo/", sep = "")
+results.dir <- paste(d0, "/../../plots/04b-4layers_PDpredictions_withendo/", sep = "")
+results.dir2 <- paste(d0, "/../../plots/02b-4layers_qMRIvsST_withendo/", sep = "")
+
+adj.qMRI.ST.medians <- read.csv(paste(qMRI.data.dir, "adj_qMRI_ST_medians_extended.csv",sep = ""))
+adj.qMRI.ST.medians.no.SWM <- subset(adj.qMRI.ST.medians, SpD != "SWM")
+PD.ST.pred <- read.csv(paste(GO.pred.data.dir,"Projected_PD_pathway_scores.csv", sep = ""))
+PD.ST.pred.no.SWM <- read.csv(paste(GO.pred.data.dir,"Projected_PD_pathway_scores_no_SWM.csv", sep = ""))
+
+POI.SWM <- as.character(read.delim("pathways_of_interest_SWM.txt", sep = ",", header = FALSE, quote = "'"))
+
+
+# colours for spatial domains
+SpD.cols <- c("#EE6677","#CCBB44","#228833","#66CCEE","#4477AA")
+
+# do LOO for these pathways
+# define a function to tun the LOO
+run.qMRI.ST.LOO <- function(dframe, ST, LOO, stats, group.string) {
+  
+  # loop though ST metrics
+  for (ii in 1:length(ST)) {
+    
+    st <- ST[ii]
+    
+    # loop through each rregion-depth row
+    for (jj in 1:nrow(dframe)) {
+      
+      # define train and test data
+      train <- dframe[-jj, ]
+      test <- dframe[jj, ]
+      
+      # actual data
+      loo.actual <- test[, paste(st, "Control", sep = "_")]
+      
+      loo.fm <- as.formula(paste0(paste(st, "Control", sep = "_"), "~",
+                                  paste("QSM", group.string, sep = "_"), "+",
+                                  paste("R1", group.string, sep = "_"), "+",
+                                  paste("R2s", group.string, sep = "_"), "+",
+                                  paste("MTsat", group.string, sep = "_")))
+      # run LOO
+      loo.fit <- lm(loo.fm, data = train)
+      loo.pred <- predict(loo.fit, newdata = test)
+      loo.SE <- (loo.pred - loo.actual) ^ 2
+      
+      # store results
+      LOO[jj, paste(st, "actual", sep = "_")] <- loo.actual
+      LOO[jj, paste(st, "predicted", sep = "_")] <- loo.pred
+      LOO[jj, paste(st, "SE", sep = "_")] <- loo.SE
+      
+    }
+    
+    res <- cor.test(LOO[, paste(st, "predicted", sep = "_")],
+                    LOO[, paste(st, "actual", sep = "_")])
+    # Save stats
+    stats[ii,1] <- st
+    stats[ii,2] <- nrmse(LOO[, paste(st, "predicted", sep = "_")],
+                         LOO[, paste(st, "actual", sep = "_")])
+    stats[ii,3] <- res$statistic
+    stats[ii,4] <- res$estimate
+    stats[ii,5] <- res$estimate^2
+    stats[ii,6] <- res$p.value
+    
+  }
+  
+  # return updated NRMSE and LOO
+  return(list(LOO = LOO, stats = stats))
+  
+}
+
+# define a function to plot the data
+plot.LOO <- function(ST, LOO) {
+  x.data <- LOO[, paste(ST, "actual", sep = "_")]
+  y.data <- LOO[[paste(ST, "predicted", sep = "_")]]
+  
+  ggplot(data = LOO, aes(x = x.data, y = y.data)) +
+    theme_minimal() +
+    theme(axis.title.x = element_blank(),
+          axis.title.y = element_blank(),
+          plot.title = element_text(size=10)
+    ) +
+    ggtitle(ST) +
+    geom_smooth(
+      method = "lm",
+      formula = y ~ x,
+      linetype = "dotted",
+      colour = "black",
+      fill = "lightgrey"
+    ) +
+    geom_point(aes(colour = SpD, shape = region)) +
+    scale_color_manual(values = SpD.cols) +
+    scale_x_continuous(labels = function(x) {
+      ifelse(
+        x == 0, "0", # zero shows as 0
+        ifelse(
+          abs(x) < 1e-3, 
+          format(x, scientific = TRUE, digits = 2), # Scientific format for small values
+          signif(x, 2)                    # otherwise 2 sig figs
+        )
+      )
+    }) +
+    scale_y_continuous(labels = function(y) {
+      ifelse(
+        y == 0, 
+        "0", 
+        ifelse(
+          abs(y) < 1e-3, 
+          format(y, scientific = TRUE, digits = 2), 
+          signif(y, 2)                              
+        )
+      )
+    }) +
+    stat_cor(aes(label = paste(
+      after_stat(rr.label), after_stat(p.label), sep = "~`, `~"
+    )), size = 3.25)
+}
+
+
+# define empty data frames for LOO results
+GO.LOO.Ctrl.colnames <- paste(rep(POI.SWM,each = 3),c("actual","predicted", "SE"),sep = "_")
+GO.LOO.Ctrl <- data.frame(matrix(nrow = nrow(adj.qMRI.ST.medians), ncol = length(GO.LOO.Ctrl.colnames)))
+colnames(GO.LOO.Ctrl) <- GO.LOO.Ctrl.colnames
+GO.LOO.Ctrl <-cbind(adj.qMRI.ST.medians[,1:2],GO.LOO.Ctrl)
+
+GO.LOO.stats.Ctrl <- data.frame(matrix(nrow = length(POI.SWM), ncol = 6))
+colnames(GO.LOO.stats.Ctrl) <- c("GO_type", "NRMSE", "T","rho", "R2", "p")
+
+# run the LOO
+GO.LOO.Ctrl.output <- run.qMRI.ST.LOO(dframe = adj.qMRI.ST.medians,
+                                      ST = POI.SWM, 
+                                      LOO = GO.LOO.Ctrl, 
+                                      stats = GO.LOO.stats.Ctrl, 
+                                      group.string = "Control")
+GO.LOO.Ctrl <- GO.LOO.Ctrl.output$LOO
+GO.LOO.stats.Ctrl <- GO.LOO.Ctrl.output$stats
+
+# plot the LOO
+plot.list.GO.LOO.Ctrl <- lapply(1:length(POI.SWM), function(i) plot.LOO(ST = POI.SWM[i], GO.LOO.Ctrl))
+png(filename = paste(results.dir2, "/Plot_control_qMRI_vs_GO_pathway_LOO_extended.png", sep = ""),
+    width = 1200, height = 700, units = "px", res = 120)
+multi.plot.GO.LOO.Ctrl <- ggarrange(
+  plotlist = plot.list.GO.LOO.Ctrl,
+  nrow = 3,
+  ncol = 5,
+  common.legend = TRUE,
+  legend = "right"
+)
+plot(multi.plot.GO.LOO.Ctrl)
+annotate_figure(multi.plot.GO.LOO.Ctrl, bottom = text_grob("Actual GO pathway score"),
+                left = text_grob("Predicted GO pathway score", rot = 90),
+                top = text_grob("Control qMRI medians predicting control GO pathway score"))
+dev.off()
+
+# save some stats
+GO.LOO.stats.Ctrl$corr_p <- p.adjust(GO.LOO.stats.Ctrl$p, method = "fdr")
+write.csv(GO.LOO.stats.Ctrl, file = paste(
+  results.dir2, "/Stats_control_qMRI_vs_GO_pathway_LOO_extended.csv", sep = ""), 
+  row.names = FALSE)
+
+
+# test diff between control and PD
+results <- lapply(1:length(POI.SWM), function(i) 
+  t.test(PD.ST.pred[,paste0(POI.SWM[i], "_PD_predicted")], 
+         adj.qMRI.ST.medians[,paste0(POI.SWM[i], "_Control")],
+         paired = TRUE))
+
+# reformat and combine dataframes
+temp <- adj.qMRI.ST.medians
+colnames(temp) <- gsub("_Control", "",colnames(adj.qMRI.ST.medians))
+colnames(PD.ST.pred) <- gsub("_PD_predicted", "",colnames(PD.ST.pred))
+adj.ST.medians <- temp[,grepl(paste(colnames(PD.ST.pred),collapse = "|"), colnames(temp))]
+PD.ST.pred$diagnosis <- rep("PD", nrow(PD.ST.pred))
+adj.ST.medians$diagnosis <- rep("HC", nrow(adj.ST.medians))
+
+Ctrl.PD.ST.medians <- rbind(adj.ST.medians, PD.ST.pred)
+
+GO.boxplot <- function(GO, dframe){
+  ggplot(dframe, aes(x = diagnosis, y = dframe[,GO])) + 
+    geom_boxplot(outlier.shape = NA) + 
+    geom_point(position = position_jitterdodge(jitter.width = 0.01), aes(colour = SpD, shape = region)) + 
+    theme_minimal() +
+    ggtitle(GO) +
+    theme(axis.title.y = element_blank()) +
+    theme(axis.title.x = element_blank()) +
+    theme(plot.title = element_text(size=10)) +
+    scale_color_manual(values = SpD.cols) 
+}
+
+GO.boxplotlist <- lapply(1:length(POI.SWM), function(i) 
+  GO.boxplot(GO = POI.SWM[i], Ctrl.PD.ST.medians))
+
+png(filename = paste(results.dir, "/Ctrl_PD_GO_boxplots.png", sep = ""),
+    width = 1200, height = 700, units = "px", res = 120)
+GO.multiboxplot <- ggarrange(plotlist = GO.boxplotlist, 
+                                    nrow = 3, ncol = 5, 
+                                    common.legend = TRUE, 
+                                    legend = "right")
+plot(GO.multiboxplot)
+dev.off()
+
+# run again without SWM
+# 
+# # colours for spatial domains
+# SpD.cols <- c("#EE6677","#CCBB44","#228833","#66CCEE")
+# 
+# # define empty data frames for LOO results
+# GO.LOO.Ctrl.no.SWM <- data.frame(matrix(nrow = nrow(adj.qMRI.ST.medians.no.SWM), ncol = length(GO.LOO.Ctrl.colnames)))
+# colnames(GO.LOO.Ctrl.no.SWM) <- GO.LOO.Ctrl.colnames
+# GO.LOO.Ctrl.no.SWM <-cbind(adj.qMRI.ST.medians.no.SWM[,1:2],GO.LOO.Ctrl.no.SWM)
+# 
+# GO.LOO.stats.Ctrl.no.SWM <- data.frame(matrix(nrow = length(POI), ncol = 6))
+# colnames(GO.LOO.stats.Ctrl.no.SWM) <- c("GO_type", "NRMSE", "T","rho", "R2", "p")
+# 
+# # run the LOO
+# GO.LOO.Ctrl.no.SWM.output <- run.qMRI.ST.LOO(dframe = adj.qMRI.ST.medians.no.SWM,
+#                                       ST = POI, 
+#                                       LOO = GO.LOO.Ctrl.no.SWM, 
+#                                       stats = GO.LOO.stats.Ctrl.no.SWM, 
+#                                       group.string = "Control")
+# GO.LOO.Ctrl.no.SWM <- GO.LOO.Ctrl.no.SWM.output$LOO
+# GO.LOO.stats.Ctrl.no.SWM <- GO.LOO.Ctrl.no.SWM.output$stats
+# 
+# # plot the LOO
+# plot.list.GO.LOO.Ctrl.no.SWM <- lapply(1:length(POI), function(i) plot.LOO(ST = POI[i], GO.LOO.Ctrl.no.SWM))
+# png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_pathway_LOO_no_SWM.png", sep = ""),
+#     width = 1200, height = 700, units = "px", res = 120)
+# multi.plot.GO.LOO.Ctrl.no.SWM <- ggarrange(
+#   plotlist = plot.list.GO.LOO.Ctrl.no.SWM,
+#   nrow = 3,
+#   ncol = 5,
+#   common.legend = TRUE,
+#   legend = "right"
+# )
+# plot(multi.plot.GO.LOO.Ctrl.no.SWM)
+# annotate_figure(multi.plot.GO.LOO.Ctrl.no.SWM, bottom = text_grob("Actual GO pathway score"),
+#                 left = text_grob("Predicted GO pathway score", rot = 90),
+#                 top = text_grob("Control qMRI medians predicting control GO pathway score"))
+# dev.off()
+# 
+# # save some stats
+# GO.LOO.stats.Ctrl.no.SWM$corr_p <- p.adjust(GO.LOO.stats.Ctrl.no.SWM$p, method = "fdr")
+# write.csv(GO.LOO.stats.Ctrl.no.SWM, file = paste(
+#   results.dir, "/Stats_control_qMRI_vs_GO_pathway_LOO_no_SWM.csv", sep = ""), 
+#   row.names = FALSE)
+# 
+# 
+# # test diff between control and PD
+# results.no.SWM <- lapply(1:length(POI), function(i) 
+#   t.test(PD.ST.pred.no.SWM[,paste0(POI[i], "_PD_predicted")], 
+#          adj.qMRI.ST.medians.no.SWM[,paste0(POI[i], "_Control")],
+#          paired = TRUE))
+# 
+# # reformat and combine dataframes
+# temp <- adj.qMRI.ST.medians.no.SWM
+# colnames(temp) <- gsub("_Control", "",colnames(adj.qMRI.ST.medians.no.SWM))
+# colnames(PD.ST.pred.no.SWM) <- gsub("_PD_predicted", "",colnames(PD.ST.pred.no.SWM))
+# adj.ST.medians.no.SWM <- temp[,grepl(paste(colnames(PD.ST.pred.no.SWM),collapse = "|"), colnames(temp))]
+# PD.ST.pred.no.SWM$diagnosis <- rep("PD", nrow(PD.ST.pred.no.SWM))
+# adj.ST.medians.no.SWM$diagnosis <- rep("HC", nrow(adj.ST.medians.no.SWM))
+# 
+# Ctrl.PD.ST.medians.no.SWM <- rbind(adj.ST.medians.no.SWM, PD.ST.pred.no.SWM)
+# 
+# GO.boxplotlist.no.SWM <- lapply(1:length(POI), function(i) 
+#   GO.boxplot(GO = POI[i], Ctrl.PD.ST.medians.no.SWM))
+# 
+# png(filename = paste(results.dir, "/Ctrl_PD_GO_boxplots_no_SWM.png", sep = ""),
+#     width = 1200, height = 700, units = "px", res = 120)
+# GO.multiboxplot.no.SWM <- ggarrange(plotlist = GO.boxplotlist.no.SWM, 
+#                              nrow = 3, ncol = 5, 
+#                              common.legend = TRUE, 
+#                              legend = "right")
+# plot(GO.multiboxplot.no.SWM)
+# dev.off()
