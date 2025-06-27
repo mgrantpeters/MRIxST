@@ -11,6 +11,7 @@ d0 <- getwd();
 qMRI.data.dir <- paste(d0, "/../../processed_data/02-4layers_qMRI/", sep = "")
 dems.dir<- paste(d0, "/../../raw_data/participant_info/", sep = "")
 results.dir <- paste(d0, "/../../plots/03-4layers_PDvsCtrl/", sep = "")
+results.dir.stats <- paste(d0, "/../../stats/03-4layers_PDvsCtrl/", sep = "")
 
 # load in the qMRI data and demographics for the combined DLPFC
 qMRI.dems <- read.csv(paste(dems.dir,"anon_DLPFC_qMRI_demographics.csv",sep = ""))
@@ -74,7 +75,7 @@ print(summary(mdl.QSM.emns))
 
 # save some stats
 write.csv(as.data.frame(summary(mdl.QSM.emns)),
-          paste(results.dir,"/stats_QSM_group_comparison_PDvsCtrl",".csv",sep=""),
+          paste(results.dir.stats,"/stats_QSM_group_comparison_PDvsCtrl",".csv",sep=""),
           row.names = FALSE)
 
 # do a boxplot across groups
@@ -111,7 +112,7 @@ print(summary(mdl.R1.emns))
 
 # save some stats
 write.csv(as.data.frame(summary(mdl.R1.emns)),
-          paste(results.dir,"/stats_R1_group_comparison_PDvsCtrl",".csv",sep=""),
+          paste(results.dir.stats,"/stats_R1_group_comparison_PDvsCtrl",".csv",sep=""),
           row.names = FALSE)
 
 # do a boxplot across groups
@@ -148,7 +149,7 @@ print(summary(mdl.R2s.emns))
 
 # save some stats
 write.csv(as.data.frame(summary(mdl.R2s.emns)),
-          paste(results.dir,"/stats_R2s_group_comparison_PDvsCtrl",".csv",sep=""),
+          paste(results.dir.stats,"/stats_R2s_group_comparison_PDvsCtrl",".csv",sep=""),
           row.names = FALSE)
 
 # do a boxplot across groups
@@ -185,7 +186,7 @@ print(summary(mdl.PrD.emns))
 
 # save some stats
 write.csv(as.data.frame(summary(mdl.PrD.emns)),
-          paste(results.dir,"/stats_PrD_group_comparison_PDvsCtrl",".csv",sep=""),
+          paste(results.dir.stats,"/stats_PrD_group_comparison_PDvsCtrl",".csv",sep=""),
           row.names = FALSE)
 
 # do a boxplot across groups
@@ -222,7 +223,7 @@ print(summary(mdl.MTsat.emns))
 
 # save some stats
 write.csv(as.data.frame(summary(mdl.MTsat.emns)),
-          paste(results.dir,"/stats_MTsat_group_comparison_PDvsCtrl",".csv",sep=""),
+          paste(results.dir.stats,"/stats_MTsat_group_comparison_PDvsCtrl",".csv",sep=""),
           row.names = FALSE)
 
 # do a boxplot across groups

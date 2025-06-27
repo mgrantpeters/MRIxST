@@ -15,6 +15,7 @@ cell.data.dir <- paste(d0, "/../../processed_data/01a-4layers_noendo/02-top3_cel
 GO.data.dir <- paste(d0, "/../../processed_data/01a-4layers_noendo/05-pathway_scoring/", sep = "")
 dems.dir<- paste(d0, "/../../raw_data/participant_info/", sep = "")
 results.dir <- paste(d0, "/../../plots/02a-4layers_qMRIvsST_noendo/", sep = "")
+results.dir.stats <- paste(d0, "/../../stats/02a-4layers_qMRIvsST_noendo/", sep = "")
 results.dir.qMRIonly <- paste(d0, "/../../plots/00-4layers_qMRI/", sep = "")
 
 # make a function to rename layers like so:
@@ -606,7 +607,7 @@ stats.Ctrl <- cbind(MOICOI,stats.Ctrl)
 colnames(stats.Ctrl) <- c("qMRI", "cell_type", "T", "rho", "R2","p")
 stats.Ctrl$corr_p <- p.adjust(stats.Ctrl$p, method = "fdr")
 write.csv(stats.Ctrl, file = paste(
-  results.dir, "/Stats_control_qMRI_vs_cell_count.csv", sep = ""), 
+  results.dir.stats, "/Stats_control_qMRI_vs_cell_count.csv", sep = ""), 
   row.names = FALSE)
 
 
@@ -638,7 +639,7 @@ stats.Ctrl <- cbind(MOIPOI,stats.Ctrl)
 colnames(stats.Ctrl) <- c("qMRI", "pathway_score", "T", "rho", "R2","p")
 stats.Ctrl$corr_p <- p.adjust(stats.Ctrl$p, method = "fdr")
 write.csv(stats.Ctrl, file = paste(
-  results.dir, "/Stats_control_qMRI_vs_GO_pathway.csv", sep = ""), 
+  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway.csv", sep = ""), 
   row.names = FALSE)
 
 #### qMRI vs ST LOO with SWM ####
@@ -683,7 +684,7 @@ dev.off()
 # save some stats
 cell.LOO.stats.Ctrl$corr_p <- p.adjust(cell.LOO.stats.Ctrl$p, method = "fdr")
 write.csv(cell.LOO.stats.Ctrl, file = paste(
-  results.dir, "/Stats_control_qMRI_vs_cell_count_LOO.csv", sep = ""), 
+  results.dir.stats, "/Stats_control_qMRI_vs_cell_count_LOO.csv", sep = ""), 
   row.names = FALSE)
 
 
@@ -727,7 +728,7 @@ dev.off()
 # save some stats
 GO.LOO.stats.Ctrl$corr_p <- p.adjust(GO.LOO.stats.Ctrl$p, method = "fdr")
 write.csv(GO.LOO.stats.Ctrl, file = paste(
-  results.dir, "/Stats_control_qMRI_vs_GO_pathway_LOO.csv", sep = ""), 
+  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway_LOO.csv", sep = ""), 
   row.names = FALSE)
 
 
@@ -767,7 +768,7 @@ cell.stats.Ctrl.no.SWM <- cbind(MOICOI,cell.stats.Ctrl.no.SWM)
 colnames(cell.stats.Ctrl.no.SWM) <- c("qMRI", "cell_type", "T", "rho", "R2","p")
 cell.stats.Ctrl.no.SWM$corr_p <- p.adjust(cell.stats.Ctrl.no.SWM$p, method = "fdr")
 write.csv(cell.stats.Ctrl.no.SWM, file = paste(
-  results.dir, "/Stats_control_qMRI_vs_cell_count_no_SWM.csv", sep = ""), 
+  results.dir.stats, "/Stats_control_qMRI_vs_cell_count_no_SWM.csv", sep = ""), 
   row.names = FALSE)
 
 
@@ -799,7 +800,7 @@ GO.stats.Ctrl.no.SWM <- cbind(MOIPOI,GO.stats.Ctrl.no.SWM)
 colnames(GO.stats.Ctrl.no.SWM) <- c("qMRI", "pathway_score", "T", "rho", "R2","p")
 GO.stats.Ctrl.no.SWM$corr_p <- p.adjust(GO.stats.Ctrl.no.SWM$p, method = "fdr")
 write.csv(GO.stats.Ctrl.no.SWM, file = paste(
-  results.dir, "/Stats_control_qMRI_vs_GO_pathway_no_SWM.csv", sep = ""), 
+  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway_no_SWM.csv", sep = ""), 
   row.names = FALSE)
 
 #### qMRI vs ST LOO no SWM ####
@@ -843,7 +844,7 @@ dev.off()
 # save some stats
 cell.LOO.stats.Ctrl.no.SWM$corr_p <- p.adjust(cell.LOO.stats.Ctrl.no.SWM$p, method = "fdr")
 write.csv(cell.LOO.stats.Ctrl.no.SWM, file = paste(
-  results.dir, "/Stats_control_qMRI_vs_cell_count_LOO_no_SWM.csv", sep = ""), 
+  results.dir.stats, "/Stats_control_qMRI_vs_cell_count_LOO_no_SWM.csv", sep = ""), 
   row.names = FALSE)
 
 
@@ -886,7 +887,7 @@ dev.off()
 # save some stats
 GO.LOO.stats.Ctrl.no.SWM$corr_p <- p.adjust(GO.LOO.stats.Ctrl.no.SWM$p, method = "fdr")
 write.csv(GO.LOO.stats.Ctrl.no.SWM, file = paste(
-  results.dir, "/Stats_control_qMRI_vs_GO_pathway_LOO_no_SWM.csv", sep = ""), 
+  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway_LOO_no_SWM.csv", sep = ""), 
   row.names = FALSE)
 #### qMRI vs ST correlation no SWM / SpD1 ####
 
@@ -924,7 +925,7 @@ cell.stats.Ctrl.no.SWMSpD1 <- cbind(MOICOI,cell.stats.Ctrl.no.SWMSpD1)
 colnames(cell.stats.Ctrl.no.SWMSpD1) <- c("qMRI", "cell_type", "T", "rho", "R2","p")
 cell.stats.Ctrl.no.SWMSpD1$corr_p <- p.adjust(cell.stats.Ctrl.no.SWMSpD1$p, method = "fdr")
 write.csv(cell.stats.Ctrl.no.SWMSpD1, file = paste(
-  results.dir, "/Stats_control_qMRI_vs_cell_count_no_SWM_SpD1.csv", sep = ""), 
+  results.dir.stats, "/Stats_control_qMRI_vs_cell_count_no_SWM_SpD1.csv", sep = ""), 
   row.names = FALSE)
 
 
@@ -956,7 +957,7 @@ GO.stats.Ctrl.no.SWMSpD1 <- cbind(MOIPOI,GO.stats.Ctrl.no.SWMSpD1)
 colnames(GO.stats.Ctrl.no.SWMSpD1) <- c("qMRI", "pathway_score", "T", "rho", "R2","p")
 GO.stats.Ctrl.no.SWMSpD1$corr_p <- p.adjust(GO.stats.Ctrl.no.SWMSpD1$p, method = "fdr")
 write.csv(GO.stats.Ctrl.no.SWMSpD1, file = paste(
-  results.dir, "/Stats_control_qMRI_vs_GO_pathway_no_SWM_SpD1.csv", sep = ""), 
+  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway_no_SWM_SpD1.csv", sep = ""), 
   row.names = FALSE)
 
 #### qMRI vs ST LOO no SWM / SpD1 ####
@@ -1000,7 +1001,7 @@ dev.off()
 # save some stats
 cell.LOO.stats.Ctrl.no.SWMSpD1$corr_p <- p.adjust(cell.LOO.stats.Ctrl.no.SWMSpD1$p, method = "fdr")
 write.csv(cell.LOO.stats.Ctrl.no.SWMSpD1, file = paste(
-  results.dir, "/Stats_control_qMRI_vs_cell_count_LOO_no_SWM_SpD1.csv", sep = ""), 
+  results.dir.stats, "/Stats_control_qMRI_vs_cell_count_LOO_no_SWM_SpD1.csv", sep = ""), 
   row.names = FALSE)
 
 
@@ -1043,5 +1044,5 @@ dev.off()
 # save some stats
 GO.LOO.stats.Ctrl.no.SWMSpD1$corr_p <- p.adjust(GO.LOO.stats.Ctrl.no.SWMSpD1$p, method = "fdr")
 write.csv(GO.LOO.stats.Ctrl.no.SWMSpD1, file = paste(
-  results.dir, "/Stats_control_qMRI_vs_GO_pathway_LOO_no_SWM_SpD1.csv", sep = ""), 
+  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway_LOO_no_SWM_SpD1.csv", sep = ""), 
   row.names = FALSE)

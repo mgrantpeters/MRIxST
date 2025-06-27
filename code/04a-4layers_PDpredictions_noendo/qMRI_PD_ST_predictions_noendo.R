@@ -15,7 +15,7 @@ cell.data.dir <- paste(d0, "/../../processed_data/01a-4layers_noendo/02-top3_cel
 GO.data.dir <- paste(d0, "/../../processed_data/01a-4layers_noendo/05-pathway_scoring/", sep = "")
 dems.dir<- paste(d0, "/../../raw_data/participant_info/", sep = "")
 results.dir <- paste(d0, "/../../plots/04a-4layers_PDpredictions_noendo/", sep = "")
-
+results.dir.stats <- paste(d0, "/../../stats/04a-4layers_PDpredictions_noendo/", sep = "")
 
 # make a function to rename layers like so:
 # L4 --> SpD1
@@ -360,11 +360,11 @@ PD.cell.proj <- PD.ST.proj[,1:6]
 PD.GO.proj <- cbind(PD.ST.proj[,1:2], PD.ST.proj[,7:ncol(PD.ST.proj)])
 
 write.csv(PD.cell.proj, file = paste(
-  results.dir, "/Projected_PD_cell_counts.csv", sep = ""), 
+  results.dir.stats, "/Projected_PD_cell_counts.csv", sep = ""), 
   row.names = FALSE)
 
 write.csv(PD.GO.proj, file = paste(
-  results.dir, "/Projected_PD_pathway_scores.csv", sep = ""), 
+  results.dir.stats, "/Projected_PD_pathway_scores.csv", sep = ""), 
   row.names = FALSE)
 
 #### predict PD ST scores without SWM ####
@@ -377,9 +377,9 @@ PD.cell.proj.no.SWM <- PD.ST.proj.no.SWM[,1:6]
 PD.GO.proj.no.SWM <- cbind(PD.ST.proj.no.SWM[,1:2], PD.ST.proj.no.SWM[,7:ncol(PD.ST.proj.no.SWM)])
 
 write.csv(PD.cell.proj.no.SWM, file = paste(
-  results.dir, "/Projected_PD_cell_counts_no_SWM.csv", sep = ""), 
+  results.dir.stats, "/Projected_PD_cell_counts_no_SWM.csv", sep = ""), 
   row.names = FALSE)
 
 write.csv(PD.GO.proj.no.SWM, file = paste(
-  results.dir, "/Projected_PD_pathway_scores_no_SWM.csv", sep = ""), 
+  results.dir.stats, "/Projected_PD_pathway_scores_no_SWM.csv", sep = ""), 
   row.names = FALSE)

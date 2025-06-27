@@ -19,6 +19,7 @@ cell.data.dir <- paste(d0, "/../../processed_data/01b-4layers_withendo/02-top3_c
 GO.data.dir <- paste(d0, "/../../processed_data/01b-4layers_withendo/05-pathway_scoring/", sep = "")
 dems.dir<- paste(d0, "/../../raw_data/participant_info/", sep = "")
 results.dir <- paste(d0, "/../../plots/02b-4layers_qMRIvsST_withendo", sep = "")
+results.dir.stats <- paste(d0, "/../../stats/02b-4layers_qMRIvsST_withendo", sep = "")
 
 # make a function to rename layers like so:
 # L4 --> SpD1
@@ -270,13 +271,13 @@ GO.categories <- unique(all.R2.vals.melt$GO.category)
 
 # save some stats
 write.csv(all.R2.vals, file = paste(
-  results.dir, "/Stats_expanded_pathway_analysis_R2.csv", sep = ""), 
+  results.dir.stats, "/Stats_expanded_pathway_analysis_R2.csv", sep = ""), 
   row.names = TRUE)
 write.csv(all.rho.vals, file = paste(
-  results.dir, "/Stats_expanded_pathway_analysis_rho.csv", sep = ""), 
+  results.dir.stats, "/Stats_expanded_pathway_analysis_rho.csv", sep = ""), 
   row.names = TRUE)
 write.csv(all.pvals, file = paste(
-  results.dir, "/Stats_expanded_pathway_analysis_pval.csv", sep = ""), 
+  results.dir.stats, "/Stats_expanded_pathway_analysis_pval.csv", sep = ""), 
   row.names = TRUE)
 
 # NOW DO A FANCY PLOT
@@ -439,13 +440,13 @@ colnames(all.R2.vals.no.SWM.melt) <- c("GO.category", "qMRI.metric", "R2")
 
 # save some stats
 write.csv(all.R2.vals.no.SWM, file = paste(
-  results.dir, "/Stats_expanded_pathway_analysis_R2_no_SWM.csv", sep = ""), 
+  results.dir.stats, "/Stats_expanded_pathway_analysis_R2_no_SWM.csv", sep = ""), 
   row.names = TRUE)
 write.csv(all.rho.vals.no.SWM, file = paste(
-  results.dir, "/Stats_expanded_pathway_analysis_rho_no_SWM.csv", sep = ""), 
+  results.dir.stats, "/Stats_expanded_pathway_analysis_rho_no_SWM.csv", sep = ""), 
   row.names = TRUE)
 write.csv(all.pvals.no.SWM, file = paste(
-  results.dir, "/Stats_expanded_pathway_analysis_pval_no_SWM.csv", sep = ""), 
+  results.dir.stats, "/Stats_expanded_pathway_analysis_pval_no_SWM.csv", sep = ""), 
   row.names = TRUE)
 
 
@@ -490,7 +491,7 @@ multi.plot.by.GO.no.SWM <- ggarrange(plotlist = plot.list.by.GO.no.SWM,
                                 nrow = 2, 
                                 ncol = 2, 
                                 common.legend = TRUE, 
-                                legend = "bottom")S
+                                legend = "bottom")
 plot(multi.plot.by.GO.no.SWM)
 annotate_figure(multi.plot.by.GO.no.SWM, 
                 top = text_grob(expression("Density of qMRI vs ST R"^2*" values")),

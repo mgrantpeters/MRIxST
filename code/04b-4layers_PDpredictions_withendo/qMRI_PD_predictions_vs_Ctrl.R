@@ -14,11 +14,13 @@ qMRI.data.dir <- paste(d0, "/../../plots/02b-4layers_qMRIvsST_withendo/", sep = 
 GO.pred.data.dir <- paste(d0, "/../../plots/04b-4layers_PDpredictions_withendo/", sep = "")
 results.dir <- paste(d0, "/../../plots/04b-4layers_PDpredictions_withendo/", sep = "")
 results.dir2 <- paste(d0, "/../../plots/02b-4layers_qMRIvsST_withendo/", sep = "")
+results.dir.stats <- paste(d0, "/../../stats/04b-4layers_PDpredictions_withendo/", sep = "")
+results.dir2.stats <- paste(d0, "/../../stats/02b-4layers_qMRIvsST_withendo/", sep = "")
 
-adj.qMRI.ST.medians <- read.csv(paste(qMRI.data.dir, "adj_qMRI_ST_medians_extended.csv",sep = ""))
+adj.qMRI.ST.medians <- read.csv(paste(results.dir2.stats, "adj_qMRI_ST_medians_extended.csv",sep = ""))
 adj.qMRI.ST.medians.no.SWM <- subset(adj.qMRI.ST.medians, SpD != "SWM")
-PD.ST.pred <- read.csv(paste(GO.pred.data.dir,"Projected_PD_pathway_scores.csv", sep = ""))
-PD.ST.pred.no.SWM <- read.csv(paste(GO.pred.data.dir,"Projected_PD_pathway_scores_no_SWM.csv", sep = ""))
+PD.ST.pred <- read.csv(paste(results.dir.stats,"Projected_PD_pathway_scores.csv", sep = ""))
+PD.ST.pred.no.SWM <- read.csv(paste(results.dir.stats,"Projected_PD_pathway_scores_no_SWM.csv", sep = ""))
 
 POI.SWM <- as.character(read.delim("pathways_of_interest_SWM.txt", sep = ",", header = FALSE, quote = "'"))
 
@@ -27,7 +29,8 @@ POI.SWM <- as.character(read.delim("pathways_of_interest_SWM.txt", sep = ",", he
 SpD.cols <- c("#EE6677","#CCBB44","#228833","#66CCEE","#4477AA")
 
 # do LOO for these pathways
-# define a function to tun the LOO
+
+# define a function to run the LOO
 run.qMRI.ST.LOO <- function(dframe, ST, LOO, stats, group.string) {
   
   # loop though ST metrics
@@ -62,16 +65,21 @@ run.qMRI.ST.LOO <- function(dframe, ST, LOO, stats, group.string) {
       
     }
     
-    res <- cor.test(LOO[, paste(st, "predicted", sep = "_")],
-                    LOO[, paste(st, "actual", sep = "_")])
+    fit <- lm(as.formula(paste0(paste(st,"actual", sep = "_"),"~",
+                                paste(st,"predicted", sep = "_"))),
+              data = LOO)
+    res <- summary(fit)
+    LOO[,paste(st, "cooksd", sep = "_")]<-cooks.distance(fit)
+    
     # Save stats
     stats[ii,1] <- st
     stats[ii,2] <- nrmse(LOO[, paste(st, "predicted", sep = "_")],
                          LOO[, paste(st, "actual", sep = "_")])
-    stats[ii,3] <- res$statistic
-    stats[ii,4] <- res$estimate
-    stats[ii,5] <- res$estimate^2
-    stats[ii,6] <- res$p.value
+    stats[ii,3] <- res$coefficients[2,3]
+    stats[ii,4] <- cor.test(LOO[, paste(st, "predicted", sep = "_")],
+                            LOO[, paste(st, "actual", sep = "_")])
+    stats[ii,5] <- res$r.squared
+    stats[ii,6] <- res$coefficients[2, 4]
     
   }
   
@@ -127,6 +135,27 @@ plot.LOO <- function(ST, LOO) {
     )), size = 3.25)
 }
 
+# function to plot the LOO Cook's distance
+plot.LOO.cooksd <- function(ST, LOO) {
+  # sort by SpD
+  LOO <- LOO[order(LOO$SpD),]
+  x.data <- 1:nrow(LOO)
+  y.data <- LOO[[paste(ST, "cooksd", sep = "_")]]
+  
+  # define cutoff as N-k-1
+  cutoff <- 4/(nrow(LOO) - 1 - 1)
+  
+  ggplot(data = LOO, aes(x = x.data, y = y.data)) +
+    theme_minimal() +
+    theme(axis.title.x = element_blank(),
+          axis.text.x = element_blank(),
+          axis.title.y = element_blank()
+    ) +
+    ggtitle(ST) +
+    geom_point(aes(colour = SpD, shape = region)) +
+    geom_hline(yintercept = cutoff, linetype = "dotted", size = 1) +
+    scale_color_manual(values = SpD.cols)
+}
 
 # define empty data frames for LOO results
 GO.LOO.Ctrl.colnames <- paste(rep(POI.SWM,each = 3),c("actual","predicted", "SE"),sep = "_")
@@ -163,10 +192,27 @@ annotate_figure(multi.plot.GO.LOO.Ctrl, bottom = text_grob("Actual GO pathway sc
                 top = text_grob("Control qMRI medians predicting control GO pathway score"))
 dev.off()
 
+# plot the LOO cook's distance
+plot.list.GO.LOO.cooksd.Ctrl <- lapply(1:length(POI.SWM), function(i) plot.LOO.cooksd(ST = POI.SWM[i], GO.LOO.Ctrl))
+png(filename = paste(results.dir2, "/Plot_control_qMRI_vs_GO_pathway_LOO_extended_cooksd.png", sep = ""),
+    width = 1200, height = 700, units = "px", res = 120)
+multi.plot.GO.LOO.cooksd.Ctrl <- ggarrange(
+  plotlist = plot.list.GO.LOO.cooksd.Ctrl,
+  nrow = 3,
+  ncol = 5,
+  common.legend = TRUE,
+  legend = "right"
+)
+plot(multi.plot.GO.LOO.cooksd.Ctrl)
+annotate_figure(multi.plot.GO.LOO.cooksd.Ctrl,  
+                left = text_grob("Cook's distance", rot = 90),
+                top = text_grob("Influence of regions on GO LOO correlations"))
+dev.off()
+
 # save some stats
 GO.LOO.stats.Ctrl$corr_p <- p.adjust(GO.LOO.stats.Ctrl$p, method = "fdr")
 write.csv(GO.LOO.stats.Ctrl, file = paste(
-  results.dir2, "/Stats_control_qMRI_vs_GO_pathway_LOO_extended.csv", sep = ""), 
+  results.dir2.stats, "/Stats_control_qMRI_vs_GO_pathway_LOO_extended.csv", sep = ""), 
   row.names = FALSE)
 
 
@@ -252,7 +298,7 @@ dev.off()
 # # save some stats
 # GO.LOO.stats.Ctrl.no.SWM$corr_p <- p.adjust(GO.LOO.stats.Ctrl.no.SWM$p, method = "fdr")
 # write.csv(GO.LOO.stats.Ctrl.no.SWM, file = paste(
-#   results.dir, "/Stats_control_qMRI_vs_GO_pathway_LOO_no_SWM.csv", sep = ""), 
+#   results.dir2.stats, "/Stats_control_qMRI_vs_GO_pathway_LOO_no_SWM.csv", sep = ""), 
 #   row.names = FALSE)
 # 
 # 
