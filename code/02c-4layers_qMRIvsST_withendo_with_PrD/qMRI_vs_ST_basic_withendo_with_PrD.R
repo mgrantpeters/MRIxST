@@ -454,7 +454,11 @@ plot.ST.qMRI <- function(dframe ,MRIST, group.string) {
     }) +
     stat_cor(aes(label = paste(
       after_stat(rr.label), after_stat(p.label), sep = "~`, `~"
-    )), size = 3.25)
+    )), size = 3.25,
+    label.x = -Inf,
+    label.y = Inf,
+    hjust = 0,
+    vjust = 1)
 }
 
 plot.ST.qMRI.cooksd <- function(dframe ,MRIST, group.string) {
@@ -571,7 +575,7 @@ run.qMRI.ST.LOO <- function(dframe, ST, LOO, stats, group.string) {
                          LOO[, paste(st, "actual", sep = "_")])
     stats[ii,3] <- res$coefficients[2,3]
     stats[ii,4] <- cor.test(LOO[, paste(st, "predicted", sep = "_")],
-                            LOO[, paste(st, "actual", sep = "_")])
+                            LOO[, paste(st, "actual", sep = "_")])$estimate
     stats[ii,5] <- res$r.squared
     stats[ii,6] <- res$coefficients[2, 4]
     
@@ -625,7 +629,11 @@ plot.LOO <- function(ST, LOO) {
     }) +
     stat_cor(aes(label = paste(
       after_stat(rr.label), after_stat(p.label), sep = "~`, `~"
-    )), size = 3.25)
+    )), size = 3.25,
+    label.x = -Inf,
+    label.y = Inf,
+    hjust = 0,
+    vjust = 1)
 }
 
 # function to plot the LOO Cook's distance
@@ -1015,7 +1023,7 @@ cell.LOO.stats.Ctrl.no.SWM <- cell.LOO.Ctrl.output.no.SWM$stats
 # plot the LOO
 plot.list.cell.LOO.Ctrl.no.SWM <- lapply(1:length(COI), function(i) plot.LOO(ST = COI[i], cell.LOO.Ctrl.no.SWM))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_LOO_no_SWM.png", sep = ""),
-    width = 750, height = 600, units = "px", res = 120)
+    width = 600, height = 500, units = "px", res = 120)
 multi.plot.cell.LOO.Ctrl.no.SWM <- ggarrange(
   plotlist = plot.list.cell.LOO.Ctrl.no.SWM,
   nrow = 2,
@@ -1032,7 +1040,7 @@ dev.off()
 # plot the LOO cook's distance
 plot.list.cell.LOO.cooksd.Ctrl.no.SWM <- lapply(1:length(COI), function(i) plot.LOO.cooksd(ST = COI[i], cell.LOO.Ctrl.no.SWM))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_LOO_cooksd_no_SWM.png", sep = ""),
-    width = 750, height = 600, units = "px", res = 120)
+    width = 600, height = 500, units = "px", res = 120)
 multi.plot.cell.LOO.cooksd.Ctrl.no.SWM <- ggarrange(
   plotlist = plot.list.cell.LOO.cooksd.Ctrl.no.SWM,
   nrow = 2,
@@ -1075,7 +1083,7 @@ GO.LOO.stats.Ctrl.no.SWM <- GO.LOO.Ctrl.output.no.SWM$stats
 # plot the LOO
 plot.list.GO.LOO.Ctrl.no.SWM <- lapply(1:length(POI), function(i) plot.LOO(ST = POI.names[i], GO.LOO.Ctrl.no.SWM))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_pathway_LOO_no_SWM.png", sep = ""),
-    width = 750, height = 600, units = "px", res = 120)
+    width = 600, height = 500, units = "px", res = 120)
 multi.plot.GO.LOO.Ctrl.no.SWM <- ggarrange(
   plotlist = plot.list.GO.LOO.Ctrl.no.SWM,
   nrow = 2,
@@ -1094,7 +1102,7 @@ dev.off()
 # plot the LOO cook's distance
 plot.list.GO.LOO.cooksd.Ctrl.no.SWM <- lapply(1:length(COI), function(i) plot.LOO.cooksd(ST = POI.names[i], GO.LOO.Ctrl.no.SWM))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_pathway_LOO_cooksd_no_SWM.png", sep = ""),
-    width = 750, height = 600, units = "px", res = 120)
+    width = 600, height = 500, units = "px", res = 120)
 multi.plot.GO.LOO.cooksd.Ctrl.no.SWM <- ggarrange(
   plotlist = plot.list.GO.LOO.cooksd.Ctrl.no.SWM,
   nrow = 2,
