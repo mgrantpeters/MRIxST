@@ -400,12 +400,15 @@ write.csv(adj.qMRI.ST.medians, file = paste(
   row.names = FALSE)
 
 # define a function to plot the data
-plot.ST.qMRI <- function(dframe ,MRIST, group.string) {
+plot.ST.qMRI <- function(dframe ,MRIST, group.string, sts) {
   MRI <- MRIST[1]
   ST <- MRIST[2]
   
   x.data <- dframe[[paste(MRI, "_", group.string, sep = "")]]
   y.data <- dframe[[paste(ST, "_Control", sep = "")]]
+  
+  R2 <- sts[sts[,1] == MRI[[1]] & sts[,2] == ST[[1]], ]$R2
+  adj.p <- sts[sts[,1] == MRI[[1]] & sts[,2] == ST[[1]], ]$corr_p
   
   ggplot(data = dframe, aes(x = x.data, y = y.data)) +
     theme_minimal() +
@@ -452,13 +455,21 @@ plot.ST.qMRI <- function(dframe ,MRIST, group.string) {
         )
       )
     }) +
-    stat_cor(aes(label = paste(
-      after_stat(rr.label), after_stat(p.label), sep = "~`, `~"
-    )), size = 3.25,
-    label.x = -Inf,
-    label.y = Inf,
-    hjust = 0,
-    vjust = 1)
+    annotate("text",
+             x = -Inf,
+             y = Inf,
+             hjust = 0,
+             vjust = 1,
+             label = as.expression(bquote(
+               R^2 == .(signif(R2, 2)) ~ "," ~ p[FDR] == .(if (adj.p < 1e-3) {
+                 format(adj.p, digits = 2, scientific = TRUE)
+               } else {
+                 signif(adj.p, 2)
+               })
+             )),
+             size = 3.25,
+             parse = TRUE
+    )
 }
 
 plot.ST.qMRI.cooksd <- function(dframe ,MRIST, group.string) {
@@ -587,9 +598,12 @@ run.qMRI.ST.LOO <- function(dframe, ST, LOO, stats, group.string) {
 }
 
 # define a function to plot the data
-plot.LOO <- function(ST, LOO) {
+plot.LOO <- function(ST, LOO,sts) {
   x.data <- LOO[, paste(ST, "actual", sep = "_")]
   y.data <- LOO[[paste(ST, "predicted", sep = "_")]]
+  
+  R2 <- sts[sts[,1] == ST[[1]], ]$R2
+  adj.p <- sts[sts[,1] == ST[[1]], ]$corr_p
   
   ggplot(data = LOO, aes(x = x.data, y = y.data)) +
     theme_minimal() +
@@ -627,13 +641,21 @@ plot.LOO <- function(ST, LOO) {
         )
       )
     }) +
-    stat_cor(aes(label = paste(
-      after_stat(rr.label), after_stat(p.label), sep = "~`, `~"
-    )), size = 3.25,
-    label.x = -Inf,
-    label.y = Inf,
-    hjust = 0,
-    vjust = 1)
+    annotate("text",
+             x = -Inf,
+             y = Inf,
+             hjust = 0,
+             vjust = 1,
+             label = as.expression(bquote(
+               R^2 == .(signif(R2, 2)) ~ "," ~ p[FDR] == .(if (adj.p < 1e-3) {
+                 format(adj.p, digits = 2, scientific = TRUE)
+               } else {
+                 signif(adj.p, 2)
+               })
+             )),
+             size = 3.25,
+             parse = TRUE
+    )
 }
 
 # function to plot the LOO Cook's distance
@@ -662,9 +684,20 @@ plot.LOO.cooksd <- function(ST, LOO) {
 
 # CELL COUNTS
 
+# generate a stats table
+cell.stats.Ctrl <- lapply(1:nrow(MOICOI), function(i) stats.ST.qMRI(
+  dframe = adj.qMRI.ST.medians, MRIST = MOICOI[i,], group.string = "Control"))
+cell.stats.Ctrl <- as.data.frame(do.call(rbind, cell.stats.Ctrl))
+cell.stats.Ctrl <- cbind(MOICOI,cell.stats.Ctrl)
+colnames(cell.stats.Ctrl) <- c("qMRI", "cell_type", "T", "rho", "R2","p")
+cell.stats.Ctrl$corr_p <- p.adjust(cell.stats.Ctrl$p, method = "fdr")
+write.csv(cell.stats.Ctrl, file = paste(
+  results.dir.stats, "/Stats_control_qMRI_vs_cell_count.csv", sep = ""), 
+  row.names = FALSE)
+
 # lapply the plot function to create a multi plot
 cell.plot.list.Ctrl <- lapply(1:nrow(MOICOI), function(i) plot.ST.qMRI(
-  dframe = adj.qMRI.ST.medians, MRIST = MOICOI[i, ], group.string = "Control"))
+  dframe = adj.qMRI.ST.medians, MRIST = MOICOI[i, ], group.string = "Control",sts = cell.stats.Ctrl))
 
 # Ctrl
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count.png", sep = ""),
@@ -700,23 +733,22 @@ annotate_figure(cell.multi.plot.cooksd.Ctrl,
                 left = text_grob("Cook's distance", rot = 90))
 dev.off()
 
-# now generate a stats table
-stats.Ctrl <- lapply(1:nrow(MOICOI), function(i) stats.ST.qMRI(
-  dframe = adj.qMRI.ST.medians, MRIST = MOICOI[i,], group.string = "Control"))
-stats.Ctrl <- as.data.frame(do.call(rbind, stats.Ctrl))
-stats.Ctrl <- cbind(MOICOI,stats.Ctrl)
-colnames(stats.Ctrl) <- c("qMRI", "cell_type", "T", "rho", "R2","p")
-stats.Ctrl$corr_p <- p.adjust(stats.Ctrl$p, method = "fdr")
-write.csv(stats.Ctrl, file = paste(
-  results.dir.stats, "/Stats_control_qMRI_vs_cell_count.csv", sep = ""), 
-  row.names = FALSE)
-
-
 # GO PATHWAYS
+
+# generate a stats table
+GO.stats.Ctrl <- lapply(1:nrow(MOIPOI), function(i) stats.ST.qMRI(
+  dframe = adj.qMRI.ST.medians, MRIST = MOIPOI[i,], group.string = "Control"))
+GO.stats.Ctrl <- as.data.frame(do.call(rbind, GO.stats.Ctrl))
+GO.stats.Ctrl <- cbind(MOIPOI,GO.stats.Ctrl)
+colnames(GO.stats.Ctrl) <- c("qMRI", "pathway_score", "T", "rho", "R2","p")
+GO.stats.Ctrl$corr_p <- p.adjust(GO.stats.Ctrl$p, method = "fdr")
+write.csv(GO.stats.Ctrl, file = paste(
+  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway.csv", sep = ""), 
+  row.names = FALSE)
 
 # lapply the plot function to create a multi plot
 GO.plot.list.Ctrl <- lapply(1:nrow(MOIPOI), function(i) plot.ST.qMRI(
-  dframe = adj.qMRI.ST.medians, MRIST = MOIPOI[i, ], group.string = "Control"))
+  dframe = adj.qMRI.ST.medians, MRIST = MOIPOI[i, ], group.string = "Control",sts = GO.stats.Ctrl))
 
 # Ctrl
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_pathway.png", sep = ""),
@@ -752,17 +784,6 @@ annotate_figure(GO.multi.plot.cooksd.Ctrl,
                 left = text_grob("Cook's distance", rot = 90))
 dev.off()
 
-# now generate a stats table
-stats.Ctrl <- lapply(1:nrow(MOIPOI), function(i) stats.ST.qMRI(
-  dframe = adj.qMRI.ST.medians, MRIST = MOIPOI[i,], group.string = "Control"))
-stats.Ctrl <- as.data.frame(do.call(rbind, stats.Ctrl))
-stats.Ctrl <- cbind(MOIPOI,stats.Ctrl)
-colnames(stats.Ctrl) <- c("qMRI", "pathway_score", "T", "rho", "R2","p")
-stats.Ctrl$corr_p <- p.adjust(stats.Ctrl$p, method = "fdr")
-write.csv(stats.Ctrl, file = paste(
-  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway.csv", sep = ""), 
-  row.names = FALSE)
-
 #### qMRI vs ST LOO with SWM ####
 
 # CELL COUNTS
@@ -785,8 +806,15 @@ cell.LOO.Ctrl.output <- run.qMRI.ST.LOO(dframe = adj.qMRI.ST.medians,
 cell.LOO.Ctrl <- cell.LOO.Ctrl.output$LOO
 cell.LOO.stats.Ctrl <- cell.LOO.Ctrl.output$stats
 
+# save some stats
+cell.LOO.stats.Ctrl$corr_p <- p.adjust(cell.LOO.stats.Ctrl$p, method = "fdr")
+write.csv(cell.LOO.stats.Ctrl, file = paste(
+  results.dir.stats, "/Stats_control_qMRI_vs_cell_count_LOO.csv", sep = ""), 
+  row.names = FALSE)
+
 # plot the LOO
-plot.list.cell.LOO.Ctrl <- lapply(1:length(COI), function(i) plot.LOO(ST = COI[i], cell.LOO.Ctrl))
+plot.list.cell.LOO.Ctrl <- lapply(1:length(COI), function(i)
+  plot.LOO(ST = COI[i], LOO = cell.LOO.Ctrl, sts = cell.LOO.stats.Ctrl))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_LOO.png", sep = ""),
     width = 750, height = 600, units = "px", res = 120)
 multi.plot.cell.LOO.Ctrl <- ggarrange(
@@ -819,13 +847,6 @@ annotate_figure(multi.plot.cell.LOO.cooksd.Ctrl,
                 top = text_grob("Influence of regions on cell LOO correlations"))
 dev.off()
 
-# save some stats
-cell.LOO.stats.Ctrl$corr_p <- p.adjust(cell.LOO.stats.Ctrl$p, method = "fdr")
-write.csv(cell.LOO.stats.Ctrl, file = paste(
-  results.dir.stats, "/Stats_control_qMRI_vs_cell_count_LOO.csv", sep = ""), 
-  row.names = FALSE)
-
-
 # GO PATHWAYS
 
 # define empty data frames for LOO results
@@ -846,8 +867,15 @@ GO.LOO.Ctrl.output <- run.qMRI.ST.LOO(dframe = adj.qMRI.ST.medians,
 GO.LOO.Ctrl <- GO.LOO.Ctrl.output$LOO
 GO.LOO.stats.Ctrl <- GO.LOO.Ctrl.output$stats
 
+# save some stats
+GO.LOO.stats.Ctrl$corr_p <- p.adjust(GO.LOO.stats.Ctrl$p, method = "fdr")
+write.csv(GO.LOO.stats.Ctrl, file = paste(
+  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway_LOO.csv", sep = ""), 
+  row.names = FALSE)
+
 # plot the LOO
-plot.list.GO.LOO.Ctrl <- lapply(1:length(POI), function(i) plot.LOO(ST = POI.names[i], GO.LOO.Ctrl))
+plot.list.GO.LOO.Ctrl <- lapply(1:length(POI), function(i) 
+  plot.LOO(ST = POI.names[i], LOO = GO.LOO.Ctrl, sts = GO.LOO.stats.Ctrl))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_pathway_LOO.png", sep = ""),
     width = 750, height = 600, units = "px", res = 120)
 multi.plot.GO.LOO.Ctrl <- ggarrange(
@@ -880,12 +908,6 @@ annotate_figure(multi.plot.GO.LOO.cooksd.Ctrl,
                 top = text_grob("Influence of regions on GO LOO correlations"))
 dev.off()
 
-# save some stats
-GO.LOO.stats.Ctrl$corr_p <- p.adjust(GO.LOO.stats.Ctrl$p, method = "fdr")
-write.csv(GO.LOO.stats.Ctrl, file = paste(
-  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway_LOO.csv", sep = ""), 
-  row.names = FALSE)
-
 
 #### qMRI vs ST correlation no SWM ####
 
@@ -897,9 +919,20 @@ SpD.cols <- c("#66CCEE","#228833","#CCBB44","#EE6677")
 
 # CELL COUNTS
 
+# generate a stats table
+cell.stats.Ctrl.no.SWM <- lapply(1:nrow(MOICOI), function(i) stats.ST.qMRI(
+  dframe = adj.qMRI.ST.medians.no.SWM, MRIST = MOICOI[i,], group.string = "Control"))
+cell.stats.Ctrl.no.SWM <- as.data.frame(do.call(rbind, cell.stats.Ctrl.no.SWM))
+cell.stats.Ctrl.no.SWM <- cbind(MOICOI,cell.stats.Ctrl.no.SWM)
+colnames(cell.stats.Ctrl.no.SWM) <- c("qMRI", "cell_type", "T", "rho", "R2","p")
+cell.stats.Ctrl.no.SWM$corr_p <- p.adjust(cell.stats.Ctrl.no.SWM$p, method = "fdr")
+write.csv(cell.stats.Ctrl.no.SWM, file = paste(
+  results.dir.stats, "/Stats_control_qMRI_vs_cell_count_no_SWM.csv", sep = ""), 
+  row.names = FALSE)
+
 # lapply the plot function to create a multi plot
 cell.plot.list.Ctrl.no.SWM <- lapply(1:nrow(MOICOI), function(i) plot.ST.qMRI(
-  dframe = adj.qMRI.ST.medians.no.SWM, MRIST = MOICOI[i, ], group.string = "Control"))
+  dframe = adj.qMRI.ST.medians.no.SWM, MRIST = MOICOI[i, ], group.string = "Control", sts = cell.stats.Ctrl.no.SWM))
 
 # Ctrl
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_no_SWM.png", sep = ""),
@@ -935,23 +968,22 @@ annotate_figure(cell.multi.plot.cooksd.Ctrl.no.SWM,
                 left = text_grob("Cook's distance", rot = 90))
 dev.off()
 
-# now generate a stats table
-cell.stats.Ctrl.no.SWM <- lapply(1:nrow(MOICOI), function(i) stats.ST.qMRI(
-  dframe = adj.qMRI.ST.medians.no.SWM, MRIST = MOICOI[i,], group.string = "Control"))
-cell.stats.Ctrl.no.SWM <- as.data.frame(do.call(rbind, cell.stats.Ctrl.no.SWM))
-cell.stats.Ctrl.no.SWM <- cbind(MOICOI,cell.stats.Ctrl.no.SWM)
-colnames(cell.stats.Ctrl.no.SWM) <- c("qMRI", "cell_type", "T", "rho", "R2","p")
-cell.stats.Ctrl.no.SWM$corr_p <- p.adjust(cell.stats.Ctrl.no.SWM$p, method = "fdr")
-write.csv(cell.stats.Ctrl.no.SWM, file = paste(
-  results.dir.stats, "/Stats_control_qMRI_vs_cell_count_no_SWM.csv", sep = ""), 
-  row.names = FALSE)
-
-
 # GO PATHWAYS
+
+# generate a stats table
+GO.stats.Ctrl.no.SWM <- lapply(1:nrow(MOIPOI), function(i) stats.ST.qMRI(
+  dframe = adj.qMRI.ST.medians.no.SWM, MRIST = MOIPOI[i,], group.string = "Control"))
+GO.stats.Ctrl.no.SWM <- as.data.frame(do.call(rbind, GO.stats.Ctrl.no.SWM))
+GO.stats.Ctrl.no.SWM <- cbind(MOIPOI,GO.stats.Ctrl.no.SWM)
+colnames(GO.stats.Ctrl.no.SWM) <- c("qMRI", "pathway_score", "T", "rho", "R2","p")
+GO.stats.Ctrl.no.SWM$corr_p <- p.adjust(GO.stats.Ctrl.no.SWM$p, method = "fdr")
+write.csv(GO.stats.Ctrl.no.SWM, file = paste(
+  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway_no_SWM.csv", sep = ""), 
+  row.names = FALSE)
 
 # lapply the plot function to create a multi plot
 GO.plot.list.Ctrl.no.SWM <- lapply(1:nrow(MOIPOI), function(i) plot.ST.qMRI(
-  dframe = adj.qMRI.ST.medians.no.SWM, MRIST = MOIPOI[i, ], group.string = "Control"))
+  dframe = adj.qMRI.ST.medians.no.SWM, MRIST = MOIPOI[i, ], group.string = "Control", sts = GO.stats.Ctrl.no.SWM))
 
 # Ctrl
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_pathway_no_SWM.png", sep = ""),
@@ -987,18 +1019,6 @@ annotate_figure(GO.multi.plot.cooksd.Ctrl.no.SWM,
                 left = text_grob("Cook's distance", rot = 90))
 dev.off()
 
-
-# now generate a stats table
-GO.stats.Ctrl.no.SWM <- lapply(1:nrow(MOIPOI), function(i) stats.ST.qMRI(
-  dframe = adj.qMRI.ST.medians.no.SWM, MRIST = MOIPOI[i,], group.string = "Control"))
-GO.stats.Ctrl.no.SWM <- as.data.frame(do.call(rbind, GO.stats.Ctrl.no.SWM))
-GO.stats.Ctrl.no.SWM <- cbind(MOIPOI,GO.stats.Ctrl.no.SWM)
-colnames(GO.stats.Ctrl.no.SWM) <- c("qMRI", "pathway_score", "T", "rho", "R2","p")
-GO.stats.Ctrl.no.SWM$corr_p <- p.adjust(GO.stats.Ctrl.no.SWM$p, method = "fdr")
-write.csv(GO.stats.Ctrl.no.SWM, file = paste(
-  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway_no_SWM.csv", sep = ""), 
-  row.names = FALSE)
-
 #### qMRI vs ST LOO no SWM ####
 
 # CELL COUNTS
@@ -1020,8 +1040,15 @@ cell.LOO.Ctrl.output.no.SWM <- run.qMRI.ST.LOO(dframe = adj.qMRI.ST.medians.no.S
 cell.LOO.Ctrl.no.SWM <- cell.LOO.Ctrl.output.no.SWM$LOO
 cell.LOO.stats.Ctrl.no.SWM <- cell.LOO.Ctrl.output.no.SWM$stats
 
+# save some stats
+cell.LOO.stats.Ctrl.no.SWM$corr_p <- p.adjust(cell.LOO.stats.Ctrl.no.SWM$p, method = "fdr")
+write.csv(cell.LOO.stats.Ctrl.no.SWM, file = paste(
+  results.dir.stats, "/Stats_control_qMRI_vs_cell_count_LOO_no_SWM.csv", sep = ""), 
+  row.names = FALSE)
+
 # plot the LOO
-plot.list.cell.LOO.Ctrl.no.SWM <- lapply(1:length(COI), function(i) plot.LOO(ST = COI[i], cell.LOO.Ctrl.no.SWM))
+plot.list.cell.LOO.Ctrl.no.SWM <- lapply(1:length(COI), function(i) 
+  plot.LOO(ST = COI[i], LOO = cell.LOO.Ctrl.no.SWM, sts = cell.LOO.stats.Ctrl.no.SWM))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_LOO_no_SWM.png", sep = ""),
     width = 600, height = 500, units = "px", res = 120)
 multi.plot.cell.LOO.Ctrl.no.SWM <- ggarrange(
@@ -1054,13 +1081,6 @@ annotate_figure(multi.plot.cell.LOO.cooksd.Ctrl.no.SWM,
                 top = text_grob("Influence of regions on cell LOO correlations"))
 dev.off()
 
-# save some stats
-cell.LOO.stats.Ctrl.no.SWM$corr_p <- p.adjust(cell.LOO.stats.Ctrl.no.SWM$p, method = "fdr")
-write.csv(cell.LOO.stats.Ctrl.no.SWM, file = paste(
-  results.dir.stats, "/Stats_control_qMRI_vs_cell_count_LOO_no_SWM.csv", sep = ""), 
-  row.names = FALSE)
-
-
 # GO PATHWAYS
 
 # define empty data frames for LOO results
@@ -1080,8 +1100,15 @@ GO.LOO.Ctrl.output.no.SWM <- run.qMRI.ST.LOO(dframe = adj.qMRI.ST.medians.no.SWM
 GO.LOO.Ctrl.no.SWM <- GO.LOO.Ctrl.output.no.SWM$LOO
 GO.LOO.stats.Ctrl.no.SWM <- GO.LOO.Ctrl.output.no.SWM$stats
 
+# save some stats
+GO.LOO.stats.Ctrl.no.SWM$corr_p <- p.adjust(GO.LOO.stats.Ctrl.no.SWM$p, method = "fdr")
+write.csv(GO.LOO.stats.Ctrl.no.SWM, file = paste(
+  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway_LOO_no_SWM.csv", sep = ""), 
+  row.names = FALSE)
+
 # plot the LOO
-plot.list.GO.LOO.Ctrl.no.SWM <- lapply(1:length(POI), function(i) plot.LOO(ST = POI.names[i], GO.LOO.Ctrl.no.SWM))
+plot.list.GO.LOO.Ctrl.no.SWM <- lapply(1:length(POI), function(i) 
+  plot.LOO(ST = POI.names[i], LOO = GO.LOO.Ctrl.no.SWM, sts = GO.LOO.stats.Ctrl.no.SWM))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_pathway_LOO_no_SWM.png", sep = ""),
     width = 600, height = 500, units = "px", res = 120)
 multi.plot.GO.LOO.Ctrl.no.SWM <- ggarrange(
@@ -1115,9 +1142,3 @@ annotate_figure(multi.plot.GO.LOO.cooksd.Ctrl.no.SWM,
                 left = text_grob("Cook's distance", rot = 90),
                 top = text_grob("Influence of regions on GO LOO correlations"))
 dev.off()
-
-# save some stats
-GO.LOO.stats.Ctrl.no.SWM$corr_p <- p.adjust(GO.LOO.stats.Ctrl.no.SWM$p, method = "fdr")
-write.csv(GO.LOO.stats.Ctrl.no.SWM, file = paste(
-  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway_LOO_no_SWM.csv", sep = ""), 
-  row.names = FALSE)

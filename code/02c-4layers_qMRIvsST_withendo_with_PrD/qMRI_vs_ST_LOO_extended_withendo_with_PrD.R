@@ -82,15 +82,17 @@ run.qMRI.ST.LOO <- function(dframe, ST, LOO, stats, group.string) {
 }
 
 # define a function to plot the data
-plot.LOO <- function(ST, LOO) {
+plot.LOO <- function(ST, LOO,sts) {
   x.data <- LOO[, paste(ST, "actual", sep = "_")]
   y.data <- LOO[[paste(ST, "predicted", sep = "_")]]
+  
+  R2 <- sts[sts[,1] == ST[[1]], ]$R2
+  adj.p <- sts[sts[,1] == ST[[1]], ]$corr_p
   
   ggplot(data = LOO, aes(x = x.data, y = y.data)) +
     theme_minimal() +
     theme(axis.title.x = element_blank(),
-          axis.title.y = element_blank(),
-          plot.title = element_text(size=10)
+          axis.title.y = element_blank()
     ) +
     ggtitle(ST) +
     geom_smooth(
@@ -123,9 +125,21 @@ plot.LOO <- function(ST, LOO) {
         )
       )
     }) +
-    stat_cor(aes(label = paste(
-      after_stat(rr.label), after_stat(p.label), sep = "~`, `~"
-    )), size = 3.25)
+    annotate("text",
+             x = -Inf,
+             y = Inf,
+             hjust = 0,
+             vjust = 1,
+             label = as.expression(bquote(
+               R^2 == .(signif(R2, 2)) ~ "," ~ p[FDR] == .(if (adj.p < 1e-3) {
+                 format(adj.p, digits = 2, scientific = TRUE)
+               } else {
+                 signif(adj.p, 2)
+               })
+             )),
+             size = 3.25,
+             parse = TRUE
+    )
 }
 
 # function to plot the LOO Cook's distance
@@ -169,10 +183,17 @@ GO.LOO.Ctrl.no.SWM.output <- run.qMRI.ST.LOO(dframe = adj.qMRI.ST.medians.no.SWM
 GO.LOO.Ctrl.no.SWM <- GO.LOO.Ctrl.no.SWM.output$LOO
 GO.LOO.stats.Ctrl.no.SWM <- GO.LOO.Ctrl.no.SWM.output$stats
 
+# save some stats
+GO.LOO.stats.Ctrl.no.SWM$corr_p <- p.adjust(GO.LOO.stats.Ctrl.no.SWM$p, method = "fdr")
+write.csv(GO.LOO.stats.Ctrl.no.SWM, file = paste(
+  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway_LOO_no_SWM_extended.csv", sep = ""),
+  row.names = FALSE)
+
 # plot the LOO
-plot.list.GO.LOO.Ctrl.no.SWM <- lapply(1:length(POI.noSWM), function(i) plot.LOO(ST = POI.noSWM[i], GO.LOO.Ctrl.no.SWM))
+plot.list.GO.LOO.Ctrl.no.SWM <- lapply(1:length(POI.noSWM), function(i) 
+  plot.LOO(ST = POI.noSWM[i], LOO = GO.LOO.Ctrl.no.SWM, sts = GO.LOO.stats.Ctrl.no.SWM))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_pathway_LOO_no_SWM_extended.png", sep = ""),
-    width = 1200, height = 700, units = "px", res = 120)
+    width = 1400, height = 700, units = "px", res = 120)
 multi.plot.GO.LOO.Ctrl.no.SWM <- ggarrange(
   plotlist = plot.list.GO.LOO.Ctrl.no.SWM,
   nrow = 3,
@@ -202,9 +223,3 @@ annotate_figure(multi.plot.GO.LOO.cooksd.Ctrl.no.SWM,
                 left = text_grob("Cook's distance", rot = 90),
                 top = text_grob("Influence of regions on GO LOO correlations"))
 dev.off()
-
-# save some stats
-GO.LOO.stats.Ctrl.no.SWM$corr_p <- p.adjust(GO.LOO.stats.Ctrl.no.SWM$p, method = "fdr")
-write.csv(GO.LOO.stats.Ctrl.no.SWM, file = paste(
-  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway_LOO_no_SWM_extended.csv", sep = ""),
-  row.names = FALSE)
