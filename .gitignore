@@ -2,3 +2,5 @@
 *.Rhistory
 .Rproj.user
 *_1x1binned_*
+OLD__*.csv
+EXTRA_*.csv
