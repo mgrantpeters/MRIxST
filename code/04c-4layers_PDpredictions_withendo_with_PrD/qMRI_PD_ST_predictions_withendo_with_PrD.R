@@ -136,13 +136,15 @@ ST.dems <- ST.dems[order(ST.dems$sample_id),]
 ST.dems$sex <- factor(ST.dems$sex)
 
 # specify the cell types we're interested in
-COI <- c("Astro", "Micro", "Oligo", "OPC")
+COI <- c("Astro", "Micro", "Oligo", "OPC", "Inhib")
 
 # get names of 4 layer cell count files
 all.cell.fnames <- dir(cell.data.dir,"count_(.+)_4SpD")
 
-# select only the interesting ones
-COI.fnames <- all.cell.fnames[grep(paste(COI, collapse = "|"), all.cell.fnames)]
+# select only the interesting ones (preserve COI order)
+COI.fnames <- unlist(lapply(COI, function(coi) {
+  grep(coi, all.cell.fnames, value = TRUE)
+}))
 
 # put these all into one data frame with the dems
 cell.data.dems <- ST.dems

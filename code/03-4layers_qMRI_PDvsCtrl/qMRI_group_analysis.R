@@ -67,7 +67,7 @@ qMRI.data.dems.QSM.melt$SpD <- factor(qMRI.data.dems.QSM.melt$SpD, levels = c("S
 # putting everything into one model rather than running loads
 mdl.QSM <- aov(data = qMRI.data.dems.QSM.melt, QSM ~ age + sex + SpD*diagnosis)
 # calculate estimated marginal means (adjusting for age and sex)
-mdl.QSM.emns <- emmeans(mdl.QSM, pairwise ~ diagnosis | SpD, cov.reduce = mean, adjust = "bonferroni")
+mdl.QSM.emns <- emmeans(mdl.QSM, pairwise ~ diagnosis | SpD, cov.reduce = mean, adjust = "fdr")
 
 print("#################### QSM ####################")
 
@@ -104,7 +104,7 @@ qMRI.data.dems.R1.melt$SpD <- factor(qMRI.data.dems.R1.melt$SpD, levels = c("SWM
 # putting everything into one model rather than running loads
 mdl.R1 <- aov(data = qMRI.data.dems.R1.melt, R1 ~ age + sex + SpD*diagnosis)
 # calculate estimated marginal means (adjusting for age and sex)
-mdl.R1.emns <- emmeans(mdl.R1, pairwise ~ diagnosis | SpD, cov.reduce = mean, adjust = "bonferroni")
+mdl.R1.emns <- emmeans(mdl.R1, pairwise ~ diagnosis | SpD, cov.reduce = mean, adjust = "fdr")
 
 print("#################### R1 ####################")
 
@@ -141,7 +141,7 @@ qMRI.data.dems.R2s.melt$SpD <- factor(qMRI.data.dems.R2s.melt$SpD, levels = c("S
 # putting everything into one model rather than running loads
 mdl.R2s <- aov(data = qMRI.data.dems.R2s.melt, R2s ~ age + sex + SpD*diagnosis)
 # calculate estimated marginal means (adjusting for age and sex)
-mdl.R2s.emns <- emmeans(mdl.R2s, pairwise ~ diagnosis | SpD, cov.reduce = mean, adjust = "bonferroni")
+mdl.R2s.emns <- emmeans(mdl.R2s, pairwise ~ diagnosis | SpD, cov.reduce = mean, adjust = "fdr")
 
 print("#################### R2s ####################")
 
@@ -178,7 +178,7 @@ qMRI.data.dems.PrD.melt$SpD <- factor(qMRI.data.dems.PrD.melt$SpD, levels = c("S
 # putting everything into one model rather than running loads
 mdl.PrD <- aov(data = qMRI.data.dems.PrD.melt, PrD ~ age + sex + SpD*diagnosis)
 # calculate estimated marginal means (adjusting for age and sex)
-mdl.PrD.emns <- emmeans(mdl.PrD, pairwise ~ diagnosis | SpD, cov.reduce = mean, adjust = "bonferroni")
+mdl.PrD.emns <- emmeans(mdl.PrD, pairwise ~ diagnosis | SpD, cov.reduce = mean, adjust = "fdr")
 
 print("#################### PrD ####################")
 
@@ -215,7 +215,7 @@ qMRI.data.dems.MTsat.melt$SpD <- factor(qMRI.data.dems.MTsat.melt$SpD, levels = 
 # putting everything into one model rather than running loads
 mdl.MTsat <- aov(data = qMRI.data.dems.MTsat.melt, MTsat ~ age + sex + SpD*diagnosis)
 # calculate estimated marginal means (adjusting for age and sex)
-mdl.MTsat.emns <- emmeans(mdl.MTsat, pairwise ~ diagnosis | SpD, cov.reduce = mean, adjust = "bonferroni")
+mdl.MTsat.emns <- emmeans(mdl.MTsat, pairwise ~ diagnosis | SpD, cov.reduce = mean, adjust = "fdr")
 
 print("#################### MTsat ####################")
 

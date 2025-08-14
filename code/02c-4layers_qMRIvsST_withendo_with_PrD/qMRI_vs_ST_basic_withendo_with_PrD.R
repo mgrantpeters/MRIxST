@@ -17,6 +17,7 @@ dems.dir<- paste(d0, "/../../raw_data/participant_info/", sep = "")
 results.dir <- paste(d0, "/../../plots/02c-4layers_qMRIvsST_withendo_with_PrD/", sep = "")
 results.dir.stats <- paste(d0, "/../../stats/02c-4layers_qMRIvsST_withendo_with_PrD/", sep = "")
 results.dir.qMRIonly <- paste(d0, "/../../plots/00-4layers_qMRI/", sep = "")
+results.dir.cellonly <- paste(d0, "/../../plots/01b-4layers_withendo/02-top3_cells_counts/", sep = "")
 
 # make a function to rename layers like so:
 # L4 --> SpD1
@@ -135,30 +136,18 @@ ST.dems <- ST.dems[order(ST.dems$sample_id),]
 ST.dems$sex <- factor(ST.dems$sex)
 
 # specify the cell types we're interested in
-COI <- c("Astro", "Micro", "Oligo", "OPC")
+COI <- c("Astro","Micro", "Oligo", "OPC","Inhib")
 
 # get names of 4 layer cell count files
 all.cell.fnames <- dir(cell.data.dir,"count_(.+)_4SpD_withEndo")
 
-# select only the interesting ones
-COI.fnames <- all.cell.fnames[grep(paste(COI, collapse = "|"), all.cell.fnames)]
+# select only the interesting ones (preserve COI order)
+COI.fnames <- unlist(lapply(COI, function(coi) {
+  grep(coi, all.cell.fnames, value = TRUE)
+}))
 
 # put these all into one data frame with the dems
 cell.data.dems <- ST.dems
-
-# the below is for loading in the mean norm cell data
-# for (i in 1:length(COI.fnames)){
-#   COI.fname <- COI.fnames[i]
-#   cell.data <- read.csv(paste(cell.data.dir, COI.fname, sep = ""))
-#   cell.data <- cell.data[,2:ncol(cell.data)]
-#   colnames(cell.data) <- paste(COI[i],"_",colnames(cell.data),sep="")
-#   cell.data <- cell.data[,c(paste(COI[i], "_WM",sep = ""),
-#                             paste(COI[i], "_L1",sep = ""),
-#                             paste(COI[i], "_L2",sep = ""),
-#                             paste(COI[i], "_L3",sep = ""),
-#                             paste(COI[i], "_L4",sep = ""))]
-#   cell.data.dems <- cbind(cell.data.dems,cell.data)
-# }
 
 # go through the fnames, load in and merge together
 for (i in 1:length(COI.fnames)){
@@ -309,7 +298,7 @@ qMRI.boxplot <- function(metric, dframe) {
     dframe[dframe[,paste("inc_",metric,sep = "")],],
     aes(SpD, .data[[metric]], fill = SpD, shape = region)
   ) +
-    geom_point(position = position_jitterdodge(), aes(colour = SpD, alpha = 1)) +
+    geom_point(position = position_jitterdodge(), aes(colour = SpD), alpha = 0.9) +
     geom_boxplot(alpha = 0) +
     theme_minimal() +
     theme(axis.title.x = element_blank()) +
@@ -324,7 +313,7 @@ qMRI.boxplotlist.Ctrl <- lapply(1:length(MOI), function(i)
   qMRI.boxplot(metric = MOI[i], adj.qMRI.data.long.Ctrl))
 
 png(filename = paste(results.dir.qMRIonly, "/Control_qMRI_boxplots.png", sep = ""),
-    width = 1000, height = 400, units = "px", res = 120)
+    width = 1600, height = 600, units = "px", res = 120)
 qMRI.multiboxplot.Ctrl <- ggarrange(plotlist = qMRI.boxplotlist.Ctrl, 
                                     nrow = 1, ncol = 5, 
                                     common.legend = TRUE, 
@@ -337,13 +326,52 @@ qMRI.boxplotlist.PD <- lapply(1:length(MOI), function(i)
   qMRI.boxplot(metric = MOI[i], adj.qMRI.data.long.PD))
 
 png(filename = paste(results.dir.qMRIonly, "/PD_qMRI_boxplots.png", sep = ""),
-    width = 1000, height = 400, units = "px", res = 120)
+    width = 1600, height = 600, units = "px", res = 120)
 qMRI.multiboxplot.PD <- ggarrange(plotlist = qMRI.boxplotlist.PD, 
                                   nrow = 1, ncol = 5, 
                                   common.legend = TRUE, 
                                   legend = "right")
 plot(qMRI.multiboxplot.PD)
 dev.off()
+
+# run again without SWM
+
+adj.qMRI.data.long.no.SWM <- subset(adj.qMRI.data.long, SpD != "SWM")
+
+# plot for controls & PD
+adj.qMRI.data.long.Ctrl.no.SWM <- subset(adj.qMRI.data.long.no.SWM, diagnosis == "Control")
+adj.qMRI.data.long.PD.no.SWM <- subset(adj.qMRI.data.long.no.SWM, diagnosis == "PD")
+
+dom <- c("SpD4", "SpD3","SpD2","SpD1")
+# colours for spatial domains
+SpD.cols <- c("#66CCEE","#228833","#CCBB44","#EE6677")
+
+# qMRI boxplots for Ctrl
+qMRI.boxplotlist.Ctrl.no.SWM <- lapply(1:length(MOI), function(i) 
+  qMRI.boxplot(metric = MOI[i], adj.qMRI.data.long.Ctrl.no.SWM))
+
+png(filename = paste(results.dir.qMRIonly, "/Control_qMRI_boxplots_no_SWM.png", sep = ""),
+    width = 1400, height = 600, units = "px", res = 120)
+qMRI.multiboxplot.Ctrl.no.SWM <- ggarrange(plotlist = qMRI.boxplotlist.Ctrl.no.SWM, 
+                                    nrow = 1, ncol = 5, 
+                                    common.legend = TRUE, 
+                                    legend = "right")
+plot(qMRI.multiboxplot.Ctrl.no.SWM)
+dev.off()
+
+# qMRI boxplots for PD
+qMRI.boxplotlist.PD.no.SWM <- lapply(1:length(MOI), function(i) 
+  qMRI.boxplot(metric = MOI[i], adj.qMRI.data.long.PD.no.SWM))
+
+png(filename = paste(results.dir.qMRIonly, "/PD_qMRI_boxplots_no_SWM.png", sep = ""),
+    width = 1400, height = 600, units = "px", res = 120)
+qMRI.multiboxplot.PD.no.SWM <- ggarrange(plotlist = qMRI.boxplotlist.PD.no.SWM, 
+                                  nrow = 1, ncol = 5, 
+                                  common.legend = TRUE, 
+                                  legend = "right")
+plot(qMRI.multiboxplot.PD.no.SWM)
+dev.off()
+
 
 # remove info about boxplot inclusion
 adj.qMRI.data.dems<- subset(adj.qMRI.data.dems, 
@@ -353,7 +381,79 @@ adj.qMRI.data.dems<- subset(adj.qMRI.data.dems,
                                         inc_PrD,
                                         inc_MTsat))
 
+#### cell type boxplots ####
+
+# subjects
+subj <- adj.cell.data.dems$subject
+
+# define spatial domains / subregions
+dom <- c("SWM", "SpD4", "SpD3","SpD2","SpD1")
+reg <- c("anterior", "middle", "posterior")
+
+# colours for spatial domains
+SpD.cols <- c("#4477AA","#66CCEE","#228833","#CCBB44","#EE6677")
+
+# do this for cell types
+adj.cell.data.long <- expand.grid(subject = subj, SpD = dom, region = reg)
+adj.cell.data.dems.melt <- melt(adj.cell.data.dems,id.vars=c("subject","age","sex","diagnosis"))
+
+for (c in COI){
+  cell.data <- adj.cell.data.dems.melt[grepl(c, adj.cell.data.dems.melt$variable),6]
+  adj.cell.data.long[,paste(c, sep = "")] <- cell.data
+}
+
+cell.boxplot <- function(ST, dframe) {
+  ggplot(dframe,aes(SpD, .data[[ST]], fill = SpD, shape = region)) +
+    geom_point(position = position_jitterdodge(), aes(colour = SpD), alpha = 0.9) +
+    geom_boxplot(alpha = 0) +
+    theme_minimal() +
+    theme(axis.title.x = element_blank()) +
+    theme(axis.title.y = element_blank()) +
+    ggtitle(ST,) +
+    scale_fill_manual(values = SpD.cols) +
+    scale_color_manual(values = SpD.cols)
+}
+
+# cell boxplots for Ctrl
+cell.boxplotlist <- lapply(1:length(COI), function(i) 
+  cell.boxplot(ST = COI[i], adj.cell.data.long))
+
+png(filename = paste(results.dir.cellonly, "/Control_cell_boxplots.png", sep = ""),
+    width = 1600, height = 600, units = "px", res = 120)
+cell.multiboxplot <- ggarrange(plotlist = cell.boxplotlist, 
+                                    nrow = 1, ncol = 5, 
+                                    common.legend = TRUE, 
+                                    legend = "right")
+plot(cell.multiboxplot)
+dev.off()
+
+# now run without SWM
+dom <- c("SpD4", "SpD3","SpD2","SpD1")
+SpD.cols <- c("#66CCEE","#228833","#CCBB44","#EE6677")
+adj.cell.data.long.no.SWM <- subset(adj.cell.data.long, SpD != "SWM")
+
+# cell boxplots for Ctrl
+cell.boxplotlist.no.SWM <- lapply(1:length(COI), function(i) 
+  cell.boxplot(ST = COI[i], adj.cell.data.long.no.SWM))
+
+png(filename = paste(results.dir.cellonly, "/Control_cell_boxplots_no_SWM.png", sep = ""),
+    width = 1400, height = 600, units = "px", res = 120)
+cell.multiboxplot.no.SWM <- ggarrange(plotlist = cell.boxplotlist.no.SWM, 
+                                    nrow = 1, ncol = 5, 
+                                    common.legend = TRUE, 
+                                    legend = "right")
+plot(cell.multiboxplot.no.SWM)
+dev.off()
+
+
 #### qMRI vs ST correlation analysis set-up ####
+
+# define spatial domains / subregions
+dom <- c("SWM", "SpD4", "SpD3","SpD2","SpD1")
+reg <- c("anterior", "middle", "posterior")
+
+# colours for spatial domains
+SpD.cols <- c("#4477AA","#66CCEE","#228833","#CCBB44","#EE6677")
 
 # set up table containing qMRI / ST median values
 
@@ -701,10 +801,10 @@ cell.plot.list.Ctrl <- lapply(1:nrow(MOICOI), function(i) plot.ST.qMRI(
 
 # Ctrl
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count.png", sep = ""),
-    width = 1200, height = 800, units = "px", res = 120)
+    width = 1200, height = 1100, units = "px", res = 120)
 cell.multi.plot.Ctrl <- ggarrange(
   plotlist = cell.plot.list.Ctrl,
-  nrow = 4,
+  nrow = 5,
   ncol = 5,
   common.legend = TRUE,
   legend = "bottom"
@@ -719,10 +819,10 @@ cell.plot.list.cooksd.Ctrl <- lapply(1:nrow(MOICOI), function(i) plot.ST.qMRI.co
 
 # Ctrl
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_cooksd.png", sep = ""),
-    width = 1200, height = 800, units = "px", res = 120)
+    width = 1200, height = 1100, units = "px", res = 120)
 cell.multi.plot.cooksd.Ctrl <- ggarrange(
   plotlist = cell.plot.list.cooksd.Ctrl,
-  nrow = 4,
+  nrow = 5,
   ncol = 5,
   common.legend = TRUE,
   legend = "right"
@@ -816,11 +916,11 @@ write.csv(cell.LOO.stats.Ctrl, file = paste(
 plot.list.cell.LOO.Ctrl <- lapply(1:length(COI), function(i)
   plot.LOO(ST = COI[i], LOO = cell.LOO.Ctrl, sts = cell.LOO.stats.Ctrl))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_LOO.png", sep = ""),
-    width = 750, height = 600, units = "px", res = 120)
+    width = 900, height = 600, units = "px", res = 120)
 multi.plot.cell.LOO.Ctrl <- ggarrange(
   plotlist = plot.list.cell.LOO.Ctrl,
   nrow = 2,
-  ncol = 2,
+  ncol = 3,
   common.legend = TRUE,
   legend = "right"
 )
@@ -833,11 +933,11 @@ dev.off()
 # plot the LOO cook's distance
 plot.list.cell.LOO.cooksd.Ctrl <- lapply(1:length(COI), function(i) plot.LOO.cooksd(ST = COI[i], cell.LOO.Ctrl))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_LOO_cooksd.png", sep = ""),
-    width = 750, height = 600, units = "px", res = 120)
+    width = 900, height = 600, units = "px", res = 120)
 multi.plot.cell.LOO.cooksd.Ctrl <- ggarrange(
   plotlist = plot.list.cell.LOO.cooksd.Ctrl,
   nrow = 2,
-  ncol = 2,
+  ncol = 3,
   common.legend = TRUE,
   legend = "right"
 )
@@ -892,7 +992,7 @@ annotate_figure(multi.plot.GO.LOO.Ctrl, bottom = text_grob("Actual GO pathway sc
 dev.off()
 
 # plot the LOO cook's distance
-plot.list.GO.LOO.cooksd.Ctrl <- lapply(1:length(COI), function(i) plot.LOO.cooksd(ST = POI.names[i], GO.LOO.Ctrl))
+plot.list.GO.LOO.cooksd.Ctrl <- lapply(1:length(POI.names), function(i) plot.LOO.cooksd(ST = POI.names[i], GO.LOO.Ctrl))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_pathway_LOO_cooksd.png", sep = ""),
     width = 750, height = 600, units = "px", res = 120)
 multi.plot.GO.LOO.cooksd.Ctrl <- ggarrange(
@@ -936,10 +1036,10 @@ cell.plot.list.Ctrl.no.SWM <- lapply(1:nrow(MOICOI), function(i) plot.ST.qMRI(
 
 # Ctrl
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_no_SWM.png", sep = ""),
-    width = 1200, height = 800, units = "px", res = 120)
+    width = 1200, height = 1100, units = "px", res = 120)
 cell.multi.plot.Ctrl.no.SWM <- ggarrange(
   plotlist = cell.plot.list.Ctrl.no.SWM,
-  nrow = 4,
+  nrow = 5,
   ncol = 5,
   common.legend = TRUE,
   legend = "bottom"
@@ -954,10 +1054,10 @@ cell.plot.list.cooksd.Ctrl.no.SWM <- lapply(1:nrow(MOICOI), function(i) plot.ST.
 
 # Ctrl
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_cooksd_no_SWM.png", sep = ""),
-    width = 1200, height = 800, units = "px", res = 120)
+    width = 1200, height = 1100, units = "px", res = 120)
 cell.multi.plot.cooksd.Ctrl.no.SWM <- ggarrange(
   plotlist = cell.plot.list.cooksd.Ctrl.no.SWM,
-  nrow = 4,
+  nrow = 5,
   ncol = 5,
   common.legend = TRUE,
   legend = "right"
@@ -1050,11 +1150,11 @@ write.csv(cell.LOO.stats.Ctrl.no.SWM, file = paste(
 plot.list.cell.LOO.Ctrl.no.SWM <- lapply(1:length(COI), function(i) 
   plot.LOO(ST = COI[i], LOO = cell.LOO.Ctrl.no.SWM, sts = cell.LOO.stats.Ctrl.no.SWM))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_LOO_no_SWM.png", sep = ""),
-    width = 600, height = 500, units = "px", res = 120)
+    width = 800, height = 500, units = "px", res = 120)
 multi.plot.cell.LOO.Ctrl.no.SWM <- ggarrange(
   plotlist = plot.list.cell.LOO.Ctrl.no.SWM,
   nrow = 2,
-  ncol = 2,
+  ncol = 3,
   common.legend = TRUE,
   legend = "right"
 )
@@ -1067,11 +1167,11 @@ dev.off()
 # plot the LOO cook's distance
 plot.list.cell.LOO.cooksd.Ctrl.no.SWM <- lapply(1:length(COI), function(i) plot.LOO.cooksd(ST = COI[i], cell.LOO.Ctrl.no.SWM))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_LOO_cooksd_no_SWM.png", sep = ""),
-    width = 600, height = 500, units = "px", res = 120)
+    width = 800, height = 500, units = "px", res = 120)
 multi.plot.cell.LOO.cooksd.Ctrl.no.SWM <- ggarrange(
   plotlist = plot.list.cell.LOO.cooksd.Ctrl.no.SWM,
   nrow = 2,
-  ncol = 2,
+  ncol = 3,
   common.legend = TRUE,
   legend = "right"
 )
@@ -1127,7 +1227,7 @@ dev.off()
 
 
 # plot the LOO cook's distance
-plot.list.GO.LOO.cooksd.Ctrl.no.SWM <- lapply(1:length(COI), function(i) plot.LOO.cooksd(ST = POI.names[i], GO.LOO.Ctrl.no.SWM))
+plot.list.GO.LOO.cooksd.Ctrl.no.SWM <- lapply(1:length(POI.names), function(i) plot.LOO.cooksd(ST = POI.names[i], GO.LOO.Ctrl.no.SWM))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_pathway_LOO_cooksd_no_SWM.png", sep = ""),
     width = 600, height = 500, units = "px", res = 120)
 multi.plot.GO.LOO.cooksd.Ctrl.no.SWM <- ggarrange(
