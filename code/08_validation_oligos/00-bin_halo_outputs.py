@@ -34,7 +34,8 @@ def make_matrix(column):
 paths = glob.glob("../../raw_data/HALO_outputs/*")
 
 # Make figures for masking and layer partitioning 
-masking_metric_list = ['DAPI (DAPI) Nucleus Intensity','MBP (Opal 520) Cytoplasm Intensity']
+#masking_metric_list = ['DAPI (DAPI) Nucleus Intensity','MBP (Opal 520) Cytoplasm Intensity']
+masking_metric_list = ['MBP_Oligo']
 
 for n in range(0,len(paths)):
     for masking_metric in masking_metric_list: 
@@ -75,7 +76,7 @@ metric_list = ['MBP_Oligo', # oligo counts
                'MBP (Opal 520) Cytoplasm Intensity', # MBP quantity
                'HPCAL1_L2_neuron', # Is HPCAL1 neuron
                'DAPI (DAPI) Positive'] # Is cell
-
+"""
 for n in range(0,len(paths)):
     for m in range(0,len(metric_list)):
         
@@ -104,3 +105,4 @@ for n in range(0,len(paths)):
         plt.savefig('../../plots/08_validation_oligos/Br%s_histogram_%s.png' % (sample_id, metric), bbox_inches = 'tight', dpi = 300)
         plt.show()
         
+"""
