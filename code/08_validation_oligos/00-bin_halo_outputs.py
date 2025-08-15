@@ -22,17 +22,25 @@ def bin_image(image_matrix, bin_size):
     binned_matrix = image_matrix.reshape(new_h // bin_size, bin_size, new_w // bin_size, bin_size).mean(axis=(1, 3))
     return binned_matrix
 
-def make_matrix(column):
+def make_matrix_complex(column):
     image = np.zeros(shape=(X,Y))
-
     for element in range(0, len(df[column])):
         for x in range(df['XMin'][element]-df['XMin'].min(), df['XMax'][element]-df['XMax'].min()):
             for y in range(df['YMin'][element]-df['YMin'].min(), df['YMax'][element]-df['YMax'].min()):
                 image[x, y] = df[column][element]*255
     return image
 
+def make_matrix_simple(column):
+    image = np.zeros(shape=(X,Y))
+
+    for element in range(0, len(df[column])):
+        x = df['XMin'][element]-df['XMin'].min() # Only writes a 'cell' in a single pixel at Xmin,Ymin coordinate
+        y = df['YMin'][element]-df['YMin'].min()
+        image[x, y] = df[column][element]
+    return image
+
 # Fetch directories
-paths = glob.glob("../../raw_data/HALO_outputs/Br9*")
+paths = glob.glob("../../raw_data/HALO_outputs/Br*")
 
 # Make figures for masking and layer partitioning 
 masking_metric_list = ['DAPI (DAPI) Positive','MBP_Oligo','MBP (Opal 520) Cytoplasm Intensity','HPCAL1_L2_neuron']
@@ -52,7 +60,7 @@ for n in range(0,len(paths)):
         output_dir = '../../plots/08_validation_oligos/Br%s' % (sample_id)
         os.makedirs(output_dir, exist_ok=True)
 
-        image = make_matrix(masking_metric)
+        image = make_matrix_complex(masking_metric)
 
         pd.DataFrame(bin_image(image, bin_size = bin_size)).to_csv('../../processed_data/08_validation_oligos/Br%s_array_%s_%sx%sbinned_for_masking.txt' % (sample_id, masking_metric, bin_size, bin_size))
 
@@ -73,13 +81,16 @@ metric_list = ['MBP_Oligo', # oligo counts
                'MBP (Opal 520) Nucleus Intensity', # MBP quantity
                'MBP (Opal 520) Cytoplasm Intensity', # MBP quantity
                'HPCAL1_L2_neuron', # Is HPCAL1 neuron
-               'DAPI (DAPI) Positive'] # Is cell
+               'DAPI (DAPI) Positive',
+               'consensus_MBP'] # all MBP positive oligos also have positive DAPI
 
 for n in range(0,len(paths)):
     for m in range(0,len(metric_list)):
         
         bin_size = 1
         df = pd.read_csv(paths[n])
+        df['consensus_MBP'] = ((df['MBP_Oligo']==1) & (df['DAPI (DAPI) Positive']==1)) # Create new metric where only Oligos that also have DAPI count
+        df['consensus_MBP'] = df['consensus_MBP'].astype(int)
         sample_id = paths[n].split('Br')[1].split('_DLPFC')[0]
         metric = metric_list[m]
 
@@ -92,7 +103,7 @@ for n in range(0,len(paths)):
         output_dir = '../../plots/08_validation_oligos/Br%s' % (sample_id)
         os.makedirs(output_dir, exist_ok=True)
 
-        image = make_matrix(metric)
+        image = make_matrix_simple(metric)
         image = image.astype(np.uint8)
 
         pd.DataFrame(bin_image(image, bin_size = bin_size)).to_csv('../../processed_data/08_validation_oligos/Br%s_array_%sx%sbinned_%s.txt' % (sample_id, bin_size, bin_size, metric))
