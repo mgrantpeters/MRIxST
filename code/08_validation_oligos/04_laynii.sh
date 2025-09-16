@@ -4,8 +4,8 @@ d0=$PWD
 
 FSLOUTPUTTYPE=NIFTI
 
-#for sub in Br5785; do echo "+++ $sub"
-for sub in Br2934 Br5347 Br5394 Br5766 Br5785 Br9413; do echo "+++ $sub"
+for sub in Br5766; do echo "+++ $sub"
+#for sub in Br2934 Br5347 Br5394 Br5766 Br5785 Br9413; do echo "+++ $sub"
 
 	subImgDir=$d0/../../plots/08_validation_oligos/$sub
 	

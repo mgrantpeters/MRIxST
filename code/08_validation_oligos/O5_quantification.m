@@ -8,7 +8,7 @@ subjects = {'Br2934', 'Br5347', 'Br5394', 'Br5766', 'Br5785','Br9413'};
 plotDir = fullfile(d0,'../../plots/08_validation_oligos/');
 dataDir = fullfile(d0,'../../processed_data/08_validation_oligos/');
 
-layType = 'equidist';
+layType = 'equivol';
 
 % set up for visualisations
 
@@ -117,47 +117,55 @@ for S = 1:length(subjects)
     % Oligo cytoplasm intensity (normalised by overall intensity within gm mask)
 
     % load in matrices to be analysed
+    dapiCount = rgb2gray(imread(...
+        fullfile(subDir,[thisSub '_array_1x1binned_DAPI (DAPI) Positive.png'])));
     oligoCount = rgb2gray(imread(...
-        fullfile(subDir,[thisSub '_array_1x1binned_MBP_Oligo.png'])));
-    mbpCyto = rgb2gray(imread(...
-        fullfile(subDir,[thisSub '_array_1x1binned_MBP (Opal 520) Cytoplasm Intensity.png'])));
-    mbpNucl = rgb2gray(imread(...
-        fullfile(subDir,[thisSub '_array_1x1binned_MBP (Opal 520) Nucleus Intensity.png'])));
+        fullfile(subDir,[thisSub '_array_1x1binned_consensus_MBP.png'])));
+    %intensity calculations will need to be done using a different method
+    % mbpCyto = rgb2gray(imread(...
+    %     fullfile(subDir,[thisSub '_array_1x1binned_MBP (Opal 520) Cytoplasm Intensity.png'])));
+    % mbpNucl = rgb2gray(imread(...
+    %     fullfile(subDir,[thisSub '_array_1x1binned_MBP (Opal 520) Nucleus Intensity.png'])));
 
     % upscale lay128bin
     lay128bin = uint8(visMtxs{6});
     lay1bin = imresize(lay128bin,[size(oligoCount,1),size(oligoCount,2)],'nearest');
+    % save a .txt file for the 1x1 binned SpD images 
+    writematrix(lay1bin, fullfile(subDir, [thisSub '_1x1binned_laynii_layers_' layType '_masked.txt']));
 
     % load in and upscale white matter
     wm128bin = nifti(fullfile(subDir,[thisSub '_128x128binned_manual_white_matter_masked.nii']));
     wm128bin = uint8(wm128bin.dat(:,:,:));
     wm1bin = imresize(wm128bin,[size(oligoCount,1),size(oligoCount,2)],'nearest');
 
-
     % example oligo counts
     for SpD = 1:4
+        % raw oligo count 
         SpDOligCountRaw(SpD,S) =...
             bwconncomp(oligoCount & lay1bin == SpD, 4).NumObjects;
+        % proportion of oligos
         SpDOligCountNorm(SpD,S) =...
-            SpDOligCountRaw(SpD,S)/...
-            (bwconncomp(oligoCount,4).NumObjects*sum(lay1bin(:) == SpD));
-        SpDMBPCytoRaw(SpD,S) =...
-            median(mbpCyto(mbpCyto(:) ~= 0 & lay1bin(:) == SpD));
-        SpDMBPCytoNorm(SpD,S) =...
-            double(SpDMBPCytoRaw(SpD,S))/...
-            double(median(mbpCyto(mbpCyto(:) ~= 0 & wm1bin(:) ~= 0)));
-        SpDRawData(SpD,S) =...
-            median(mbpNucl(mbpNucl(:) ~= 0 & lay1bin(:) == SpD));
-        SpDNormData(SpD,S) =...
-            double(SpDRawData(SpD,S))/...
-            double(median(mbpNucl(mbpNucl(:) ~= 0 & wm1bin(:) ~= 0)));
+            100*SpDOligCountRaw(SpD,S)/...
+            (bwconncomp(dapiCount & lay1bin == SpD, 4).NumObjects);
+        % % MBP intensity in cyto
+        % SpDMBPCytoRaw(SpD,S) =...
+        %     median(mbpCyto(mbpCyto(:) ~= 0 & lay1bin(:) == SpD));
+        % SpDMBPCytoNorm(SpD,S) =...
+        %     double(SpDMBPCytoRaw(SpD,S))/...
+        %     double(median(mbpCyto(mbpCyto(:) ~= 0 & wm1bin(:) ~= 0)));
+        % % MBP intensity in nucl
+        % SpDMBPNuclRaw(SpD,S) =...
+        %     median(mbpNucl(mbpNucl(:) ~= 0 & lay1bin(:) == SpD));
+        % SpDMBPNuclNorm(SpD,S) =...
+        %     double(SpDMBPNuclRaw(SpD,S))/...
+        %     double(median(mbpNucl(mbpNucl(:) ~= 0 & wm1bin(:) ~= 0)));
         fprintf('> SpD%d\n', SpD);
         fprintf('oligo count: %d\n', SpDOligCountRaw(SpD,S));
-        fprintf('oligos per pixel: %.4g\n', SpDOligCountNorm(SpD,S));
-        fprintf('MBP cyto raw intensity: %.4g\n', SpDMBPCytoRaw(SpD,S));
-        fprintf('MBP cyto norm intensity: %.4g\n', SpDMBPCytoNorm(SpD,S));
-        fprintf('MBP nucl raw intensity: %.4g\n', SpDRawData(SpD,S));
-        fprintf('MBP nucl norm intensity: %.4g\n', SpDNormData(SpD,S));
+        fprintf('oligo proportion: %.4g\n', SpDOligCountNorm(SpD,S));
+        % fprintf('MBP cyto raw intensity: %.4g\n', SpDMBPCytoRaw(SpD,S));
+        % fprintf('MBP cyto norm intensity: %.4g\n', SpDMBPCytoNorm(SpD,S));
+        % fprintf('MBP nucl raw intensity: %.4g\n', SpDMBPNuclRaw(SpD,S));
+        % fprintf('MBP nucl norm intensity: %.4g\n', SpDMBPNuclNorm(SpD,S));
 
     end
 
@@ -180,75 +188,55 @@ xlim([0,7])
 xticks(1:6)
 xticklabels(subjects)
 legend({'SpD1','SpD2','SpD3','SpD4'},'Location','best')
-title('Norm. olig. count')
+title('Olig. proportion (%)')
 saveas(f2,fullfile(plotDir,['SpD_oligos_by_subject_' layType '.png']));
 
-f3 = figure();
-subplot(1,2,1)
-plot(SpDMBPCytoRaw','x','MarkerSize',10)
-xlim([0,7])
-xticks(1:6)
-xticklabels(subjects)
-title('Raw MBP cyto int.')
-subplot(1,2,2)
-plot(SpDMBPCytoNorm','x','MarkerSize',10)
-xlim([0,7])
-xticks(1:6)
-xticklabels(subjects)
-title('Norm. MBP cyto int.')
-legend({'SpD1','SpD2','SpD3','SpD4'},'Location','best')
-saveas(f3,fullfile(plotDir,['SpD_MBP_cyto_by_subject_' layType '.png']));
+% f3 = figure();
+% subplot(1,2,1)
+% plot(SpDMBPCytoRaw','x','MarkerSize',10)
+% xlim([0,7])
+% xticks(1:6)
+% xticklabels(subjects)
+% title('Raw MBP cyto int.')
+% subplot(1,2,2)
+% plot(SpDMBPCytoNorm','x','MarkerSize',10)
+% xlim([0,7])
+% xticks(1:6)
+% xticklabels(subjects)
+% title('Norm. MBP cyto int.')
+% legend({'SpD1','SpD2','SpD3','SpD4'},'Location','best')
+% saveas(f3,fullfile(plotDir,['SpD_MBP_cyto_by_subject_' layType '.png']));
+% 
+% f4 = figure();
+% subplot(1,2,1)
+% plot(SpDMBPNuclRaw','x','MarkerSize',10)
+% xlim([0,7])
+% xticks(1:6)
+% xticklabels(subjects)
+% title('Raw MBP nucl int.')
+% subplot(1,2,2)
+% plot(SpDMBPNuclNorm','x','MarkerSize',10)
+% xlim([0,7])
+% xticks(1:6)
+% xticklabels(subjects)
+% title('Norm. MBP nucl int.')
+% legend({'SpD1','SpD2','SpD3','SpD4'},'Location','best')
+% saveas(f4,fullfile(plotDir,['SpD_MBP_nucl_by_subject_' layType '.png']));
 
-f4 = figure();
-subplot(1,2,1)
-plot(SpDRawData','x','MarkerSize',10)
-xlim([0,7])
-xticks(1:6)
-xticklabels(subjects)
-title('Raw MBP nucl int.')
-subplot(1,2,2)
-plot(SpDNormData','x','MarkerSize',10)
-xlim([0,7])
-xticks(1:6)
-xticklabels(subjects)
-title('Norm. MBP nucl int.')
-legend({'SpD1','SpD2','SpD3','SpD4'},'Location','best')
-saveas(f4,fullfile(plotDir,['SpD_MBP_nucl_by_subject_' layType '.png']));
-
-SpDRawData = [table(subjects','VariableNames',{'Subject'}),...
+SpDRawOligoData = [table(subjects','VariableNames',{'Subject'}),...
     array2table(SpDOligCountRaw','VariableNames',...
     {'OligCountRaw_SpD1',...
     'OligCountRaw_SpD2',...
     'OligCountRaw_SpD3',...
-    'OligCountRaw_SpD4'}),...
-    array2table(SpDMBPCytoRaw','VariableNames',...
-    {'MBPCytoRaw_SpD1',...
-    'MBPCytoRaw_SpD2',...
-    'MBPCytoRaw_SpD3',...
-    'MBPCytoRaw_SpD4'}),...
-    array2table(SpDRawData','VariableNames',...
-    {'MBPNuclRaw_SpD1',...
-    'MBPNuclRaw_SpD2',...
-    'MBPNuclRaw_SpD3',...
-    'MBPNuclRaw_SpD4'})];
-writetable(SpDRawData,...
-    fullfile(dataDir,['SpD_quant_raw_' layType '.csv']));
+    'OligCountRaw_SpD4'})];
+writetable(SpDRawOligoData,...
+    fullfile(dataDir,['SpD_oligo_count_raw_' layType '.csv']));
 
-SpDNormData = [table(subjects','VariableNames',{'Subject'}),...
+SpDNormOligoData = [table(subjects','VariableNames',{'Subject'}),...
     array2table(SpDOligCountNorm','VariableNames',...
     {'OligCountNorm_SpD1',...
     'OligCountNorm_SpD2',...
     'OligCountNorm_SpD3',...
-    'OligCountNorm_SpD4'}),...
-    array2table(SpDMBPCytoNorm','VariableNames',...
-    {'MBPCytoNorm_SpD1',...
-    'MBPCytoNorm_SpD2',...
-    'MBPCytoNorm_SpD3',...
-    'MBPCytoNorm_SpD4'}),...
-    array2table(SpDNormData','VariableNames',...
-    {'MBPNuclNorm_SpD1',...
-    'MBPNuclNorm_SpD2',...
-    'MBPNuclNorm_SpD3',...
-    'MBPNuclNorm_SpD4'})];
-writetable(SpDNormData,...
-    fullfile(dataDir,['SpD_quant_norm_' layType '.csv']));
+    'OligCountNorm_SpD4'})];
+writetable(SpDNormOligoData,...
+    fullfile(dataDir,['SpD_oligo_count_norm_' layType '.csv']));

@@ -1,0 +1,103 @@
+% try to incorporate layer info into spreadsheets
+% don't worry about visualisation
+
+clear;
+
+d0=pwd;
+
+subjects = {'Br2934', 'Br5347', 'Br5394', 'Br5766', 'Br5785','Br9413'};
+%subjects = {'Br2934'};
+
+plotDir = fullfile(d0,'../../plots/08_validation_oligos/');
+procDataDir = fullfile(d0,'../../processed_data/08_validation_oligos/');
+rawDataDir = fullfile(d0,'../../raw_data/HALO_outputs/');
+layType = 'equivol';
+
+% initialise blank matrices for results
+SpDOligCountRaw = nan(length(subjects), 4);
+SpDOligCountNorm = nan(length(subjects), 4);
+SpDMBPCytoRaw = nan(length(subjects), 4);
+SpDMBPCytoNorm = nan(length(subjects), 4);
+SpDMBPNuclRaw = nan(length(subjects), 4);
+SpDMBPNuclNorm = nan(length(subjects), 4);
+
+for S = 1:length(subjects)
+
+
+    thisSub = subjects{S};
+
+    disp(['+++++ ' thisSub ' +++++']);
+
+    subDir = fullfile(plotDir, thisSub);
+
+    % load in reference OligoCount
+    oligoCount = rgb2gray(imread(...
+        fullfile(subDir,[thisSub '_array_1x1binned_consensus_MBP.png'])));
+
+    % Load in lay128bin and resize
+    lay128bin = nifti(fullfile(subDir, [thisSub '_128x128binned_laynii_layers_' layType '_masked.nii']));
+    lay128bin = uint8(lay128bin.dat(:,:,:));
+    lay1bin = imresize(lay128bin,[size(oligoCount,1),size(oligoCount,2)],'nearest');
+    
+    % load in and upscale white matter
+    wm128bin = nifti(fullfile(subDir,[thisSub '_128x128binned_manual_white_matter_masked.nii']));
+    wm128bin = uint8(wm128bin.dat(:,:,:));
+    wm1bin = imresize(wm128bin,[size(oligoCount,1),size(oligoCount,2)],'nearest');
+
+    % load in HALO data for this subject
+    HALOfile = dir([rawDataDir,filesep, thisSub, '*.csv']);
+    HALO = readtable(fullfile(HALOfile.folder, HALOfile.name));
+
+    % HALO x and y origin
+    % N.B. that MATLAB is reading X as rows, and Y as columns
+    rowOrig = min(HALO.XMin); 
+    colOrig = min(HALO.YMin);
+
+    % add in blank columns for layers and white matter
+    HALO.SpD = nan(size(HALO,1),1);
+    HALO.WM = nan(size(HALO,1),1);
+
+    % loop through object IDs
+    for ii = 1:size(HALO,1)
+        
+        % get relative to minimum, add 1 for MATLAB indexing
+        matRow = HALO(ii,:).XMin - rowOrig + 1;
+        matCol = HALO(ii,:).YMin - colOrig + 1;
+
+        HALO.SpD(ii) = lay1bin(matRow,matCol);
+        HALO.WM(ii) = wm1bin(matRow,matCol);
+
+    end
+
+    % save table
+    writetable(HALO,fullfile(procDataDir,[thisSub, '_HALO_with_SpD_info.csv']));
+
+    % now loop through spatial domains
+    for SpD = 1:4
+        % oligo Count
+        SpDOligCountRaw(S,SpD) =...
+            sum(HALO.SpD == SpD & HALO.MBP_Oligo == 1 & HALO.DAPI_DAPI_Positive == 1);
+        SpDOligCountNorm(S,SpD) =...
+            SpDOligCountRaw(S,SpD)/...
+            sum(HALO.SpD == SpD & HALO.DAPI_DAPI_Positive == 1);
+        % MBP intensity in cyto
+        SpDMBPCytoRaw(S,SpD) =...
+            mean(HALO.MBP_Opal520_CytoplasmIntensity(...
+            HALO.SpD == SpD & HALO.DAPI_DAPI_Positive == 1 & HALO.MBP_Oligo == 1));
+        SpDMBPCytoNorm(S,SpD) =...
+            SpDMBPCytoRaw(S,SpD)/...
+            mean(HALO.MBP_Opal520_CytoplasmIntensity(...
+            HALO.WM == 1 & HALO.DAPI_DAPI_Positive == 1 & HALO.MBP_Oligo == 1));
+        % MBP intensity in nucl
+        SpDMBPNuclRaw(S,SpD) =...
+            mean(HALO.MBP_Opal520_NucleusIntensity(...
+            HALO.SpD == SpD & HALO.DAPI_DAPI_Positive == 1 & HALO.MBP_Oligo == 1));
+        SpDMBPNuclNorm(S,SpD) =...
+            SpDMBPNuclRaw(S,SpD)/...
+            mean(HALO.MBP_Opal520_NucleusIntensity(...
+            HALO.WM == 1 & HALO.DAPI_DAPI_Positive == 1 & HALO.MBP_Oligo == 1));
+    end
+
+end
+
+`
