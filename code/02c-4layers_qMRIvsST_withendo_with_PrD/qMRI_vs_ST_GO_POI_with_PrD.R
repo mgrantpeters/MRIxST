@@ -18,10 +18,154 @@ adj.qMRI.ST.medians.no.SWM <- subset(adj.qMRI.ST.medians, SpD != "SWM")
 
 POI.noSWM <- as.character(read.delim("pathways_of_interest_no_SWM.txt", sep = ",", header = FALSE, quote = "'"))
 
+MOI <- MOI <- c("QSM","R1","R2s","PrD","MTsat")
+
+MOIPOI <- expand.grid(MOI,POI.noSWM,stringsAsFactors = FALSE)
+
 # colours for spatial domains
 SpD.cols <- c("#EE6677","#CCBB44","#228833","#66CCEE")
 
 # do LOO for these pathways
+# define a function to plot the data
+POI.names <- POI.noSWM
+COI <- c("Astro","Micro", "Oligo", "OPC")
+plot.ST.qMRI <- function(dframe ,MRIST, group.string, sts) {
+  MRI <- MRIST[1]
+  ST <- MRIST[2]
+  
+  x.data <- dframe[[paste(MRI, "_", group.string, sep = "")]]
+  y.data <- dframe[[paste(ST, "_Control", sep = "")]]
+  
+  R2 <- sts[sts[,1] == MRI[[1]] & sts[,2] == ST[[1]], ]$R2
+  adj.p <- sts[sts[,1] == MRI[[1]] & sts[,2] == ST[[1]], ]$corr_p
+  
+  ggplot(data = dframe, aes(x = x.data, y = y.data)) +
+    theme_minimal() +
+    {
+      if (ST == COI[length(COI)] || 
+          ST == POI.names[length(POI.names)])
+        xlab(MRI)
+      else
+        theme(axis.title.x = element_blank())
+    } +
+    {
+      if (MRI == MOI[1])
+        list(
+          ylab(ST),
+          theme(axis.title.y = element_text(size = 10))  
+        )
+      else
+        theme(axis.title.y = element_blank())
+    } +
+    geom_smooth(
+      method = "lm",
+      formula = y ~ x,
+      linetype = "dotted",
+      colour = "black",
+      fill = "lightgrey"
+    ) +
+    geom_point(aes(colour = SpD, shape = region)) +
+    scale_color_manual(values = SpD.cols) +
+    scale_x_continuous(labels = function(x) {
+      ifelse(
+        x == 0, "0", # zero shows as 0
+        ifelse(
+          abs(x) < 1e-3, 
+          format(x, scientific = TRUE, digits = 2), # Scientific format for small values
+          signif(x, 2)                    # otherwise 2 sig figs
+        )
+      )
+    }) +
+    scale_y_continuous(labels = function(y) {
+      ifelse(
+        y == 0, 
+        "0", 
+        ifelse(
+          abs(y) < 1e-3, 
+          format(y, scientific = TRUE, digits = 2), 
+          signif(y, 2)                              
+        )
+      )
+    }) +
+    annotate("text",
+             x = -Inf,
+             y = Inf,
+             hjust = 0,
+             vjust = 1,
+             label = as.expression(bquote(
+               R^2 == .(signif(R2, 2)) ~ "," ~ p[FDR] == .(if (adj.p < 1e-3) {
+                 format(adj.p, digits = 2, scientific = TRUE)
+               } else {
+                 signif(adj.p, 2)
+               })
+             )),
+             size = 2.75,
+             parse = TRUE
+    )
+}
+
+plot.ST.qMRI.cooksd <- function(dframe ,MRIST, group.string) {
+  # sort by SpD
+  dframe <- dframe[order(dframe$SpD),]
+  
+  MRI <- MRIST[1]
+  ST <- MRIST[2]
+  
+  fit <- lm(as.formula(paste0(paste(MRI,group.string, sep = "_"),"~",
+                              paste(ST,"Control", sep = "_"))),
+            data = dframe)
+  res <- summary(fit)
+  dframe[,paste(MRI,ST,"cooksd", sep = "_")] <- cooks.distance(fit)
+  
+  # define cutoff as N-k-1
+  cutoff <- 4/(nrow(dframe) - 1 - 1)
+  
+  x.data <- 1:nrow(dframe)
+  y.data <- dframe[[paste(MRI,ST,"cooksd", sep = "_")]]
+  
+  ggplot(data = dframe, aes(x = x.data, y = y.data)) +
+    theme_minimal() +
+    {
+      if (ST == COI[length(COI)] || 
+          ST == POI.names[length(POI.names)])
+        xlab(MRI)
+      else
+        theme(axis.title.x = element_blank())
+    } +
+    {
+      if (MRI == MOI[1])
+        list(
+          ylab(ST),
+          theme(axis.title.y = element_text(size = 10)) 
+        )
+      else
+        theme(axis.title.y = element_blank())
+    } +
+    theme(axis.text.x = element_blank()
+    ) +
+    geom_point(aes(colour = SpD, shape = region)) +
+    geom_hline(yintercept = cutoff, linetype = "dotted", size = 1) +
+    scale_color_manual(values = SpD.cols)
+}
+
+# and define a function to generate some stats tables
+stats.ST.qMRI <- function(dframe, MRIST, group.string) {
+  MRI <- MRIST[1]
+  ST <- MRIST[2]
+  
+  x.data <- dframe[[paste(MRI, "_", group.string, sep = "")]]
+  y.data <- dframe[[paste(ST, "_Control", sep = "")]]
+  
+  res <- cor.test(x.data,y.data)
+  
+  Tstat <- res$statistic
+  rho <- res$estimate
+  R2 <- res$estimate^2
+  p <- res$p.value
+  
+  return(c(Tstat,rho,R2,p))
+  
+}
 
 # define a function to run the LOO
 run.qMRI.ST.LOO <- function(dframe, ST, LOO, stats, group.string) {
@@ -164,6 +308,54 @@ plot.LOO.cooksd <- function(ST, LOO) {
     scale_color_manual(values = SpD.cols)
 }
 
+# generate a stats table
+GO.stats.Ctrl.no.SWM <- lapply(1:nrow(MOIPOI), function(i) stats.ST.qMRI(
+  dframe = adj.qMRI.ST.medians.no.SWM, MRIST = MOIPOI[i,], group.string = "Control"))
+GO.stats.Ctrl.no.SWM <- as.data.frame(do.call(rbind, GO.stats.Ctrl.no.SWM))
+GO.stats.Ctrl.no.SWM <- cbind(MOIPOI,GO.stats.Ctrl.no.SWM)
+colnames(GO.stats.Ctrl.no.SWM) <- c("qMRI", "pathway_score", "T", "rho", "R2","p")
+GO.stats.Ctrl.no.SWM$corr_p <- p.adjust(GO.stats.Ctrl.no.SWM$p, method = "fdr")
+write.csv(GO.stats.Ctrl.no.SWM, file = paste(
+  results.dir.stats, "/Stats_control_qMRI_vs_GO_POI_no_SWM.csv", sep = ""), 
+  row.names = FALSE)
+
+# lapply the plot function to create a multi plot
+GO.plot.list.Ctrl.no.SWM <- lapply(1:nrow(MOIPOI), function(i) plot.ST.qMRI(
+  dframe = adj.qMRI.ST.medians.no.SWM, MRIST = MOIPOI[i, ], group.string = "Control", sts = GO.stats.Ctrl.no.SWM))
+
+# Ctrl
+png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_pathway_no_SWM.png", sep = ""),
+    width = 1200, height = 2500, units = "px", res = 120)
+GO.multi.plot.Ctrl.no.SWM <- ggarrange(
+  plotlist = GO.plot.list.Ctrl.no.SWM,
+  nrow = 14,
+  ncol = 5,
+  common.legend = TRUE,
+  legend = "bottom"
+)
+plot(GO.multi.plot.Ctrl.no.SWM)
+annotate_figure(GO.multi.plot.Ctrl.no.SWM, top = text_grob("Control qMRI versus control pathway score"))
+dev.off()
+
+# lapply for cook's distances
+GO.plot.list.cooksd.Ctrl.no.SWM <- lapply(1:nrow(MOIPOI), function(i) plot.ST.qMRI.cooksd(
+  dframe = adj.qMRI.ST.medians.no.SWM, MRIST = MOIPOI[i, ], group.string = "Control"))
+
+# Ctrl
+png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_POI_cooksd_no_SWM.png", sep = ""),
+    width = 1200, height = 2500, units = "px", res = 120)
+GO.multi.plot.cooksd.Ctrl.no.SWM <- ggarrange(
+  plotlist = GO.plot.list.cooksd.Ctrl.no.SWM,
+  nrow = 14,
+  ncol = 5,
+  common.legend = TRUE,
+  legend = "right"
+)
+plot(GO.multi.plot.cooksd.Ctrl.no.SWM)
+annotate_figure(GO.multi.plot.cooksd.Ctrl.no.SWM, 
+                top = text_grob("Effect of regions on HC qMRI vs. HC GO pathway correlation"),
+                left = text_grob("Cook's distance", rot = 90))
+dev.off()
 
 # define empty data frames for LOO results
 GO.LOO.Ctrl.colnames <- paste(rep(POI.noSWM,each = 3),c("actual","predicted", "SE"),sep = "_")
@@ -186,13 +378,13 @@ GO.LOO.stats.Ctrl.no.SWM <- GO.LOO.Ctrl.no.SWM.output$stats
 # save some stats
 GO.LOO.stats.Ctrl.no.SWM$corr_p <- p.adjust(GO.LOO.stats.Ctrl.no.SWM$p, method = "fdr")
 write.csv(GO.LOO.stats.Ctrl.no.SWM, file = paste(
-  results.dir.stats, "/Stats_control_qMRI_vs_GO_pathway_LOO_no_SWM_extended.csv", sep = ""),
+  results.dir.stats, "/Stats_control_qMRI_vs_GO_POI_LOO_no_SWM.csv", sep = ""),
   row.names = FALSE)
 
 # plot the LOO
 plot.list.GO.LOO.Ctrl.no.SWM <- lapply(1:length(POI.noSWM), function(i) 
   plot.LOO(ST = POI.noSWM[i], LOO = GO.LOO.Ctrl.no.SWM, sts = GO.LOO.stats.Ctrl.no.SWM))
-png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_pathway_LOO_no_SWM_extended.png", sep = ""),
+png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_pathway_LOO_no_SWM.png", sep = ""),
     width = 1400, height = 700, units = "px", res = 120)
 multi.plot.GO.LOO.Ctrl.no.SWM <- ggarrange(
   plotlist = plot.list.GO.LOO.Ctrl.no.SWM,
@@ -209,7 +401,7 @@ dev.off()
 
 # plot the LOO cook's distance
 plot.list.GO.LOO.cooksd.Ctrl.no.SWM <- lapply(1:length(POI.noSWM), function(i) plot.LOO.cooksd(ST = POI.noSWM[i], GO.LOO.Ctrl.no.SWM))
-png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_pathway_LOO_extended_cooksd_no_SWM.png", sep = ""),
+png(filename = paste(results.dir, "/Plot_control_qMRI_vs_GO_POI_LOO_cooksd_no_SWM.png", sep = ""),
     width = 1200, height = 700, units = "px", res = 120)
 multi.plot.GO.LOO.cooksd.Ctrl.no.SWM <- ggarrange(
   plotlist = plot.list.GO.LOO.cooksd.Ctrl.no.SWM,

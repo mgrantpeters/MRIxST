@@ -136,7 +136,7 @@ ST.dems <- ST.dems[order(ST.dems$sample_id),]
 ST.dems$sex <- factor(ST.dems$sex)
 
 # specify the cell types we're interested in
-COI <- c("Astro","Micro", "Oligo", "OPC","Inhib")
+COI <- c("Astro","Micro", "Oligo", "OPC")
 
 # get names of 4 layer cell count files
 all.cell.fnames <- dir(cell.data.dir,"count_(.+)_4SpD_withEndo")
@@ -421,7 +421,7 @@ cell.boxplotlist <- lapply(1:length(COI), function(i)
 png(filename = paste(results.dir.cellonly, "/Control_cell_boxplots.png", sep = ""),
     width = 1600, height = 600, units = "px", res = 120)
 cell.multiboxplot <- ggarrange(plotlist = cell.boxplotlist, 
-                                    nrow = 1, ncol = 5, 
+                                    nrow = 1, ncol = 4, 
                                     common.legend = TRUE, 
                                     legend = "right")
 plot(cell.multiboxplot)
@@ -439,7 +439,7 @@ cell.boxplotlist.no.SWM <- lapply(1:length(COI), function(i)
 png(filename = paste(results.dir.cellonly, "/Control_cell_boxplots_no_SWM.png", sep = ""),
     width = 1400, height = 600, units = "px", res = 120)
 cell.multiboxplot.no.SWM <- ggarrange(plotlist = cell.boxplotlist.no.SWM, 
-                                    nrow = 1, ncol = 5, 
+                                    nrow = 1, ncol = 4, 
                                     common.legend = TRUE, 
                                     legend = "right")
 plot(cell.multiboxplot.no.SWM)
@@ -801,10 +801,10 @@ cell.plot.list.Ctrl <- lapply(1:nrow(MOICOI), function(i) plot.ST.qMRI(
 
 # Ctrl
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count.png", sep = ""),
-    width = 1200, height = 1100, units = "px", res = 120)
+    width = 1200, height = 800, units = "px", res = 120)
 cell.multi.plot.Ctrl <- ggarrange(
   plotlist = cell.plot.list.Ctrl,
-  nrow = 5,
+  nrow = 4,
   ncol = 5,
   common.legend = TRUE,
   legend = "bottom"
@@ -819,10 +819,10 @@ cell.plot.list.cooksd.Ctrl <- lapply(1:nrow(MOICOI), function(i) plot.ST.qMRI.co
 
 # Ctrl
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_cooksd.png", sep = ""),
-    width = 1200, height = 1100, units = "px", res = 120)
+    width = 1200, height = 800, units = "px", res = 120)
 cell.multi.plot.cooksd.Ctrl <- ggarrange(
   plotlist = cell.plot.list.cooksd.Ctrl,
-  nrow = 5,
+  nrow = 4,
   ncol = 5,
   common.legend = TRUE,
   legend = "right"
@@ -916,11 +916,11 @@ write.csv(cell.LOO.stats.Ctrl, file = paste(
 plot.list.cell.LOO.Ctrl <- lapply(1:length(COI), function(i)
   plot.LOO(ST = COI[i], LOO = cell.LOO.Ctrl, sts = cell.LOO.stats.Ctrl))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_LOO.png", sep = ""),
-    width = 900, height = 600, units = "px", res = 120)
+    width = 750, height = 600, units = "px", res = 120)
 multi.plot.cell.LOO.Ctrl <- ggarrange(
   plotlist = plot.list.cell.LOO.Ctrl,
   nrow = 2,
-  ncol = 3,
+  ncol = 2,
   common.legend = TRUE,
   legend = "right"
 )
@@ -933,11 +933,11 @@ dev.off()
 # plot the LOO cook's distance
 plot.list.cell.LOO.cooksd.Ctrl <- lapply(1:length(COI), function(i) plot.LOO.cooksd(ST = COI[i], cell.LOO.Ctrl))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_LOO_cooksd.png", sep = ""),
-    width = 900, height = 600, units = "px", res = 120)
+    width = 750, height = 600, units = "px", res = 120)
 multi.plot.cell.LOO.cooksd.Ctrl <- ggarrange(
   plotlist = plot.list.cell.LOO.cooksd.Ctrl,
   nrow = 2,
-  ncol = 3,
+  ncol = 2,
   common.legend = TRUE,
   legend = "right"
 )
@@ -1036,10 +1036,10 @@ cell.plot.list.Ctrl.no.SWM <- lapply(1:nrow(MOICOI), function(i) plot.ST.qMRI(
 
 # Ctrl
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_no_SWM.png", sep = ""),
-    width = 1200, height = 1100, units = "px", res = 120)
+    width = 1200, height = 800, units = "px", res = 120)
 cell.multi.plot.Ctrl.no.SWM <- ggarrange(
   plotlist = cell.plot.list.Ctrl.no.SWM,
-  nrow = 5,
+  nrow = 4,
   ncol = 5,
   common.legend = TRUE,
   legend = "bottom"
@@ -1054,10 +1054,10 @@ cell.plot.list.cooksd.Ctrl.no.SWM <- lapply(1:nrow(MOICOI), function(i) plot.ST.
 
 # Ctrl
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_cooksd_no_SWM.png", sep = ""),
-    width = 1200, height = 1100, units = "px", res = 120)
+    width = 1200, height = 800, units = "px", res = 120)
 cell.multi.plot.cooksd.Ctrl.no.SWM <- ggarrange(
   plotlist = cell.plot.list.cooksd.Ctrl.no.SWM,
-  nrow = 5,
+  nrow = 4,
   ncol = 5,
   common.legend = TRUE,
   legend = "right"
@@ -1150,11 +1150,11 @@ write.csv(cell.LOO.stats.Ctrl.no.SWM, file = paste(
 plot.list.cell.LOO.Ctrl.no.SWM <- lapply(1:length(COI), function(i) 
   plot.LOO(ST = COI[i], LOO = cell.LOO.Ctrl.no.SWM, sts = cell.LOO.stats.Ctrl.no.SWM))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_LOO_no_SWM.png", sep = ""),
-    width = 800, height = 500, units = "px", res = 120)
+    width = 600, height = 500, units = "px", res = 120)
 multi.plot.cell.LOO.Ctrl.no.SWM <- ggarrange(
   plotlist = plot.list.cell.LOO.Ctrl.no.SWM,
   nrow = 2,
-  ncol = 3,
+  ncol = 2,
   common.legend = TRUE,
   legend = "right"
 )
@@ -1167,11 +1167,11 @@ dev.off()
 # plot the LOO cook's distance
 plot.list.cell.LOO.cooksd.Ctrl.no.SWM <- lapply(1:length(COI), function(i) plot.LOO.cooksd(ST = COI[i], cell.LOO.Ctrl.no.SWM))
 png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_LOO_cooksd_no_SWM.png", sep = ""),
-    width = 800, height = 500, units = "px", res = 120)
+    width = 600, height = 500, units = "px", res = 120)
 multi.plot.cell.LOO.cooksd.Ctrl.no.SWM <- ggarrange(
   plotlist = plot.list.cell.LOO.cooksd.Ctrl.no.SWM,
   nrow = 2,
-  ncol = 3,
+  ncol = 2,
   common.legend = TRUE,
   legend = "right"
 )
