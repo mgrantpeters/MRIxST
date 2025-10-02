@@ -35,6 +35,9 @@ for (ii in 1:2) {
   HALO.data.dems$Sex <- factor(HALO.data.dems$Sex)
   HALO.data.dems$Diagnosis <- factor(HALO.data.dems$Diagnosis, levels=c("HC","PD"))
   
+  # remove the SWM
+  HALO.data.dems <- HALO.data.dems %>% select(-contains("_SWM"))
+  
   # now do some group analyses
   
   ## PD vs HC ----
