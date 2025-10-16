@@ -14,6 +14,7 @@ qMRI.data.dir <- paste(d0, "/../../processed_data/02-4layers_qMRI/", sep = "")
 cell.data.dir <- paste(d0, "/../../processed_data/01b-4layers_withendo/02-top3_cells_counts/", sep = "")
 GO.data.dir <- paste(d0, "/../../processed_data/01b-4layers_withendo/05-pathway_scoring/", sep = "")
 dems.dir<- paste(d0, "/../../raw_data/participant_info/", sep = "")
+results.dir.qMRIonly <- paste(d0, "/../../plots/00-4layers_qMRI/", sep = "")
 results.dir <- paste(d0, "/../../plots/04c-4layers_PDpredictions_withendo_with_PrD/", sep = "")
 results.dir2 <- paste(d0, "/../../plots/02c-4layers_qMRIvsST_withendo_with_PrD/", sep = "")
 results.dir.stats <- paste(d0, "/../../stats/04c-4layers_PDpredictions_withendo_with_PrD/", sep = "")
@@ -60,6 +61,7 @@ rename_layers <- function(x) {
 # load in the qMRI data and demographics for the DLPFC sub-regions
 qMRI.dems <- read.csv(paste(dems.dir,"anon_DLPFC_qMRI_demographics.csv",sep = ""))
 qMRI.data <-  read.csv(paste(qMRI.data.dir,"anon_DLPFC_AMP_qMRI_medians_4_equivol_layers.csv",sep = ""))
+qMRI.ACG.data <- read.csv(paste(qMRI.data.dir,"anon_ACG_AMP_qMRI_medians_4_equivol_layers.csv",sep = ""))
 
 # set age and diagnosis as factors
 qMRI.dems$sex <- factor(qMRI.dems$sex)
@@ -76,9 +78,21 @@ colnames(qMRI.data.mid) <- paste(colnames(qMRI.data.mid),"_mid", sep = "")
 qMRI.data.pos <- qMRI.data[grepl("pos", qMRI.data$subject_region),2:ncol(qMRI.data)]
 colnames(qMRI.data.pos) <- paste(colnames(qMRI.data.pos),"_pos", sep = "")
 
+# do this also for the ACG data
+qMRI.ACG.data.ant <- qMRI.ACG.data[grepl("ant", qMRI.ACG.data$subject_region),2:ncol(qMRI.ACG.data)]
+colnames(qMRI.ACG.data.ant) <- paste(colnames(qMRI.ACG.data.ant),"_ant", sep = "")
+# middle
+qMRI.ACG.data.mid <- qMRI.ACG.data[grepl("mid", qMRI.ACG.data$subject_region),2:ncol(qMRI.ACG.data)]
+colnames(qMRI.ACG.data.mid) <- paste(colnames(qMRI.ACG.data.mid),"_mid", sep = "")
+# posterior
+qMRI.ACG.data.pos <- qMRI.ACG.data[grepl("pos", qMRI.ACG.data$subject_region),2:ncol(qMRI.ACG.data)]
+colnames(qMRI.ACG.data.pos) <- paste(colnames(qMRI.ACG.data.pos),"_pos", sep = "")
+
 # merge them together and add the dems
 qMRI.data.dems <- cbind(qMRI.dems,qMRI.data.ant, qMRI.data.mid, qMRI.data.pos)
 rownames(qMRI.data.dems) <- 1:nrow(qMRI.data.dems)
+qMRI.ACG.data.dems <- cbind(qMRI.dems,qMRI.ACG.data.ant, qMRI.ACG.data.mid, qMRI.ACG.data.pos)
+rownames(qMRI.ACG.data.dems) <- 1:nrow(qMRI.ACG.data.dems)
 
 # load in the QC info sheet 
 QC.info <- read.csv(paste(dems.dir,"anon_7T_QC_info.csv",sep = ""))
@@ -94,10 +108,12 @@ rownames(QC.info) <- 1:nrow(QC.info)
 # remove data from demographics and qMRI data using QC info
 # if they failed MPRAGE QC or FS QC, then remove from everywhere
 qMRI.data.dems <- subset(qMRI.data.dems, QC.info$MPRAGE_QC == 1 & QC.info$FS_QC == 1)
+qMRI.ACG.data.dems <- subset(qMRI.ACG.data.dems, QC.info$MPRAGE_QC == 1 & QC.info$FS_QC == 1)
 QC.info <- subset(QC.info, QC.info$MPRAGE_QC == 1 & QC.info$FS_QC == 1)
 
 # rename columns
 colnames(qMRI.data.dems) <- lapply(colnames(qMRI.data.dems), rename_layers)
+colnames(qMRI.ACG.data.dems) <- lapply(colnames(qMRI.ACG.data.dems), rename_layers)
 # get all ROI names
 qMRI.ROI.names <- colnames(qMRI.data.dems)[5:ncol(qMRI.data.dems)]
 
@@ -112,6 +128,7 @@ QC.info$MTsat_QC <- QC.info$MPM_QC == 1 & QC.info$has_MT == 1
 
 # initialize a data frame for the adjusted values
 adj.qMRI.data.dems <- qMRI.data.dems
+adj.qMRI.ACG.data.dems <- qMRI.ACG.data.dems
 
 # get mean and diff from mean age and sex for all subjects
 mn.qMRI.age <- mean(qMRI.data.dems$age)
@@ -121,12 +138,120 @@ diff.qMRI.sex <- mn.qMRI.sex - as.numeric(qMRI.data.dems$sex)
 
 # adjust all ROIs for age and sex using the covariance method
 for (ROI in qMRI.ROI.names) {
+  # DLPFC
   mdl.qMRI.adj <- lm(qMRI.data.dems[,ROI] ~ age + sex, data = qMRI.data.dems)
   adj.qMRI.vals <- qMRI.data.dems[,ROI] +
     diff.qMRI.age * mdl.qMRI.adj$coefficients[2] +
     diff.qMRI.sex * mdl.qMRI.adj$coefficients[3]
   adj.qMRI.data.dems[,ROI] <- adj.qMRI.vals
+  # ACG
+  mdl.qMRI.ACG.adj <- lm(qMRI.ACG.data.dems[,ROI] ~ age + sex, data = qMRI.ACG.data.dems)
+  adj.qMRI.ACG.vals <- qMRI.ACG.data.dems[,ROI] +
+    diff.qMRI.age * mdl.qMRI.ACG.adj$coefficients[2] +
+    diff.qMRI.sex * mdl.qMRI.ACG.adj$coefficients[3]
+  adj.qMRI.ACG.data.dems[,ROI] <- adj.qMRI.ACG.vals
 }
+
+
+#### qMRI ACG boxplots ----
+
+# subjects
+subj <- adj.qMRI.ACG.data.dems$subject
+
+# define spatial domains / subregions
+dom <- c("SWM", "SpD4", "SpD3","SpD2","SpD1")
+reg <- c("anterior", "middle", "posterior")
+
+# colours for spatial domains
+SpD.cols <- c("#4477AA","#66CCEE","#228833","#CCBB44","#EE6677")
+
+# include in boxplots?
+adj.qMRI.ACG.data.dems$inc_QSM <- QC.info$QSM_QC == 1 & QC.info$has_QSM == 1
+adj.qMRI.ACG.data.dems$inc_R1 <- QC.info$MPM_QC == 1 & QC.info$has_MPM == 1
+adj.qMRI.ACG.data.dems$inc_R2s <- QC.info$MPM_QC == 1 & QC.info$has_MPM == 1
+adj.qMRI.ACG.data.dems$inc_PrD <- QC.info$MPM_QC == 1 & QC.info$has_MPM == 1
+adj.qMRI.ACG.data.dems$inc_MTsat <- QC.info$MPM_QC == 1 & QC.info$has_MT == 1
+
+# do this for qMRI
+adj.qMRI.ACG.data.long <- expand.grid(subject = subj, SpD = dom, region = reg)
+adj.qMRI.ACG.data.dems.melt <- melt(adj.qMRI.ACG.data.dems,id.vars=c("subject","age","sex","diagnosis",
+                                                             "inc_QSM","inc_R1","inc_R2s","inc_PrD","inc_MTsat"))
+
+for (m in qMRI.metrics){
+  metric.data <- adj.qMRI.ACG.data.dems.melt[grepl(m, adj.qMRI.ACG.data.dems.melt$variable),11]
+  QC.data <- adj.qMRI.ACG.data.dems.melt[grepl(m, adj.qMRI.ACG.data.dems.melt$variable),paste("inc_",m,sep = "")]
+  adj.qMRI.ACG.data.long[,paste(m, sep = "")] <- metric.data
+  adj.qMRI.ACG.data.long[,paste("inc_", m, sep = "")] <- QC.data
+}
+
+adj.qMRI.ACG.data.long$diagnosis <- adj.qMRI.ACG.data.dems.melt$diagnosis[1:nrow(adj.qMRI.ACG.data.long)]
+
+# plot for controls & PD
+adj.qMRI.ACG.data.long.Ctrl <- subset(adj.qMRI.ACG.data.long, diagnosis == "Control")
+adj.qMRI.ACG.data.long.PD <- subset(adj.qMRI.ACG.data.long, diagnosis == "PD")
+
+
+qMRI.boxplot <- function(metric, dframe) {
+  ggplot(
+    dframe[dframe[,paste("inc_",metric,sep = "")],],
+    aes(SpD, .data[[metric]], fill = SpD, shape = region)
+  ) +
+    geom_point(position = position_jitterdodge(), aes(colour = SpD), alpha = 0.9) +
+    geom_boxplot(alpha = 0) +
+    theme_minimal() +
+    theme(axis.title.x = element_blank()) +
+    theme(axis.title.y = element_blank()) +
+    ggtitle(metric,) +
+    scale_fill_manual(values = SpD.cols) +
+    scale_color_manual(values = SpD.cols)
+}
+
+# run again without SWM
+
+adj.qMRI.ACG.data.long.no.SWM <- subset(adj.qMRI.ACG.data.long, SpD != "SWM")
+
+# plot for controls & PD
+adj.qMRI.ACG.data.long.Ctrl.no.SWM <- subset(adj.qMRI.ACG.data.long.no.SWM, diagnosis == "Control")
+adj.qMRI.ACG.data.long.PD.no.SWM <- subset(adj.qMRI.ACG.data.long.no.SWM, diagnosis == "PD")
+
+dom <- c("SpD4", "SpD3","SpD2","SpD1")
+# colours for spatial domains
+SpD.cols <- c("#66CCEE","#228833","#CCBB44","#EE6677")
+
+# qMRI boxplots for Ctrl
+qMRI.ACG.boxplotlist.Ctrl.no.SWM <- lapply(1:length(MOI), function(i) 
+  qMRI.boxplot(metric = MOI[i], adj.qMRI.ACG.data.long.Ctrl.no.SWM))
+
+png(filename = paste(results.dir.qMRIonly, "/Control_qMRI_ACG_boxplots_no_SWM.png", sep = ""),
+    width = 1400, height = 600, units = "px", res = 120)
+qMRI.ACG.multiboxplot.Ctrl.no.SWM <- ggarrange(plotlist = qMRI.ACG.boxplotlist.Ctrl.no.SWM, 
+                                           nrow = 1, ncol = 5, 
+                                           common.legend = TRUE, 
+                                           legend = "right")
+plot(qMRI.ACG.multiboxplot.Ctrl.no.SWM)
+dev.off()
+
+# qMRI boxplots for PD
+qMRI.ACG.boxplotlist.PD.no.SWM <- lapply(1:length(MOI), function(i) 
+  qMRI.boxplot(metric = MOI[i], adj.qMRI.ACG.data.long.PD.no.SWM))
+
+png(filename = paste(results.dir.qMRIonly, "/PD_qMRI_ACG_boxplots_no_SWM.png", sep = ""),
+    width = 1400, height = 600, units = "px", res = 120)
+qMRI.ACG.multiboxplot.PD.no.SWM <- ggarrange(plotlist = qMRI.ACG.boxplotlist.PD.no.SWM, 
+                                         nrow = 1, ncol = 5, 
+                                         common.legend = TRUE, 
+                                         legend = "right")
+plot(qMRI.ACG.multiboxplot.PD.no.SWM)
+dev.off()
+
+
+# remove info about boxplot inclusion
+adj.qMRI.ACG.data.dems<- subset(adj.qMRI.ACG.data.dems, 
+                            select = -c(inc_QSM, 
+                                        inc_R1,
+                                        inc_R2s,
+                                        inc_PrD,
+                                        inc_MTsat))
 
 #### load in & reorganise cell data ####
 
@@ -274,6 +399,7 @@ dom <- c("SWM", "SpD4", "SpD3","SpD2","SpD1")
 reg <- c("anterior", "middle", "posterior")
 
 adj.qMRI.ST.medians <- expand.grid(SpD = dom, region = reg)
+adj.qMRI.ACG.medians <- expand.grid(SpD = dom, region = reg)
 
 # go through each qMRI metric and remove QC-failed subjects / nan values before averaging
 qMRI.metrics = c("QSM","R1","R2s","PrD","MTsat")
@@ -281,12 +407,15 @@ qMRI.metrics = c("QSM","R1","R2s","PrD","MTsat")
 # do this for controls and PD separately
 # (although only looking at Ctrl vs Ctrl for now)
 adj.qMRI.data.dems.Ctrl <- subset(adj.qMRI.data.dems, diagnosis == "Control")
+adj.qMRI.ACG.data.dems.Ctrl <- subset(adj.qMRI.ACG.data.dems, diagnosis == "Control")
 QC.info.Ctrl <- subset(QC.info, adj.qMRI.data.dems$diagnosis == "Control" )
 adj.qMRI.data.dems.PD <- subset(adj.qMRI.data.dems, diagnosis == "PD")
+adj.qMRI.ACG.data.dems.PD <- subset(adj.qMRI.ACG.data.dems, diagnosis == "PD")
 QC.info.PD <- subset(QC.info, adj.qMRI.data.dems$diagnosis == "PD" )
 
 for (m in qMRI.metrics){
   # remove QC failed subs before calculating mean
+  # DLPFC
   metric.data.Ctrl <- adj.qMRI.data.dems.Ctrl[QC.info.Ctrl[,paste(m,"_QC",sep = "")], 
                                               grepl(m, colnames(adj.qMRI.data.dems))]
   metric.medians.Ctrl <- colMedians(as.matrix(metric.data.Ctrl),na.rm = TRUE)
@@ -295,6 +424,15 @@ for (m in qMRI.metrics){
   metric.medians.PD <- colMedians(as.matrix(metric.data.PD),na.rm = TRUE)
   adj.qMRI.ST.medians[,paste(m, "_Control", sep = "")] <- metric.medians.Ctrl
   adj.qMRI.ST.medians[,paste(m, "_PD", sep = "")] <- metric.medians.PD
+  # ACG
+  metric.ACG.data.Ctrl <- adj.qMRI.ACG.data.dems.Ctrl[QC.info.Ctrl[,paste(m,"_QC",sep = "")], 
+                                              grepl(m, colnames(adj.qMRI.ACG.data.dems))]
+  metric.ACG.medians.Ctrl <- colMedians(as.matrix(metric.ACG.data.Ctrl),na.rm = TRUE)
+  metric.ACG.data.PD <- adj.qMRI.ACG.data.dems.PD[QC.info.PD[,paste(m,"_QC",sep = "")], 
+                                          grepl(m, colnames(adj.qMRI.ACG.data.dems))]
+  metric.ACG.medians.PD <- colMedians(as.matrix(metric.ACG.data.PD),na.rm = TRUE)
+  adj.qMRI.ACG.medians[,paste(m, "_Control", sep = "")] <- metric.ACG.medians.Ctrl
+  adj.qMRI.ACG.medians[,paste(m, "_PD", sep = "")] <- metric.ACG.medians.PD
 }
 
 # removing neuronal_death and mineral (for now) as these were not in the main analysis
@@ -362,6 +500,58 @@ project.PD.ST <- function(dframe, ST) {
   return(output.dframe)
 }
 
+project.ACG.ST <- function(DLPFC, ACG, ST) {
+  
+  # want to output two dataframes, one for control ACG, and one for PD ACG
+  # Control
+  output.dframe1 <- data.frame(matrix(NA, nrow = nrow(ACG), ncol = length(ST)))
+  colnames(output.dframe1) <- gsub("Control", "Control_predicted", ST)
+  output.dframe1 <- cbind(ACG[,1:2], output.dframe1)
+  # PD
+  output.dframe2 <- data.frame(matrix(NA, nrow = nrow(ACG), ncol = length(ST)))
+  colnames(output.dframe2) <- gsub("Control", "PD_predicted", ST)
+  output.dframe2 <- cbind(ACG[,1:2], output.dframe2)
+  
+  # loop though ST metrics
+  for (ii in 1:length(ST)) {
+    
+    st <- ST[ii]
+    
+    
+    # define formula
+    control.fm <- as.formula(paste0(st, 
+                                    "~ QSM_Control + R1_Control + 
+                                 R2s_Control + PrD_Control + MTsat_Control"))
+    
+    # control ACG data
+    control.ACG.data <- ACG[,c("QSM_Control", "R1_Control", "R2s_Control", 
+                               "PrD_Control", "MTsat_Control")]
+    # PD ACG data
+    PD.ACG.data <- ACG[,c("QSM_PD","R1_PD", "R2s_PD","PrD_PD", "MTsat_PD")]
+    
+    # fit control
+    control.fit <- lm(control.fm, data = DLPFC)
+    
+    # predict PD values
+    # need to temporarily rename columns to get this to work
+    colnames(control.ACG.data) <- c("QSM_Control","R1_Control", "R2s_Control", "PrD_Control", "MTsat_Control")
+    colnames(PD.ACG.data) <- c("QSM_Control","R1_Control", "R2s_Control", "PrD_Control", "MTsat_Control")
+    control.ACG.pred <- predict(control.fit, newdata = control.ACG.data)
+    PD.ACG.pred <- predict(control.fit, newdata = PD.ACG.data)
+    
+    # add to data frame
+    output.dframe1[,gsub("Control", "Control_predicted", st)] <- control.ACG.pred
+    output.dframe2[,gsub("Control", "PD_predicted", st)] <- PD.ACG.pred
+    
+  }
+  
+  return(list(
+    control = output.dframe1,
+    PD = output.dframe2
+    ))
+}
+
+# PD DLPFC projections
 PD.ST.proj <- project.PD.ST(adj.qMRI.ST.medians, all.ST.names)
 
 PD.cell.proj <- PD.ST.proj[,1:6]
@@ -378,6 +568,7 @@ write.csv(PD.GO.proj, file = paste(
 #### predict PD ST scores without SWM ####
 
 adj.qMRI.ST.medians.no.SWM <- subset(adj.qMRI.ST.medians, SpD != "SWM")
+adj.qMRI.ACG.medians.no.SWM <- subset(adj.qMRI.ACG.medians, SpD != "SWM")
 
 PD.ST.proj.no.SWM <- project.PD.ST(adj.qMRI.ST.medians.no.SWM, all.ST.names)
 
@@ -391,3 +582,33 @@ write.csv(PD.cell.proj.no.SWM, file = paste(
 write.csv(PD.GO.proj.no.SWM, file = paste(
   results.dir.stats, "/Projected_PD_pathway_scores_no_SWM.csv", sep = ""), 
   row.names = FALSE)
+
+ACG.proj.no.SWM <- project.ACG.ST(adj.qMRI.ST.medians.no.SWM,
+                                  adj.qMRI.ACG.medians.no.SWM, all.ST.names)
+
+control.ACG.cell.proj.no.SWM <- ACG.proj.no.SWM$control[,1:6]
+control.ACG.ST.proj.no.SWM <- cbind(ACG.proj.no.SWM$control[,1:2],
+                                    ACG.proj.no.SWM$control[,7:ncol(ACG.proj.no.SWM$control)])
+PD.ACG.cell.proj.no.SWM <- ACG.proj.no.SWM$PD[,1:6]
+PD.ACG.ST.proj.no.SWM <- cbind(ACG.proj.no.SWM$PD[,1:2],
+                               ACG.proj.no.SWM$PD[,7:ncol(ACG.proj.no.SWM$PD)])
+
+write.csv(control.ACG.cell.proj.no.SWM, file = paste(
+  results.dir.stats, "/Projected_control_ACG_cell_counts_no_SWM.csv", sep = ""), 
+  row.names = FALSE)
+
+write.csv(control.ACG.ST.proj.no.SWM, file = paste(
+  results.dir.stats, "/Projected_control_ACG_pathway_scores_no_SWM.csv", sep = ""), 
+  row.names = FALSE)
+
+write.csv(PD.ACG.cell.proj.no.SWM, file = paste(
+  results.dir.stats, "/Projected_PD_ACG_cell_counts_no_SWM.csv", sep = ""), 
+  row.names = FALSE)
+
+write.csv(PD.ACG.ST.proj.no.SWM, file = paste(
+  results.dir.stats, "/Projected_PD_ACG_pathway_scores_no_SWM.csv", sep = ""), 
+  row.names = FALSE)
+
+
+
+
