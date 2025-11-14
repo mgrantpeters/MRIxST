@@ -500,6 +500,11 @@ write.csv(GO.LOO.stats.Ctrl.no.SWM, file = paste(
   results.dir.stats, "/Stats_control_qMRI_vs_GO_POI_LOO_no_SWM.csv", sep = ""),
   row.names = FALSE)
 
+# save the LOO predictions
+write.csv(GO.LOO.Ctrl.no.SWM, file = paste(
+  results.dir.stats, "/LOO_predictions_control_qMRI_vs_GO_POI_no_SWM.csv", sep = ""),
+  row.names = FALSE)
+
 # plot the LOO
 plot.list.GO.LOO.Ctrl.no.SWM <- lapply(1:length(POI.names), function(i) 
   plot.LOO(ST = POI.names[i], LOO = GO.LOO.Ctrl.no.SWM, sts = GO.LOO.stats.Ctrl.no.SWM))

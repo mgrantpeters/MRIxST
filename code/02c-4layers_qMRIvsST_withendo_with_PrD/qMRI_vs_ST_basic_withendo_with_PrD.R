@@ -1146,6 +1146,11 @@ write.csv(cell.LOO.stats.Ctrl.no.SWM, file = paste(
   results.dir.stats, "/Stats_control_qMRI_vs_cell_count_LOO_no_SWM.csv", sep = ""), 
   row.names = FALSE)
 
+# save the LOO predictions
+write.csv(cell.LOO.Ctrl.no.SWM, file = paste(
+  results.dir.stats, "/LOO_predictions_control_qMRI_vs_cell_count_no_SWM.csv", sep = ""),
+  row.names = FALSE)
+
 # plot the LOO
 plot.list.cell.LOO.Ctrl.no.SWM <- lapply(1:length(COI), function(i) 
   plot.LOO(ST = COI[i], LOO = cell.LOO.Ctrl.no.SWM, sts = cell.LOO.stats.Ctrl.no.SWM))
