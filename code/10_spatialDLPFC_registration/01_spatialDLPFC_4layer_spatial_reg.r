@@ -1,21 +1,24 @@
 ## Nov 2025
 ## Louise Huuki-Myers
-## Preform spatial registration on k=7 
+## Preform spatial registration on k=7
 
 #### prep & load data ####
 
 library("spatialLIBD")
 library("tidyverse")
+library("here")
+
+data_dir <- here()
 
 ## load data
 spe <- fetch_data("spatialDLPFC_Visium")
 
-#### Explore k=7 ####
+#### Explore k=7  - add 4 layer classifications ####
 
 colData(spe)
 table(spe$BayesSpace_harmony_07)
 
-vis_clus(spe, 
+vis_clus(spe,
          clustervar = "BayesSpace_harmony_07",
          sampleid = "Br2743_mid")
 
@@ -32,7 +35,7 @@ MRI_colors = c('SpD1' = '#ED5E70',
                'SpD4' = '#66CCEE',
                'WM' = "grey90")
 
-vis_clus(spe, 
+vis_clus(spe,
          clustervar = "MRI_layer",
          sampleid = "Br2743_mid",
          colors = MRI_colors)
