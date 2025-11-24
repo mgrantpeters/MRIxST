@@ -78,6 +78,8 @@ modeling_results <- registration_wrapper(
     pseudobulk_rds_file = here(data_dir, "spatialDLPFC_spe_pb_l4.rds")
 )
 
+saveRDS(modeling_results, file = here(data_dir, "modeling_results_spatialDLPFC_l4.Rds"))
+
 #### register to pilot data ####
 
 human_pilot_model <- fetch_data(type = "modeling_results")
@@ -97,13 +99,36 @@ anno <- annotate_registered_clusters(
     cutoff_merge_ratio = 0.25
 )
 
+#   cluster layer_confidence   layer_label layer_label_simple
+# 1    SpD1             good        Layer2                 L2
+# 2    SpD2             good Layer4/Layer3               L4/3
+# 3    SpD3             good        Layer5                 L5
+# 4    SpD4             good        Layer6                 L6
+# 5      WM             good            WM                 WM
+
+write.csv(cor_layer, file = here(data_dir, "cor_layer_spatialDLPFC_l4_v_human_pilot.csv"))
+write.csv(anno, file = here(data_dir, "cor_layer_anno_spatialDLPFC_l4_v_human_pilot.csv"))
+
+saveRDS(list(cor_layer = cor_layer, anno = anno), file = here(data_dir, "cor_layer_anno_spatialDLPFC_l4_v_human_pilot.Rds"))
 
 #### plot ####
 
-layer_stat_cor_plot(cor_stats_layer,
+cor_layer <- cor_layer[,sort(colnames(cor_layer))]
+
+pdf(here(plot_dir, "spatialDLPFC_l4_v_human_pilot_cor_plot.pdf"), height = 6)
+layer_stat_cor_plot(cor_layer,
                     reference_colors = libd_layer_colors,
                     query_colors = SpD_colors,
+                    annotation = anno,
                     cluster_rows = FALSE,
                     cluster_columns = FALSE
-                    )
+)
+dev.off()
+
+## Reproducibility information
+print("Reproducibility information:")
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()
 
