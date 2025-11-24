@@ -1,73 +1,109 @@
 ## Nov 2025
 ## Louise Huuki-Myers
-## Preform spatial registration on k=7
+## Preform spatial registration on 4 layers from k=7 spatialDLPFC vs. human pilot layers
 
 #### prep & load data ####
 
 library("spatialLIBD")
 library("tidyverse")
 library("here")
+library("sessioninfo")
 
-data_dir <- here()
+## prep dirs
+data_dir <- here("processed_data", "10_spatialDLPFC_registration", "01_spatialDLPFC_4layer_spatial_reg")
+if(!dir.exists(data_dir)) dir.create(data_dir, recursive = TRUE)
+
+plot_dir <- here("plots", "10_spatialDLPFC_registration", "01_spatialDLPFC_4layer_spatial_reg")
+if(!dir.exists(plot_dir)) dir.create(plot_dir, recursive = TRUE)
 
 ## load data
 spe <- fetch_data("spatialDLPFC_Visium")
 
-#### Explore k=7  - add 4 layer classifications ####
+#### Add 4 layer classifications to k=7 BayesSpace clusters ####
 
 colData(spe)
 table(spe$BayesSpace_harmony_07)
 
-vis_clus(spe,
+vis_clus_k7 <- vis_clus(spe,
          clustervar = "BayesSpace_harmony_07",
          sampleid = "Br2743_mid")
 
+ggsave(vis_clus_k7, filename = here(plot_dir, "vis_clus_k7-Br2743_mid.png"))
+
 layer_def <- tibble(harmony_07 = 1:7,
-                    layer_def = c("SpD1", "SpD1", "SpD2", "SpD3", "WM", "SpD4", "WM"))
+                    SpD = c("SpD1", "SpD1", "SpD2", "SpD3", "WM", "SpD4", "WM"))
 
-spe$MRI_layer <- layer_def$layer_def[match(spe$BayesSpace_harmony_07, layer_def$harmony_07)]
+layer_def |> arrange(SpD)
+# harmony_07 SpD
+# <int> <chr>
+# 1          1 SpD1
+# 2          2 SpD1
+# 3          3 SpD2
+# 4          4 SpD3
+# 5          6 SpD4
+# 6          5 WM
+# 7          7 WM
 
-table(spe$MRI_layer)
+spe$SpD <- layer_def$SpD[match(spe$BayesSpace_harmony_07, layer_def$harmony_07)]
 
-MRI_colors = c('SpD1' = '#ED5E70',
+table(spe$SpD)
+
+SpD_colors = c('SpD1' = '#ED5E70',
                'SpD2' = '#CCBB44',
                'SpD3' = '#238934',
                'SpD4' = '#66CCEE',
                'WM' = "grey90")
 
-vis_clus(spe,
-         clustervar = "MRI_layer",
-         sampleid = "Br2743_mid",
-         colors = MRI_colors)
+vis_clus_SpD_l4 <- vis_clus(spe,
+                            clustervar = "SpD",
+                            sampleid = "Br2743_mid",
+                            colors = SpD_colors,
+                            guide_point_size = 4)
+
+ggsave(vis_clus_SpD_l4, filename = here(plot_dir, "vis_clus_SpD_l4-Br2743_mid.png"))
+
 
 #### run registration wrapper ####
 
-colData(spe)[,c("sample_id", "MRI_layer", "position", "age", "sex")]
+colData(spe)[,c("sample_id", "SpD", "position", "age", "sex")]
 rowData(spe)
 
 modeling_results <- registration_wrapper(
     spe,
-    var_registration = "MRI_layer",
+    var_registration = "SpD",
     var_sample_id = "sample_id",
     covars = c("position", "age", "sex"),
     gene_ensembl = "gene_id",
-    gene_name = "gene_name"
+    gene_name = "gene_name",
+    pseudobulk_rds_file = here(data_dir, "spatialDLPFC_spe_pb_l4.rds")
 )
 
 #### register to pilot data ####
 
 human_pilot_model <- fetch_data(type = "modeling_results")
 
-cor_stats_layer <- layer_stat_cor(
+cor_layer <- layer_stat_cor(
     stats = modeling_results$enrichment,
     modeling_results = fetch_data(type = "modeling_results"),
     model_type = "enrichment",
     top_n = 100
 )
 
+## annotate
+
+anno <- annotate_registered_clusters(
+    cor_stats_layer = cor_layer,
+    confidence_threshold = 0.25,
+    cutoff_merge_ratio = 0.25
+)
+
 
 #### plot ####
 
 layer_stat_cor_plot(cor_stats_layer,
-                    reference_colors = libd_layer_colors)
+                    reference_colors = libd_layer_colors,
+                    query_colors = SpD_colors,
+                    cluster_rows = FALSE,
+                    cluster_columns = FALSE
+                    )
 
