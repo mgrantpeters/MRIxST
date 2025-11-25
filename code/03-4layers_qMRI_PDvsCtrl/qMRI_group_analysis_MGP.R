@@ -52,7 +52,7 @@ qMRI.ROI.names <- colnames(qMRI.data.dems)[5:ncol(qMRI.data.dems)]
 
 ## JUST PD AND CONTROLS ----
 
-# R1
+###############################################################  R1
 
 # remove subjects that failed R1 QC or are missing their R1
 qMRI.data.dems.R1 <- subset(qMRI.data.dems,QC.info$MPM_QC == 1 & !is.nan(qMRI.data.dems$R1_SWM))
@@ -73,6 +73,8 @@ print("#################### R1 ####################")
 
 print(summary(mdl.R1.emns))
 
+qMRI.data.dems.R1.melt = qMRI.data.dems.R1.melt[qMRI.data.dems.R1.melt$SpD!='SWM',]
+
 # save some stats
 write.csv(as.data.frame(summary(mdl.R1.emns)),
           paste(results.dir.stats,"/stats_R1_group_comparison_PDvsCtrl",".csv",sep=""),
@@ -91,7 +93,7 @@ print(plot.mdl)
 dev.off()
 
 
-# MT sat
+############################################################### MT sat
 
 # remove subjects that failed MTsat QC or are missing their MTsat
 qMRI.data.dems.MTsat <- subset(qMRI.data.dems,QC.info$MPM_QC == 1 & !is.nan(qMRI.data.dems$MTsat_SWM))
@@ -111,6 +113,129 @@ mdl.MTsat.emns <- emmeans(mdl.MTsat, pairwise ~ diagnosis | SpD, cov.reduce = me
 print("#################### MTsat ####################")
 
 print(summary(mdl.MTsat.emns))
+
+qMRI.data.dems.MTsat.melt = qMRI.data.dems.MTsat.melt[qMRI.data.dems.MTsat.melt$SpD!='SWM',]
+
+# save some stats
+#write.csv(as.data.frame(summary(mdl.MTsat.emns)),
+#          paste(results.dir.stats,"/stats_MTsat_group_comparison_PDvsCtrl",".csv",sep=""),
+#          row.names = FALSE)
+
+# do a boxplot across groups
+png(filename = paste(results.dir,"/plot_MTsat_group_comparison_PDvsCtrl_MGP",".png",sep=""), 
+    width = 750, height = 375, units = "px", res = 150)
+plot.mdl <- ggplot(qMRI.data.dems.MTsat.melt, aes(x = SpD, y = MTsat, fill = diagnosis)) + 
+  scale_fill_manual(values = c("PD" = "#4B8D86", "Control" = "#C3B3A1")) +
+  geom_boxplot(outlier.shape = NA) + 
+  geom_point(position = position_jitterdodge(jitter.width = 0.2), alpha = 0.5, shape = 21, aes(fill = diagnosis)) + 
+  ylab("MTsat") +
+  theme_minimal()
+print(plot.mdl)
+dev.off()
+
+
+###############################################################  QSM
+
+# remove subjects that failed MTsat QC or are missing their MTsat
+qMRI.data.dems.MTsat <- subset(qMRI.data.dems,QC.info$MPM_QC == 1 & !is.nan(qMRI.data.dems$MTsat_SWM))
+qMRI.data.dems.MTsat <- subset(qMRI.data.dems.MTsat, select = c(grepl("subject|age|sex|diagnosis|MTsat",colnames(qMRI.data.dems.MTsat))))
+ROI.names.MTsat <- colnames(qMRI.data.dems.MTsat)[grepl("MTsat",colnames(qMRI.data.dems.MTsat))]
+
+qMRI.data.dems.MTsat.melt <- melt(qMRI.data.dems.MTsat,id.vars=c("subject","age","sex","diagnosis"))
+colnames(qMRI.data.dems.MTsat.melt) <- c("subject","age","sex","diagnosis","SpD", "MTsat")
+qMRI.data.dems.MTsat.melt$SpD <- gsub("MTsat_", "", qMRI.data.dems.MTsat.melt$SpD)
+qMRI.data.dems.MTsat.melt$SpD <- factor(qMRI.data.dems.MTsat.melt$SpD, levels = c("SWM", "SpD4", "SpD3", "SpD2", "SpD1"), ordered = TRUE)
+
+# putting everything into one model rather than running loads
+mdl.MTsat <- aov(data = qMRI.data.dems.MTsat.melt, MTsat ~ age + sex + SpD*diagnosis)
+# calculate estimated marginal means (adjusting for age and sex)
+mdl.MTsat.emns <- emmeans(mdl.MTsat, pairwise ~ diagnosis | SpD, cov.reduce = mean, adjust = "bonferroni")
+
+print("#################### MTsat ####################")
+
+print(summary(mdl.MTsat.emns))
+
+qMRI.data.dems.MTsat = qMRI.data.dems.MTsat[qMRI.data.dems.MTsat$SpD!='SWM',]
+
+# save some stats
+#write.csv(as.data.frame(summary(mdl.MTsat.emns)),
+#          paste(results.dir.stats,"/stats_MTsat_group_comparison_PDvsCtrl",".csv",sep=""),
+#          row.names = FALSE)
+
+# do a boxplot across groups
+png(filename = paste(results.dir,"/plot_MTsat_group_comparison_PDvsCtrl_MGP",".png",sep=""), 
+    width = 750, height = 375, units = "px", res = 150)
+plot.mdl <- ggplot(qMRI.data.dems.MTsat.melt, aes(x = SpD, y = MTsat, fill = diagnosis)) + 
+  scale_fill_manual(values = c("PD" = "#4B8D86", "Control" = "#C3B3A1")) +
+  geom_boxplot(outlier.shape = NA) + 
+  geom_point(position = position_jitterdodge(jitter.width = 0.2), alpha = 0.5, shape = 21, aes(fill = diagnosis)) + 
+  ylab("MTsat") +
+  theme_minimal()
+print(plot.mdl)
+dev.off()
+
+###############################################################  PrD
+
+# remove subjects that failed MTsat QC or are missing their MTsat
+qMRI.data.dems.MTsat <- subset(qMRI.data.dems,QC.info$MPM_QC == 1 & !is.nan(qMRI.data.dems$MTsat_SWM))
+qMRI.data.dems.MTsat <- subset(qMRI.data.dems.MTsat, select = c(grepl("subject|age|sex|diagnosis|MTsat",colnames(qMRI.data.dems.MTsat))))
+ROI.names.MTsat <- colnames(qMRI.data.dems.MTsat)[grepl("MTsat",colnames(qMRI.data.dems.MTsat))]
+
+qMRI.data.dems.MTsat.melt <- melt(qMRI.data.dems.MTsat,id.vars=c("subject","age","sex","diagnosis"))
+colnames(qMRI.data.dems.MTsat.melt) <- c("subject","age","sex","diagnosis","SpD", "MTsat")
+qMRI.data.dems.MTsat.melt$SpD <- gsub("MTsat_", "", qMRI.data.dems.MTsat.melt$SpD)
+qMRI.data.dems.MTsat.melt$SpD <- factor(qMRI.data.dems.MTsat.melt$SpD, levels = c("SWM", "SpD4", "SpD3", "SpD2", "SpD1"), ordered = TRUE)
+
+# putting everything into one model rather than running loads
+mdl.MTsat <- aov(data = qMRI.data.dems.MTsat.melt, MTsat ~ age + sex + SpD*diagnosis)
+# calculate estimated marginal means (adjusting for age and sex)
+mdl.MTsat.emns <- emmeans(mdl.MTsat, pairwise ~ diagnosis | SpD, cov.reduce = mean, adjust = "bonferroni")
+
+print("#################### MTsat ####################")
+
+print(summary(mdl.MTsat.emns))
+
+qMRI.data.dems.MTsat = qMRI.data.dems.MTsat[qMRI.data.dems.MTsat$SpD!='SWM',]
+
+# save some stats
+#write.csv(as.data.frame(summary(mdl.MTsat.emns)),
+#          paste(results.dir.stats,"/stats_MTsat_group_comparison_PDvsCtrl",".csv",sep=""),
+#          row.names = FALSE)
+
+# do a boxplot across groups
+png(filename = paste(results.dir,"/plot_MTsat_group_comparison_PDvsCtrl_MGP",".png",sep=""), 
+    width = 750, height = 375, units = "px", res = 150)
+plot.mdl <- ggplot(qMRI.data.dems.MTsat.melt, aes(x = SpD, y = MTsat, fill = diagnosis)) + 
+  scale_fill_manual(values = c("PD" = "#4B8D86", "Control" = "#C3B3A1")) +
+  geom_boxplot(outlier.shape = NA) + 
+  geom_point(position = position_jitterdodge(jitter.width = 0.2), alpha = 0.5, shape = 21, aes(fill = diagnosis)) + 
+  ylab("MTsat") +
+  theme_minimal()
+print(plot.mdl)
+dev.off()
+
+###############################################################  R2*
+
+# remove subjects that failed MTsat QC or are missing their MTsat
+qMRI.data.dems.MTsat <- subset(qMRI.data.dems,QC.info$MPM_QC == 1 & !is.nan(qMRI.data.dems$R2s_SWM))
+qMRI.data.dems.MTsat <- subset(qMRI.data.dems.MTsat, select = c(grepl("subject|age|sex|diagnosis|MTsat",colnames(qMRI.data.dems.MTsat))))
+ROI.names.MTsat <- colnames(qMRI.data.dems.MTsat)[grepl("MTsat",colnames(qMRI.data.dems.MTsat))]
+
+qMRI.data.dems.MTsat.melt <- melt(qMRI.data.dems.MTsat,id.vars=c("subject","age","sex","diagnosis"))
+colnames(qMRI.data.dems.MTsat.melt) <- c("subject","age","sex","diagnosis","SpD", "MTsat")
+qMRI.data.dems.MTsat.melt$SpD <- gsub("MTsat_", "", qMRI.data.dems.MTsat.melt$SpD)
+qMRI.data.dems.MTsat.melt$SpD <- factor(qMRI.data.dems.MTsat.melt$SpD, levels = c("SWM", "SpD4", "SpD3", "SpD2", "SpD1"), ordered = TRUE)
+
+# putting everything into one model rather than running loads
+mdl.MTsat <- aov(data = qMRI.data.dems.MTsat.melt, MTsat ~ age + sex + SpD*diagnosis)
+# calculate estimated marginal means (adjusting for age and sex)
+mdl.MTsat.emns <- emmeans(mdl.MTsat, pairwise ~ diagnosis | SpD, cov.reduce = mean, adjust = "bonferroni")
+
+print("#################### MTsat ####################")
+
+print(summary(mdl.MTsat.emns))
+
+qMRI.data.dems.MTsat = qMRI.data.dems.MTsat[qMRI.data.dems.MTsat$SpD!='SWM',]
 
 # save some stats
 #write.csv(as.data.frame(summary(mdl.MTsat.emns)),
