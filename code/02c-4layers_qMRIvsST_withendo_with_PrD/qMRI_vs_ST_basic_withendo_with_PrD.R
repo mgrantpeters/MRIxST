@@ -829,7 +829,7 @@ plot.LOO.cooksd <- function(ST, LOO) {
 # )
 # plot(cell.multi.plot.cooksd.Ctrl)
 # annotate_figure(cell.multi.plot.cooksd.Ctrl, 
-#                 top = text_grob("Effect of regions on HC qMRI vs. HC cell count correlation"),
+#                 top = text_grob("Effect of regions on Control qMRI vs. Control cell count correlation"),
 #                 left = text_grob("Cook's distance", rot = 90))
 # dev.off()
 # 
@@ -880,7 +880,7 @@ plot.LOO.cooksd <- function(ST, LOO) {
 # )
 # plot(GO.multi.plot.cooksd.Ctrl)
 # annotate_figure(GO.multi.plot.cooksd.Ctrl, 
-#                 top = text_grob("Effect of regions on HC qMRI vs. HC GO pathway correlation"),
+#                 top = text_grob("Effect of regions on Control qMRI vs. Control GO pathway correlation"),
 #                 left = text_grob("Cook's distance", rot = 90))
 # dev.off()
 # 
@@ -1064,7 +1064,7 @@ cell.multi.plot.cooksd.Ctrl.no.SWM <- ggarrange(
 )
 plot(cell.multi.plot.cooksd.Ctrl.no.SWM)
 annotate_figure(cell.multi.plot.cooksd.Ctrl.no.SWM, 
-                top = text_grob("Effect of regions on HC qMRI vs. HC cell count correlation"),
+                top = text_grob("Effect of regions on Control qMRI vs. Control cell count correlation"),
                 left = text_grob("Cook's distance", rot = 90),
                 bottom = text_grob("ROI"))
 dev.off()
@@ -1116,7 +1116,7 @@ dev.off()
 # )
 # plot(GO.multi.plot.cooksd.Ctrl.no.SWM)
 # annotate_figure(GO.multi.plot.cooksd.Ctrl.no.SWM, 
-#                 top = text_grob("Effect of regions on HC qMRI vs. HC GO pathway correlation"),
+#                 top = text_grob("Effect of regions on Control qMRI vs. Control GO pathway correlation"),
 #                 left = text_grob("Cook's distance", rot = 90),
 #                 bottom = text_grob("ROI"))
 # dev.off()

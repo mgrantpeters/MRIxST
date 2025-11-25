@@ -472,7 +472,7 @@ GO.multi.plot.cooksd.Ctrl.no.SWM <- ggarrange(
 )
 plot(GO.multi.plot.cooksd.Ctrl.no.SWM)
 annotate_figure(GO.multi.plot.cooksd.Ctrl.no.SWM, 
-                top = text_grob("Effect of regions on HC qMRI vs. HC GO pathway correlation"),
+                top = text_grob("Effect of regions on Control qMRI vs. Control GO pathway correlation"),
                 left = text_grob("Cook's distance", rot = 90),
                 bottom = text_grob("ROI"))
 dev.off()
