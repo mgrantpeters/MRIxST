@@ -421,7 +421,7 @@ plot.LOO.cooksd <- function(ST, LOO) {
 
 #### run correlation / LOO analyses ----
 
-MOI <- MOI <- c("QSM","R1","R2s","PrD","MTsat")
+MOI <- c("MTsat","PrD", "QSM", "R1","R2s")
 
 MOIPOI <- expand.grid(MOI,POI.names,stringsAsFactors = FALSE)
 
@@ -473,7 +473,8 @@ GO.multi.plot.cooksd.Ctrl.no.SWM <- ggarrange(
 plot(GO.multi.plot.cooksd.Ctrl.no.SWM)
 annotate_figure(GO.multi.plot.cooksd.Ctrl.no.SWM, 
                 top = text_grob("Effect of regions on HC qMRI vs. HC GO pathway correlation"),
-                left = text_grob("Cook's distance", rot = 90))
+                left = text_grob("Cook's distance", rot = 90),
+                bottom = text_grob("ROI"))
 dev.off()
 
 # define empty data frames for LOO results
@@ -537,5 +538,6 @@ multi.plot.GO.LOO.cooksd.Ctrl.no.SWM <- ggarrange(
 plot(multi.plot.GO.LOO.cooksd.Ctrl.no.SWM)
 annotate_figure(multi.plot.GO.LOO.cooksd.Ctrl.no.SWM,  
                 left = text_grob("Cook's distance", rot = 90),
-                top = text_grob("Influence of regions on GO LOO correlations"))
+                top = text_grob("Influence of regions on GO LOO correlations"),
+                bottom = text_grob("ROI"))
 dev.off()

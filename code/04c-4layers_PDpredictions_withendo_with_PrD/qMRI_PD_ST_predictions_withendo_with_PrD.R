@@ -609,6 +609,70 @@ write.csv(PD.ACG.ST.proj.no.SWM, file = paste(
   results.dir.stats, "/Projected_PD_ACG_pathway_scores_no_SWM.csv", sep = ""), 
   row.names = FALSE)
 
+# add in comparison between control and PD projections
+
+POI.no.SWM <- as.character(read.delim("pathways_of_interest_no_SWM.txt", sep = ",", header = FALSE, quote = "'"))
+
+#reformat and combine dataframes
+
+temp <- adj.qMRI.ST.medians.no.SWM
+colnames(temp) <- gsub("_Control", "",colnames(adj.qMRI.ST.medians.no.SWM))
+colnames(PD.ST.proj.no.SWM) <- gsub("_PD_predicted", "",colnames(PD.ST.proj.no.SWM))
+adj.ST.medians.no.SWM <- temp[,grepl(paste(colnames(PD.ST.proj.no.SWM),collapse = "|"), colnames(temp))]
+PD.ST.proj.no.SWM$diagnosis <- rep("PD", nrow(PD.ST.proj.no.SWM))
+adj.ST.medians.no.SWM$diagnosis <- rep("Control", nrow(adj.ST.medians.no.SWM))
+
+Ctrl.PD.ST.medians.no.SWM <- rbind(adj.ST.medians.no.SWM, PD.ST.proj.no.SWM)
+
+GO.boxplot <- function(GO, dframe){
+  ggplot(dframe, aes(x = diagnosis, y = dframe[,GO])) + 
+    geom_boxplot(outlier.shape = NA) + 
+    geom_point(position = position_jitterdodge(jitter.width = 0.01), aes(colour = SpD, shape = region)) + 
+    theme_minimal() +
+    ggtitle(GO) +
+    theme(axis.title.y = element_blank()) +
+    theme(axis.title.x = element_blank()) +
+    theme(plot.title = element_text(size=10)) +
+    scale_color_manual(values = SpD.cols) 
+}
 
 
+GO.boxplotlist.no.SWM <- lapply(1:length(POI.no.SWM), function(i)
+  GO.boxplot(GO = POI.no.SWM[i], Ctrl.PD.ST.medians.no.SWM))
+
+png(filename = paste(results.dir, "/Ctrl_PD_POI_boxplots_no_SWM.png", sep = ""),
+    width = 1200, height = 700, units = "px", res = 120)
+GO.multiboxplot.no.SWM <- ggarrange(plotlist = GO.boxplotlist.no.SWM,
+                             nrow = 3, ncol = 5,
+                             common.legend = TRUE,
+                             legend = "right")
+
+plot(GO.multiboxplot.no.SWM)
+dev.off()
+
+# Run paired Wilcoxon tests
+results.no.SWM <- lapply(1:length(POI.no.SWM), function(i) {
+  x <- PD.ST.proj.no.SWM[, paste0(POI.no.SWM[i])]
+  y <- adj.qMRI.ST.medians.no.SWM[, paste0(POI.no.SWM[i], "_Control")]
+  
+  wt <- wilcox.test(x, y, paired = TRUE, exact = FALSE)
+  
+  data.frame(
+    POI = POI.no.SWM[i],
+    median_predicted = median(x, na.rm = TRUE),
+    median_control = median(y, na.rm = TRUE),
+    W_stat = unname(wt$statistic),
+    p_value = wt$p.value
+  )
+})
+
+# Combine into a single table
+results.table.no.SWM <- do.call(rbind, results.no.SWM)
+
+# Add FDR-corrected p-values
+results.table.no.SWM$FDR_p <- p.adjust(results.table.no.SWM$p_value, method = "fdr")
+
+results.table.no.SWM
+
+write.csv(results.table.no.SWM, paste(results.dir.stats, "/Ctrl_PD_POI_diffs_no_SWM.csv", sep = ""))
 
