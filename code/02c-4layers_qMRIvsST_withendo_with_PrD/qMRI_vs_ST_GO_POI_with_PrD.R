@@ -519,8 +519,8 @@ multi.plot.GO.LOO.Ctrl.no.SWM <- ggarrange(
   legend = "right"
 )
 plot(multi.plot.GO.LOO.Ctrl.no.SWM)
-annotate_figure(multi.plot.GO.LOO.Ctrl.no.SWM, bottom = text_grob("Actual GO pathway score"),
-                left = text_grob("Predicted GO pathway score", rot = 90),
+annotate_figure(multi.plot.GO.LOO.Ctrl.no.SWM, bottom = text_grob("Control SRT GO pathway score"),
+                left = text_grob("qMRI-predicted GO pathway score", rot = 90),
                 top = text_grob("Control qMRI medians predicting control GO pathway score"))
 dev.off()
 

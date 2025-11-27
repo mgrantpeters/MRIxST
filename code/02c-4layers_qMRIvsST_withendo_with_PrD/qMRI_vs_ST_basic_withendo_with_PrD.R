@@ -926,7 +926,7 @@ colnames(cell.LOO.stats.Ctrl) <- c("cell_type", "NRMSE", "T","rho", "R2", "p")
 # )
 # plot(multi.plot.cell.LOO.Ctrl)
 # annotate_figure(multi.plot.cell.LOO.Ctrl, bottom = text_grob("Control SRT count"),
-#                 left = text_grob("Predicted cell count", rot = 90),
+#                 left = text_grob("qMRI-predicted cell count", rot = 90),
 #                 top = text_grob("Control qMRI medians predicting control cell count"))
 # dev.off()
 # 
@@ -986,8 +986,8 @@ colnames(cell.LOO.stats.Ctrl) <- c("cell_type", "NRMSE", "T","rho", "R2", "p")
 #   legend = "right"
 # )
 # plot(multi.plot.GO.LOO.Ctrl)
-# annotate_figure(multi.plot.GO.LOO.Ctrl, bottom = text_grob("Actual GO pathway score"),
-#                 left = text_grob("Predicted GO pathway score", rot = 90),
+# annotate_figure(multi.plot.GO.LOO.Ctrl, bottom = text_grob("Control SRT GO pathway score"),
+#                 left = text_grob("qMRI-predicted GO pathway score", rot = 90),
 #                 top = text_grob("Control qMRI medians predicting control GO pathway score"))
 # dev.off()
 # 
@@ -1167,7 +1167,7 @@ multi.plot.cell.LOO.Ctrl.no.SWM <- ggarrange(
 )
 plot(multi.plot.cell.LOO.Ctrl.no.SWM)
 annotate_figure(multi.plot.cell.LOO.Ctrl.no.SWM, bottom = text_grob("Control SRT count"),
-                left = text_grob("Predicted cell count", rot = 90),
+                left = text_grob("qMRI-predicted cell count", rot = 90),
                 top = text_grob("Control qMRI medians predicting control cell count"))
 dev.off()
 
@@ -1227,8 +1227,8 @@ dev.off()
 #   legend = "right"
 # )
 # plot(multi.plot.GO.LOO.Ctrl.no.SWM)
-# annotate_figure(multi.plot.GO.LOO.Ctrl.no.SWM, bottom = text_grob("Actual GO pathway score"),
-#                 left = text_grob("Predicted GO pathway score", rot = 90),
+# annotate_figure(multi.plot.GO.LOO.Ctrl.no.SWM, bottom = text_grob("Control SRT GO pathway score"),
+#                 left = text_grob("qMRI-predicted GO pathway score", rot = 90),
 #                 top = text_grob("Control qMRI medians predicting control GO pathway score"))
 # dev.off()
 # 
