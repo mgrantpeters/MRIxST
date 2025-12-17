@@ -1,7 +1,6 @@
 *.RData
 *.Rhistory
-.Rproj.user
-*_1x1binned_*
-OLD__*.csv
-EXTRA_*.csv
-*.zip
+*.Rproj.user
+*.Rproj
+.ipynb_checkpoints/
+*.ipynb_checkpoints/

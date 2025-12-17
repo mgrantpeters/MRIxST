@@ -1,1 +1,0 @@
-'inflammation_GO0006954','myelin_GO0014003','myelin_GO0019911','myelin_GO0031643','myelin_GO0033269','myelin_GO0042552','lipid_GO0005227','lipid_GO0005778','lipid_GO0030148','lipid_GO0030658','lipid_GO0030660','lipid_GO0032580','lipid_GO0034379','lipid_GO1902388'

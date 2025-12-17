@@ -1,0 +1,8 @@
+Panpipes environment activated
+Start running python
+05-pathway_scoring.py:20: ImplicitModificationWarning: Trying to modify attribute `.obs` of view, initializing view as actual.
+  subset.obs['bayesSpace_harmony_7'] = subset.obs['bayesSpace_harmony_7'].replace({   # Renaming to match order of MRI (L1, closer to WM, L4 closer to meninges)
+Traceback (most recent call last):
+  File "05-pathway_scoring.py", line 35, in <module>
+    if os.path.exists('../../processed_data/01-4layers_withendo/05-pathway_scoring/scores_4layers_%s_%s.csv' % (categories[m],pathways[n])):
+NameError: name 'categories' is not defined
