@@ -118,7 +118,7 @@ qMRI vs SRT R analyses were run using R version 4.4.1, and depend on the followi
 - reshape2
 - tidyverse
 
-qMRI vs SRT R analyses were run using R version $${\color{red}version}$$, and depend on the following packages:
+SRT-only R analyses were run using R version $${\color{red}version}$$, and depend on the following packages:
 - AnnotationDbi
 - biomaRt
 - dplyr
