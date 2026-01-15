@@ -39,13 +39,13 @@ qMRI vs SRT statistical analysis results.
 ## Dependencies
 
 qMRI vs SRT R analyses were run using R version 4.4.1, and depend on the following packages:
-- emmeans
-- ggplot2
-- ggpubr
-- hydroGOF
-- matrixStats
-- reshape2
-- tidyverse
+- emmeans (v 1.10.4)
+- ggplot2 (v 3.5.1)
+- ggpubr (v 0.6.0)
+- hydroGOF (v 0.6-0)
+- matrixStats (v 1.4.1)
+- reshape2 (v 1.4.4)
+- tidyverse (v 2.0.0)
 
 SRT-only R analyses were run using R version 4.3.1, and depend on the following packages:
 - AnnotationDbi (v 1.60.2)
@@ -70,9 +70,9 @@ Python analyses were run in Python version 3.7.3, and depend on the following pa
 - sklearn (v 0.0)
 - statsmodels (v 0.13.2)
 
-## Achronym definitions
+## Acronym definitions
 
-Achronym definitions: 
+Acronym definitions: 
 DLPFC = dorsolateral prefrontal cortex;
 GO = gene ontolgy;
 LOOCV = leave-one-out cross validation;
