@@ -8,7 +8,7 @@ library(emmeans)
 
 # define directories
 d0 <- getwd();
-qMRI.data.dir <- paste(d0, "/../../processed_data/02-4layers_qMRI/", sep = "")
+qMRI.data.dir <- paste(d0, "/../../raw_data/4layers_qMRI/", sep = "")
 dems.dir<- paste(d0, "/../../raw_data/participant_info/", sep = "")
 results.dir <- paste(d0, "/../../plots/03-4layers_PDvsCtrl/", sep = "")
 results.dir.stats <- paste(d0, "/../../stats/03-4layers_PDvsCtrl/", sep = "")

@@ -10,7 +10,7 @@ library(matrixStats)
 
 # define directories
 d0 <- getwd();
-qMRI.data.dir <- paste(d0, "/../../processed_data/02-4layers_qMRI/", sep = "")
+qMRI.data.dir <- paste(d0, "/../../raw_data/4layers_qMRI/", sep = "")
 cell.data.dir <- paste(d0, "/../../processed_data/01-4layers_withendo/02-top3_cells_counts/", sep = "")
 GO.data.dir <- paste(d0, "/../../processed_data/01-4layers_withendo/05-pathway_scoring/", sep = "")
 dems.dir<- paste(d0, "/../../raw_data/participant_info/", sep = "")
