@@ -109,13 +109,27 @@ qMRI vs SRT statistical analysis results
 
 ## Dependencies
 
-R analyses were run using R version 4.4.1, and depend on the following packages:
+qMRI vs SRT R analyses were run using R version 4.4.1, and depend on the following packages:
 - emmeans
 - ggplot2
 - ggpubr
 - hydroGOF
 - matrixStats
 - reshape2
+- tidyverse
+
+qMRI vs SRT R analyses were run using R version $${\color{red}version}$$, and depend on the following packages:
+- AnnotationDbi
+- biomaRt
+- dplyr
+- ggplot2
+- GO.db
+- here
+- org.Hs.eg.db
+- sessioninfo
+- spatialLIBD
+- stringr
+- tibble
 - tidyverse
 
 Python analyses were run in $${\color{red}version}$$
