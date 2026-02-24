@@ -2,7 +2,7 @@
 
 Can we infer molecular information from quantitative MRI imaging using spatially resolved transcriptomics? This is the question we set out to answer in our pre-print (https://doi.org/10.1101/2025.09.24.678316). This repository contains all the code relating to this project, including the data generated specifically for this project and instructions of how to access other datasets. 
 
-## Contents
+## Respository contents
 ### code
 All code for reproducing results, statistics, and plots in the paper. These scripts contain a combination of scripts in R, python and jupyter notebooks for interactive analysis and visualisation. All analyses were primarily run on a high performance computing cluster and have not been tested on a local machine. In particular, all analyses relating to GO pathways (especially filtration of GO pathways and spatial pathway scoring) have long running times of up to several days and should be run as a submitted job on an HPC. 
 
