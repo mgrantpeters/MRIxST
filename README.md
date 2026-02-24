@@ -43,13 +43,9 @@ qMRI vs SRT statistical analysis results.
 ## Accessing other datasets
 We additionally make use of datasets associated with other projects which are listed below: 
 
-*Spatially-resolved transcriptomics data from control dorsolateral prefrontal cortex* (original publication available in Science, DOI: 10.1126/science.adh1938)
+*Spatially-resolved transcriptomics data from control dorsolateral prefrontal cortex* (original publication available in Science, DOI: 10.1126/science.adh1938). This dataset as well as paired single nucleus RNA-sequencing data are publicly available and can be downloaded through the spatialLIBD R package (DOI: 10.18129/B9.bioc.spatialLIBD).
 
-This dataset as well as paired single nucleus RNA-sequencing data are publicly available and can be downloaded through the spatialLIBD R package (DOI: 10.18129/B9.bioc.spatialLIBD).
-
-*Single nucleus RNA-sequencing data for Braak stage 3/4 Parkinson's disease and controls* (original manuscript on bioRxiv, DOI: 10.1101/2025.08.25.671921)
-
-This dataset has been submitted to the CRN cloud for publication and will be made available on the CRN cloud (https://cloud.parkinsonsroadmap.org/).
+*Single nucleus RNA-sequencing data for Braak stage 3/4 Parkinson's disease and controls* (original manuscript on bioRxiv, DOI: 10.1101/2025.08.25.671921). This dataset has been submitted to the CRN cloud for publication and will be made available on the CRN cloud (https://cloud.parkinsonsroadmap.org/).
 
 ## Dependencies
 qMRI vs SRT R analyses were run using R version 4.4.1, and depend on the following packages:
