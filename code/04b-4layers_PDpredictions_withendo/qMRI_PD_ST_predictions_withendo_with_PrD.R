@@ -133,8 +133,7 @@ for (i in 1:length(COI.fnames)){
   cell.data <- read.csv(paste(cell.data.dir, COI.fname, sep = ""))
   cell.data <- cell.data[,2:ncol(cell.data)]
   colnames(cell.data) <- paste(COI[i],"_",colnames(cell.data),sep="")
-  cell.data <- cell.data[,c(paste(COI[i], "_WM",sep = ""),
-                            paste(COI[i], "_SpD4",sep = ""),
+  cell.data <- cell.data[,c(paste(COI[i], "_SpD4",sep = ""),
                             paste(COI[i], "_SpD3",sep = ""),
                             paste(COI[i], "_SpD2",sep = ""),
                             paste(COI[i], "_SpD1",sep = ""))]
@@ -340,12 +339,6 @@ project.PD.ST <- function(dframe, ST) {
   
   return(output.dframe)
 }
-
-# PD DLPFC projections
-PD.ST.proj <- project.PD.ST(adj.qMRI.ST.medians, all.ST.names)
-
-PD.cell.proj <- PD.ST.proj[,1:6]
-PD.GO.proj <- cbind(PD.ST.proj[,1:2], PD.ST.proj[,7:ncol(PD.ST.proj)])
 
 #### predict PD ST scores without SWM ####
 

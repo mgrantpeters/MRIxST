@@ -42,6 +42,8 @@ rename_layers <- function(x) {
 qMRI.dems <- read.csv(paste(dems.dir,"anon_DLPFC_qMRI_demographics.csv",sep = ""))
 qMRI.data <-  read.csv(paste(qMRI.data.dir,"anon_DLPFC_AMP_qMRI_medians_4_equivol_layers.csv",sep = ""))
 
+qMRI.data <- qMRI.data[,!grepl("_SWM",colnames(qMRI.data))]
+
 # set age and diagnosis as factors
 qMRI.dems$sex <- factor(qMRI.dems$sex)
 qMRI.dems$diagnosis <- factor(qMRI.dems$diagnosis,levels = c("Control","PD"))
@@ -80,7 +82,7 @@ QC.info <- subset(QC.info, QC.info$MPRAGE_QC == 1 & QC.info$FS_QC == 1)
 # rename columns
 colnames(qMRI.data.dems) <- lapply(colnames(qMRI.data.dems), rename_layers)
 # get all ROI names
-qMRI.ROI.names <- colnames(qMRI.data.dems)[5:ncol(qMRI.data.dems)]
+qMRI.ROI.names <- colnames(qMRI.data.dems)[7:ncol(qMRI.data.dems)]
 
 # need to create some new columns in the QC.info dataframe
 QC.info$QSM_QC <- QC.info$QSM_QC == 1 & QC.info$has_QSM == 1
@@ -99,13 +101,16 @@ mn.qMRI.age <- mean(qMRI.data.dems$age)
 diff.qMRI.age <- mn.qMRI.age - qMRI.data.dems$age
 mn.qMRI.sex <- mean(as.numeric(qMRI.data.dems$sex))
 diff.qMRI.sex <- mn.qMRI.sex - as.numeric(qMRI.data.dems$sex)
+mn.qMRI.CT <- mean(as.numeric(qMRI.data.dems$DLPFC_CT))
+diff.qMRI.CT <- mn.qMRI.CT - as.numeric(qMRI.data.dems$DLPFC_CT)
 
 # adjust all ROIs for age and sex using the covariance method
 for (ROI in qMRI.ROI.names) {
-  mdl.qMRI.adj <- lm(qMRI.data.dems[,ROI] ~ age + sex, data = qMRI.data.dems)
+  mdl.qMRI.adj <- lm(qMRI.data.dems[,ROI] ~ age + sex + DLPFC_CT, data = qMRI.data.dems)
   adj.qMRI.vals <- qMRI.data.dems[,ROI] +
     diff.qMRI.age * mdl.qMRI.adj$coefficients[2] +
-    diff.qMRI.sex * mdl.qMRI.adj$coefficients[3]
+    diff.qMRI.sex * mdl.qMRI.adj$coefficients[3] +
+    diff.qMRI.CT  * mdl.qMRI.adj$coefficients[4]
   adj.qMRI.data.dems[,ROI] <- adj.qMRI.vals
 }
 
@@ -136,14 +141,12 @@ for (i in 1:length(COI.fnames)){
   cell.data <- read.csv(paste(cell.data.dir, COI.fname, sep = ""))
   cell.data <- cell.data[,2:ncol(cell.data)]
   colnames(cell.data) <- paste(COI[i],"_",colnames(cell.data),sep="")
-  cell.data <- cell.data[,c(paste(COI[i], "_WM",sep = ""),
-                            paste(COI[i], "_SpD4",sep = ""),
+  cell.data <- cell.data[,c(paste(COI[i], "_SpD4",sep = ""),
                             paste(COI[i], "_SpD3",sep = ""),
                             paste(COI[i], "_SpD2",sep = ""),
                             paste(COI[i], "_SpD1",sep = ""))]
   cell.data.dems <- cbind(cell.data.dems,cell.data)
 }
-colnames(cell.data.dems) <- gsub("_WM", "_SWM", colnames(cell.data.dems))
 
 # reorganise in the same way as the qMRI data
 cell.data.ant <- cell.data.dems[ST.dems$region == "anterior", 7:ncol(cell.data.dems)]
@@ -181,12 +184,11 @@ for (i in 1:length(POI.fnames)){
   colnames(GO.data) <- c("sample_id", "region", POI.names[i])
   GO.data <- GO.data[order(
     GO.data$sample_id,
-    factor(GO.data$region, levels = c("WM", "SpD4","SpD3","SpD2","SpD1"))),]
+    factor(GO.data$region, levels = c("SpD4","SpD3","SpD2","SpD1"))),]
   GO.data <- pivot_wider(GO.data,names_from = region, values_from = POI.names[i],
                          names_prefix = paste(POI.names[i],"_", sep = ""))
   GO.data.dems <- cbind(GO.data.dems,GO.data[,2:ncol(GO.data)])
 }
-colnames(GO.data.dems) <- gsub("_WM", "_SWM", colnames(GO.data.dems))
 
 # reorganise in the same way as the qMRI data
 GO.data.ant <- GO.data.dems[ST.dems$region == "anterior", 7:ncol(GO.data.dems)]
@@ -200,6 +202,8 @@ colnames(GO.data.pos) <- paste(colnames(GO.data.pos),"_pos", sep = "")
 GO.data.dems <- cbind(ST.dems[seq(1,nrow(ST.dems),3),], GO.data.ant, GO.data.mid, GO.data.pos)
 rownames(GO.data.dems) <- 1:nrow(GO.data.dems)
 GO.data.dems <- subset(GO.data.dems, select = -c(sample_id, region))
+
+GO.data.dems <- GO.data.dems[,!grepl("_WM_",colnames(GO.data.dems))]
 
 #### adjust ST data ####
 
@@ -239,7 +243,7 @@ for (ROI in GO.ROI.names) {
 subj <- adj.qMRI.data.dems$subject
 
 # define spatial domains / subregions
-dom <- c("SWM", "SpD4", "SpD3","SpD2","SpD1")
+dom <- c("SpD4", "SpD3","SpD2","SpD1")
 reg <- c("anterior", "middle", "posterior")
 
 # include in boxplots?
@@ -335,7 +339,7 @@ adj.qMRI.data.dems<- subset(adj.qMRI.data.dems,
 subj <- adj.cell.data.dems$subject
 
 # define spatial domains / subregions
-dom <- c("SWM", "SpD4", "SpD3","SpD2","SpD1")
+dom <- c("SpD4", "SpD3","SpD2","SpD1")
 reg <- c("anterior", "middle", "posterior")
 
 # do this for cell types
@@ -379,7 +383,7 @@ dev.off()
 #### POI boxplots ####
 
 # define spatial domains / subregions
-dom <- c("SWM", "SpD4", "SpD3","SpD2","SpD1")
+dom <- c("SpD4", "SpD3","SpD2","SpD1")
 reg <- c("anterior", "middle", "posterior")
 
 # long format
@@ -422,7 +426,7 @@ dev.off()
 #### qMRI vs ST correlation analysis set-up ####
 
 # define spatial domains / subregions
-dom <- c("SWM", "SpD4", "SpD3","SpD2","SpD1")
+dom <- c("SpD4", "SpD3","SpD2","SpD1")
 reg <- c("anterior", "middle", "posterior")
 
 # set up table containing qMRI / ST median values
@@ -667,6 +671,94 @@ run.qMRI.ST.LOO <- function(dframe, ST, LOO, stats, group.string) {
   
 }
 
+run.qMRI.ST.LOO.SpD <- function(dframe, ST, LOO, stats, group.string) {
+  
+  # loop though ST metrics
+  for (ii in 1:length(ST)) {
+    
+    st <- ST[ii]
+    
+    # loop through each SpD and leave-one-SpD out
+    for (spd in unique(dframe$SpD)) {
+      
+      # get SpD rows
+      test.idx <- which(dframe$SpD == spd)
+      
+      # define train and test data
+      train <- dframe[-test.idx, ]
+      test <- dframe[test.idx, ]
+      
+      # actual data
+      loo.actual <- test[, paste(st, "Control", sep = "_")]
+      
+      loo.fm <- as.formula(paste0(paste(st, "Control", sep = "_"), "~",
+                                  paste("QSM", group.string, sep = "_"), "+",
+                                  paste("R1", group.string, sep = "_"), "+",
+                                  paste("R2s", group.string, sep = "_"), "+",
+                                  paste("PrD", group.string, sep = "_"), "+",
+                                  paste("MTsat", group.string, sep = "_")))
+      # run LOO
+      loo.fit <- lm(loo.fm, data = train)
+      loo.pred <- predict(loo.fit, newdata = test)
+      loo.SE <- (loo.pred - loo.actual) ^ 2
+      
+      # store results
+      LOO[test.idx, paste(st, "actual", sep = "_")] <- loo.actual
+      LOO[test.idx, paste(st, "predicted", sep = "_")] <- loo.pred
+      LOO[test.idx, paste(st, "SE", sep = "_")] <- loo.SE
+      
+    }
+    
+    fit <- lm(as.formula(paste0(paste(st,"actual", sep = "_"),"~",
+                                paste(st,"predicted", sep = "_"))),
+              data = LOO)
+    res <- summary(fit)
+    LOO[,paste(st, "cooksd", sep = "_")]<-cooks.distance(fit)
+    
+    full.coef <- coef(fit)
+    full.mse <- sum(residuals(fit)^2) / df.residual(fit)
+    p <- length(full.coef)
+    
+    # SpD-level cooks distance
+    
+    full.coef <- coef(fit)
+    full.mse <- sum(residuals(fit)^2) / df.residual(fit)
+    
+    for (spd in unique(LOO$SpD)) {
+      
+      fit.minus <- lm(
+        as.formula(
+          paste0(paste(st, "actual", sep = "_"),
+                 " ~ ", paste(st, "predicted", sep = "_"))
+        ),
+        data = subset(LOO, SpD != spd)
+      )
+      
+      beta.diff <- coef(fit.minus) - full.coef
+      
+      spd.cook <- sum(beta.diff^2) / (length(full.coef) * full.mse)
+      
+      # assign same value to all rows from this SpD
+      LOO[LOO$SpD == spd,paste(st, "SpD_cooksd", sep = "_")] <- spd.cook
+    }
+    
+    # Save stats
+    stats[ii,1] <- st
+    stats[ii,2] <- nrmse(LOO[, paste(st, "predicted", sep = "_")],
+                         LOO[, paste(st, "actual", sep = "_")])
+    stats[ii,3] <- res$coefficients[2,3]
+    stats[ii,4] <- cor.test(LOO[, paste(st, "predicted", sep = "_")],
+                            LOO[, paste(st, "actual", sep = "_")])$estimate
+    stats[ii,5] <- res$r.squared
+    stats[ii,6] <- res$coefficients[2, 4]
+    
+  }
+  
+  # return updated NRMSE and LOO
+  return(list(LOO = LOO, stats = stats))
+  
+}
+
 # define a function to plot the data
 plot.LOO <- function(ST, LOO,sts) {
   x.data <- LOO[, paste(ST, "actual", sep = "_")]
@@ -747,6 +839,24 @@ plot.LOO.cooksd <- function(ST, LOO) {
     ggtitle(ST) +
     geom_point(aes(colour = SpD, shape = region)) +
     geom_hline(yintercept = cutoff, linetype = "dotted", size = 1) +
+    scale_color_manual(values = SpD.cols)
+}
+
+# function to plot the LOO Cook's distance
+plot.LOO.SpD.cooksd <- function(ST, LOO) {
+  # sort by SpD
+  LOO <- LOO[order(LOO$SpD),]
+  x.data <- 1:nrow(LOO)
+  y.data <- LOO[[paste(ST, "SpD_cooksd", sep = "_")]]
+  
+  ggplot(data = LOO, aes(x = x.data, y = y.data)) +
+    theme_minimal() +
+    theme(axis.title.x = element_blank(),
+          axis.text.x = element_blank(),
+          axis.title.y = element_blank()
+    ) +
+    ggtitle(ST) +
+    geom_point(aes(colour = SpD, shape = region)) +
     scale_color_manual(values = SpD.cols)
 }
 
@@ -930,6 +1040,71 @@ annotate_figure(multi.plot.cell.LOO.cooksd.Ctrl.no.SWM,
                 bottom = text_grob("ROI"))
 dev.off()
 
+# now run a LOO leaving out whole SpDs instead
+cell.LOO.Ctrl.SpD.colnames <- paste(rep(COI,each = 3),c("actual","predicted", "SE"),sep = "_")
+cell.LOO.Ctrl.SpD.no.SWM <- data.frame(matrix(nrow = nrow(adj.qMRI.ST.medians.no.SWM), ncol = length(cell.LOO.Ctrl.SpD.colnames)))
+colnames(cell.LOO.Ctrl.SpD.no.SWM) <- cell.LOO.Ctrl.SpD.colnames
+cell.LOO.Ctrl.SpD.no.SWM <-cbind(adj.qMRI.ST.medians.no.SWM[,1:2],cell.LOO.Ctrl.SpD.no.SWM)
+
+cell.LOO.stats.Ctrl.SpD.no.SWM <- data.frame(matrix(nrow = length(COI), ncol = 6))
+colnames(cell.LOO.stats.Ctrl.SpD.no.SWM) <- c("cell_type", "NRMSE", "T","rho", "R2", "p")
+
+# run the LOO
+cell.LOO.Ctrl.SpD.output.no.SWM <- run.qMRI.ST.LOO.SpD(dframe = adj.qMRI.ST.medians.no.SWM,
+                                               ST = COI, 
+                                               LOO = cell.LOO.Ctrl.SpD.no.SWM, 
+                                               stats = cell.LOO.stats.Ctrl.SpD.no.SWM, 
+                                               group.string = "Control")
+cell.LOO.Ctrl.SpD.no.SWM <- cell.LOO.Ctrl.SpD.output.no.SWM$LOO
+cell.LOO.stats.Ctrl.SpD.no.SWM <- cell.LOO.Ctrl.SpD.output.no.SWM$stats
+
+# save some stats
+cell.LOO.stats.Ctrl.SpD.no.SWM$corr_p <- p.adjust(cell.LOO.stats.Ctrl.SpD.no.SWM$p, method = "fdr")
+write.csv(cell.LOO.stats.Ctrl.SpD.no.SWM, file = paste(
+  results.dir.stats, "/Stats_control_qMRI_vs_cell_count_LOO_SpD_no_SWM.csv", sep = ""), 
+  row.names = FALSE)
+
+# save the LOO predictions
+write.csv(cell.LOO.Ctrl.SpD.no.SWM, file = paste(
+  results.dir.stats, "/LOO_SpD_predictions_control_qMRI_vs_cell_count_no_SWM.csv", sep = ""),
+  row.names = FALSE)
+
+# plot the LOO
+plot.list.cell.LOO.Ctrl.SpD.no.SWM <- lapply(1:length(COI), function(i) 
+  plot.LOO(ST = COI[i], LOO = cell.LOO.Ctrl.SpD.no.SWM, sts = cell.LOO.stats.Ctrl.SpD.no.SWM))
+png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_LOO_SpD_no_SWM.png", sep = ""),
+    width = 600, height = 500, units = "px", res = 120)
+multi.plot.cell.LOO.Ctrl.SpD.no.SWM <- ggarrange(
+  plotlist = plot.list.cell.LOO.Ctrl.SpD.no.SWM,
+  nrow = 2,
+  ncol = 2,
+  common.legend = TRUE,
+  legend = "right"
+)
+plot(multi.plot.cell.LOO.Ctrl.SpD.no.SWM)
+annotate_figure(multi.plot.cell.LOO.Ctrl.SpD.no.SWM, bottom = text_grob("Control SRT count"),
+                left = text_grob("qMRI-predicted cell count", rot = 90),
+                top = text_grob("Control qMRI medians predicting control cell count"))
+dev.off()
+
+# plot the LOO cook's distance
+plot.list.cell.LOO.cooksd.Ctrl.SpD.no.SWM <- lapply(1:length(COI), function(i) plot.LOO.SpD.cooksd(ST = COI[i], cell.LOO.Ctrl.SpD.no.SWM))
+png(filename = paste(results.dir, "/Plot_control_qMRI_vs_cell_count_LOO_SpD_cooksd_no_SWM.png", sep = ""),
+    width = 600, height = 500, units = "px", res = 120)
+multi.plot.cell.LOO.cooksd.Ctrl.SpD.no.SWM <- ggarrange(
+  plotlist = plot.list.cell.LOO.cooksd.Ctrl.SpD.no.SWM,
+  nrow = 2,
+  ncol = 2,
+  common.legend = TRUE,
+  legend = "right"
+)
+plot(multi.plot.cell.LOO.cooksd.Ctrl.SpD.no.SWM)
+annotate_figure(multi.plot.cell.LOO.cooksd.Ctrl.SpD.no.SWM,  
+                left = text_grob("Cook's distance", rot = 90),
+                top = text_grob("Influence of regions on cell LOO correlations"),
+                bottom = text_grob("ROI"))
+dev.off()
+
 # PATHWAYS OF INTEREST
 
 # define empty data frames for LOO results
@@ -997,3 +1172,68 @@ annotate_figure(multi.plot.GO.LOO.cooksd.Ctrl.no.SWM,
                 bottom = text_grob("ROI"))
 dev.off()
 
+
+# now run a LOO leaving out whole SpDs instead
+GO.LOO.Ctrl.SpD.colnames <- paste(rep(POI.names,each = 3),c("actual","predicted", "SE"),sep = "_")
+GO.LOO.Ctrl.SpD.no.SWM <- data.frame(matrix(nrow = nrow(adj.qMRI.ST.medians.no.SWM), ncol = length(GO.LOO.Ctrl.SpD.colnames)))
+colnames(GO.LOO.Ctrl.SpD.no.SWM) <- GO.LOO.Ctrl.SpD.colnames
+GO.LOO.Ctrl.SpD.no.SWM <-cbind(adj.qMRI.ST.medians.no.SWM[,1:2],GO.LOO.Ctrl.SpD.no.SWM)
+
+GO.LOO.stats.Ctrl.SpD.no.SWM <- data.frame(matrix(nrow = length(POI.names), ncol = 6))
+colnames(GO.LOO.stats.Ctrl.SpD.no.SWM) <- c("GO_type", "NRMSE", "T","rho", "R2", "p")
+
+# run the LOO
+GO.LOO.Ctrl.SpD.output.no.SWM <- run.qMRI.ST.LOO.SpD(dframe = adj.qMRI.ST.medians.no.SWM,
+                                                       ST = POI.names, 
+                                                       LOO = GO.LOO.Ctrl.SpD.no.SWM, 
+                                                       stats = GO.LOO.stats.Ctrl.SpD.no.SWM, 
+                                                       group.string = "Control")
+GO.LOO.Ctrl.SpD.no.SWM <- GO.LOO.Ctrl.SpD.output.no.SWM$LOO
+GO.LOO.stats.Ctrl.SpD.no.SWM <- GO.LOO.Ctrl.SpD.output.no.SWM$stats
+
+# save some stats
+GO.LOO.stats.Ctrl.SpD.no.SWM$corr_p <- p.adjust(GO.LOO.stats.Ctrl.SpD.no.SWM$p, method = "fdr")
+write.csv(GO.LOO.stats.Ctrl.SpD.no.SWM, file = paste(
+  results.dir.stats, "/Stats_control_qMRI_vs_POI_LOO_SpD_no_SWM.csv", sep = ""), 
+  row.names = FALSE)
+
+# save the LOO predictions
+write.csv(GO.LOO.Ctrl.SpD.no.SWM, file = paste(
+  results.dir.stats, "/LOO_SpD_predictions_control_qMRI_vs_POI_no_SWM.csv", sep = ""),
+  row.names = FALSE)
+
+# plot the LOO
+plot.list.GO.LOO.Ctrl.SpD.no.SWM <- lapply(1:length(POI.names), function(i) 
+  plot.LOO(ST = POI.names[i], LOO = GO.LOO.Ctrl.SpD.no.SWM, sts = GO.LOO.stats.Ctrl.SpD.no.SWM))
+png(filename = paste(results.dir, "/Plot_control_qMRI_vs_POI_LOO_SpD_no_SWM.png", sep = ""),
+    width = 1400, height = 700, units = "px", res = 120)
+multi.plot.GO.LOO.Ctrl.SpD.no.SWM <- ggarrange(
+  plotlist = plot.list.GO.LOO.Ctrl.SpD.no.SWM,
+  nrow = 3,
+  ncol = 5,
+  common.legend = TRUE,
+  legend = "right"
+)
+plot(multi.plot.GO.LOO.Ctrl.SpD.no.SWM)
+annotate_figure(multi.plot.GO.LOO.Ctrl.SpD.no.SWM, bottom = text_grob("Control SRT count"),
+                left = text_grob("qMRI-predicted cell count", rot = 90),
+                top = text_grob("Control qMRI medians predicting control GO pathway score"))
+dev.off()
+
+# plot the LOO cook's distance
+plot.list.GO.LOO.cooksd.Ctrl.SpD.no.SWM <- lapply(1:length(POI.names), function(i) plot.LOO.SpD.cooksd(ST = POI.names[i], GO.LOO.Ctrl.SpD.no.SWM))
+png(filename = paste(results.dir, "/Plot_control_qMRI_vs_POI_LOO_SpD_cooksd_no_SWM.png", sep = ""),
+    width = 1200, height = 700, units = "px", res = 120)
+multi.plot.GO.LOO.cooksd.Ctrl.SpD.no.SWM <- ggarrange(
+  plotlist = plot.list.GO.LOO.cooksd.Ctrl.SpD.no.SWM,
+  nrow = 3,
+  ncol = 5,
+  common.legend = TRUE,
+  legend = "right"
+)
+plot(multi.plot.GO.LOO.cooksd.Ctrl.SpD.no.SWM)
+annotate_figure(multi.plot.GO.LOO.cooksd.Ctrl.SpD.no.SWM,  
+                left = text_grob("Cook's distance", rot = 90),
+                top = text_grob("Influence of regions on GO LOO correlations"),
+                bottom = text_grob("ROI"))
+dev.off()
